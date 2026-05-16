@@ -13,6 +13,7 @@ Requires-Dist: streamlit>=1.35.0
 Requires-Dist: fastapi>=0.110.0
 Requires-Dist: uvicorn>=0.29.0
 Requires-Dist: scikit-learn>=1.4.0
+Requires-Dist: openai>=1.0.0
 Provides-Extra: ocr
 Requires-Dist: pytesseract>=0.3.10; extra == "ocr"
 Provides-Extra: test

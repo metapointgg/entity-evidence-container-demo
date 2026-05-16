@@ -12,6 +12,8 @@ from eec.indexer import rebuild_index
 from eec.search import advanced_search_index
 from eec.ui_data import list_entities, list_objects_for_entity, read_payload, resolve_archive_paths
 from eec.vector_search import vector_search
+from eec.local_llm import answer_question_from_evidence, expand_search_query, lm_studio_status, summarise_search_results
+from eec.lmstudio_vector_search import build_lmstudio_vector_index, lmstudio_vector_search
 
 app = FastAPI(title="Entity Evidence Container API", version="0.1.0")
 
@@ -44,10 +46,12 @@ def entity_objects(entity_id: str, root: str = "samples"):
 
 
 @app.get("/search")
-def search(root: str = "samples", q: str = "", mode: str = Query("keyword", pattern="^(keyword|semantic|vector)$"), limit: int = 50):
+def search(root: str = "samples", q: str = "", mode: str = Query("keyword", pattern="^(keyword|semantic|vector|lmstudio-vector)$"), limit: int = 50):
     paths = _paths(root)
     if mode == "vector":
         return vector_search(paths.root / "index" / "evidence_vector.pkl", q, limit)
+    if mode == "lmstudio-vector":
+        return lmstudio_vector_search(paths.root / "index" / "evidence_lmstudio_vector.pkl", q, limit)
     return advanced_search_index(paths.index, query=q, limit=limit, mode=mode)
 
 
@@ -78,3 +82,45 @@ def download_object(object_id: str, container_path: str):
     out = tmp_dir / item.get("filename", f"{object_id}.bin")
     out.write_bytes(data)
     return FileResponse(out, media_type=item.get("mime_type", "application/octet-stream"), filename=item.get("filename", out.name))
+
+
+@app.get("/llm/status")
+def llm_status():
+    return lm_studio_status()
+
+
+@app.get("/llm/expand-query")
+def llm_expand_query(q: str):
+    return {"query": q, "expanded_terms": expand_search_query(q)}
+
+
+@app.post("/llm/vector-index/rebuild")
+def rebuild_lmstudio_vector_index(root: str = "samples"):
+    paths = _paths(root)
+    output = paths.root / "index" / "evidence_lmstudio_vector.pkl"
+    count = build_lmstudio_vector_index(paths.index, output)
+    return {"indexed_objects": count, "index": str(output)}
+
+
+@app.get("/llm/summarise-search")
+def llm_summarise_search(root: str = "samples", q: str = "", mode: str = "keyword", limit: int = 10):
+    paths = _paths(root)
+    if mode == "lmstudio-vector":
+        rows = lmstudio_vector_search(paths.root / "index" / "evidence_lmstudio_vector.pkl", q, limit)
+    elif mode == "vector":
+        rows = vector_search(paths.root / "index" / "evidence_vector.pkl", q, limit)
+    else:
+        rows = advanced_search_index(paths.index, query=q, limit=limit, mode=mode)
+    return {"query": q, "summary": summarise_search_results(q, rows), "result_count": len(rows)}
+
+
+@app.get("/llm/ask")
+def llm_ask(root: str = "samples", q: str = "", question: str = "", mode: str = "keyword", limit: int = 8):
+    paths = _paths(root)
+    if mode == "lmstudio-vector":
+        rows = lmstudio_vector_search(paths.root / "index" / "evidence_lmstudio_vector.pkl", q, limit)
+    elif mode == "vector":
+        rows = vector_search(paths.root / "index" / "evidence_vector.pkl", q, limit)
+    else:
+        rows = advanced_search_index(paths.index, query=q, limit=limit, mode=mode)
+    return {"query": q, "question": question, "answer": answer_question_from_evidence(question, rows), "result_count": len(rows)}

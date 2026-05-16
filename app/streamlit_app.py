@@ -19,6 +19,8 @@ from eec.presets import REGULATORY_PRESETS
 from eec.retention import retention_report
 from eec.search import advanced_search_index
 from eec.search_result_exporter import export_search_results
+from eec.local_llm import answer_question_from_evidence, expand_search_query, lm_studio_status, summarise_search_results
+from eec.lmstudio_vector_search import build_lmstudio_vector_index, lmstudio_vector_search
 from eec.ui_data import (
     format_bytes,
     get_archive_summary,
@@ -66,13 +68,19 @@ def cached_vector_search(vector_path: str, query: str, limit: int) -> List[Dict[
     return vector_search(Path(vector_path), query, limit)
 
 
+
+
+@st.cache_data(show_spinner=False)
+def cached_lmstudio_vector_search(vector_path: str, query: str, limit: int) -> List[Dict[str, Any]]:
+    return lmstudio_vector_search(Path(vector_path), query, limit)
+
 @st.cache_data(show_spinner=False)
 def cached_validate(container_path: str) -> Dict[str, Any]:
     return validate_container(Path(container_path)).to_dict()
 
 
 def clear_caches() -> None:
-    cached_summary.clear(); cached_entities.clear(); cached_objects.clear(); cached_facets.clear(); cached_search.clear(); cached_vector_search.clear(); cached_validate.clear()
+    cached_summary.clear(); cached_entities.clear(); cached_objects.clear(); cached_facets.clear(); cached_search.clear(); cached_vector_search.clear(); cached_lmstudio_vector_search.clear(); cached_validate.clear()
 
 
 def run_generator(customers: int, target_mb: int, seed: int, root: Path) -> None:
@@ -226,6 +234,19 @@ def dashboard_tab(root: Path) -> None:
         with st.spinner("Building local offline vector index..."):
             count = build_vector_index(paths.index, paths.root / "index" / "evidence_vector.pkl")
         cached_vector_search.clear(); st.success(f"Vector indexed {count} objects.")
+    st.divider()
+    st.subheader("Local LM Studio AI")
+    status = lm_studio_status()
+    if status.get("available"):
+        st.success(f"LM Studio available at {status.get('base_url')}")
+        st.caption("Models: " + ", ".join(status.get("models", [])))
+        if st.button("Build LM Studio embedding index"):
+            with st.spinner("Calling LM Studio embeddings endpoint and building local vector index..."):
+                count = build_lmstudio_vector_index(paths.index, paths.root / "index" / "evidence_lmstudio_vector.pkl")
+            cached_lmstudio_vector_search.clear(); st.success(f"LM Studio embedding indexed {count} objects.")
+    else:
+        st.warning("LM Studio is not available. Start LM Studio server on http://127.0.0.1:1234 and refresh.")
+        st.caption(status.get("error", ""))
     st.info("Set EEC_OCR_PROVIDER=auto, sidecar, tesseract or none before building containers to control OCR/index extraction. Tesseract requires the native Tesseract executable plus pytesseract.")
 
 
@@ -301,6 +322,25 @@ def customers_tab(root: Path) -> None:
             render_object_preview_modal(row)
 
 
+def _merge_results(primary: list[dict[str, Any]], extra_batches: list[list[dict[str, Any]]], limit: int) -> list[dict[str, Any]]:
+    seen: set[str] = set()
+    merged: list[dict[str, Any]] = []
+    for row in primary:
+        key = str(row.get("object_id"))
+        if key not in seen:
+            seen.add(key); merged.append(row)
+    for batch in extra_batches:
+        for row in batch:
+            key = str(row.get("object_id"))
+            if key not in seen:
+                row = dict(row)
+                row["snippet"] = row.get("snippet", "")
+                seen.add(key); merged.append(row)
+            if len(merged) >= limit:
+                return merged
+    return merged[:limit]
+
+
 def search_tab(root: Path) -> None:
     paths = resolve_archive_paths(root)
     st.subheader("Search rebuilt index")
@@ -313,14 +353,50 @@ def search_tab(root: Path) -> None:
     preset = REGULATORY_PRESETS.get(preset_name, {})
     if preset_name != "Custom search": st.caption(preset.get("description", ""))
     query = st.text_input("Search query", value=preset.get("query", "source of wealth"))
-    mode = st.radio("Search mode", ["keyword", "semantic", "vector"], horizontal=True, help="Vector mode uses a local offline TF-IDF vector index. Build it from the Dashboard tab first.")
+    mode = st.radio(
+        "Search mode",
+        ["keyword", "semantic", "vector", "lmstudio-vector"],
+        horizontal=True,
+        help="Vector mode uses the local TF-IDF index. LM Studio vector mode uses the local embeddings endpoint and evidence_lmstudio_vector.pkl.",
+    )
     limit = st.slider("Limit", min_value=5, max_value=250, value=50, step=5)
     filters = _filter_multiselects(facets, defaults=preset.get("filters", {}))
+
+    with st.expander("Local LM Studio assistance", expanded=False):
+        status = lm_studio_status()
+        if status.get("available"):
+            st.success(f"LM Studio available: {status.get('base_url')}")
+            st.caption(f"Query model: {status.get('query_model')} · Chat model: {status.get('chat_model')} · Embedding model: {status.get('embedding_model')}")
+        else:
+            st.warning("LM Studio is not currently available.")
+            st.caption(status.get("error", ""))
+        use_llm_expansion = st.checkbox("Use local LLM query expansion", value=False, disabled=not status.get("available"))
+        show_summary = st.checkbox("Enable local LLM result summary", value=False, disabled=not status.get("available"))
+        expanded_terms: list[str] = []
+        if use_llm_expansion and query.strip():
+            try:
+                with st.spinner("Expanding search query with local LLM..."):
+                    expanded_terms = expand_search_query(query)
+                st.caption("Expanded terms: " + ", ".join(expanded_terms))
+            except Exception as exc:
+                st.error(f"Local LLM query expansion failed: {exc}")
+
     if mode == "vector":
-        results = cached_vector_search(str(paths.root / "index" / "evidence_vector.pkl"), query, limit)
-        st.caption("Vector mode uses the local offline vector index and does not currently apply structured facets.")
+        results = cached_vector_search(str(paths.root / "index" / "evidence_vector.pkl"), query + " " + " ".join(expanded_terms), limit)
+        st.caption("Vector mode uses the local offline TF-IDF vector index and does not currently apply structured facets.")
+    elif mode == "lmstudio-vector":
+        results = cached_lmstudio_vector_search(str(paths.root / "index" / "evidence_lmstudio_vector.pkl"), query + " " + " ".join(expanded_terms), limit)
+        st.caption("LM Studio vector mode uses local embeddings from LM Studio. Build this index from the Dashboard tab first.")
     else:
         results = cached_search(str(paths.index), query, limit, mode, _filters_key(filters))
+        if expanded_terms:
+            extra = []
+            for term in expanded_terms[:8]:
+                try:
+                    extra.append(cached_search(str(paths.index), term, limit, mode, _filters_key(filters)))
+                except Exception:
+                    pass
+            results = _merge_results(results, extra, limit)
     st.caption(f"{len(results)} result(s)")
     if not results:
         st.info("No results found."); return
@@ -328,6 +404,7 @@ def search_tab(root: Path) -> None:
     cols = ["object_id", "entity_id", "display_name", "snapshot_id", "risk_rating", "category", "document_type", "filename", "source_system", "retention_class", "legal_hold_status", "sensitivity", "ocr_source", "size_bytes"]
     if "semantic_score" in df.columns: cols.insert(3, "semantic_score")
     if "vector_score" in df.columns: cols.insert(3, "vector_score")
+    if "lmstudio_vector_score" in df.columns: cols.insert(3, "lmstudio_vector_score")
     out = df[[c for c in cols if c in df.columns]].copy()
     if "size_bytes" in out.columns:
         out["size"] = out["size_bytes"].apply(format_bytes); out = out.drop(columns=["size_bytes"])
@@ -350,9 +427,23 @@ def search_tab(root: Path) -> None:
         c_msg.caption(f"Selected: {row.get('display_name')} / {row.get('filename')}")
         if row.get("snippet"):
             st.markdown("### Selected result snippet"); st.markdown(str(row["snippet"]))
+        ask = st.text_input("Ask a question about the current results or selected evidence", value="")
+        if ask and st.button("Ask local LLM"):
+            try:
+                evidence_rows = [row] + [r for i, r in enumerate(results) if i != idx][:7]
+                with st.spinner("Asking local LLM over retrieved evidence..."):
+                    st.markdown(answer_question_from_evidence(ask, evidence_rows))
+            except Exception as exc:
+                st.error(f"Local LLM question failed: {exc}")
     else:
         c_msg.caption("Select a row to preview it.")
 
+    if show_summary and st.button("Summarise current results with local LLM"):
+        try:
+            with st.spinner("Summarising retrieved evidence with local LLM..."):
+                st.markdown(summarise_search_results(query, results))
+        except Exception as exc:
+            st.error(f"Local LLM summary failed: {exc}")
 
 def retention_tab(root: Path) -> None:
     paths = resolve_archive_paths(root)
@@ -413,6 +504,11 @@ GET  /entities?root=samples
 GET  /entities/{entity_id}/objects?root=samples
 GET  /search?root=samples&q=source%20of%20wealth&mode=keyword
 GET  /search?root=samples&q=where%20did%20money%20come%20from&mode=vector
+GET  /search?root=samples&q=where%20did%20money%20come%20from&mode=lmstudio-vector
+GET  /llm/status
+GET  /llm/expand-query?q=where%20did%20the%20customer%20money%20come%20from
+POST /llm/vector-index/rebuild?root=samples
+GET  /llm/summarise-search?root=samples&q=source%20of%20wealth
 GET  /containers/{container_name}/inspect?root=samples
 GET  /containers/{container_name}/validate?root=samples""")
 
@@ -428,6 +524,7 @@ def main() -> None:
     st.sidebar.markdown("### Paths")
     st.sidebar.caption(f"Source: `{paths.source}`"); st.sidebar.caption(f"Containers: `{paths.containers}`"); st.sidebar.caption(f"Index: `{paths.index}`")
     st.sidebar.caption(f"Vector: `{paths.root / 'index' / 'evidence_vector.pkl'}`")
+    st.sidebar.caption(f"LM vector: `{paths.root / 'index' / 'evidence_lmstudio_vector.pkl'}`")
     if st.sidebar.button("Refresh UI caches"):
         clear_caches(); st.rerun()
     tabs = st.tabs(["Dashboard", "Health", "Comparison", "Customers", "Search", "Retention", "Integrity", "Export", "API"])

@@ -248,3 +248,58 @@ Streamlit UI / API / Evidence Pack Export / Validation
 ```
 
 The important principle is that the database/search index is an access layer. The preserved container remains the durable evidence object.
+
+## Local LM Studio integration
+
+The demo can optionally use local models served by LM Studio. This keeps AI assistance local to the machine running the POC.
+
+Recommended model roles:
+
+| Model | Role |
+|---|---|
+| `qwen/qwen3.5-9b` | Query expansion and structured search assistance |
+| `google/gemma-4-e4b` | Result summaries and ask-the-archive answers |
+| `text-embedding-nomic-embed-text-v1.5` | Local embedding/vector search |
+
+Set the environment variables before running Streamlit or the API:
+
+```bash
+export EEC_LM_STUDIO_BASE_URL="http://127.0.0.1:1234/v1"
+export EEC_LM_STUDIO_MODEL="google/gemma-4-e4b"
+export EEC_LM_STUDIO_QUERY_MODEL="qwen/qwen3.5-9b"
+export EEC_LM_STUDIO_EMBEDDING_MODEL="text-embedding-nomic-embed-text-v1.5"
+```
+
+Check that LM Studio is available:
+
+```bash
+python scripts/list_lm_studio_models.py
+python scripts/test_lm_studio.py
+```
+
+Build the normal TF-IDF vector index and the LM Studio embedding index:
+
+```bash
+python scripts/refresh_demo_assets.py --root samples --clean --lmstudio-vector
+```
+
+Or build only the LM Studio embedding index:
+
+```bash
+python scripts/build_lmstudio_vector_index.py \
+  --sqlite samples/index/evidence_index.db \
+  --output samples/index/evidence_lmstudio_vector.pkl
+```
+
+Search the LM Studio embedding index:
+
+```bash
+python scripts/search_lmstudio_vector_index.py \
+  --index samples/index/evidence_lmstudio_vector.pkl \
+  --query "where did the customer money come from" \
+  --limit 5
+```
+
+In Streamlit, open the **Dashboard** tab to see LM Studio status and build the LM Studio embedding index, then use **Search → lmstudio-vector** mode. The search tab also supports optional local LLM query expansion, result summarisation, and ask-the-archive over retrieved evidence.
+
+The LLM is intentionally assistive only. It expands queries and summarises retrieved evidence, but the FITS preservation containers remain the source of truth.

@@ -8,6 +8,7 @@ from eec.container_builder import build_all_containers
 from eec.demo_data import generate_customers
 from eec.indexer import rebuild_index
 from eec.vector_search import build_vector_index
+from eec.lmstudio_vector_search import build_lmstudio_vector_index
 
 
 def main() -> None:
@@ -21,6 +22,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42, help="Synthetic data seed when --regenerate is used")
     parser.add_argument("--full-container", action="store_true", help="Build one full container per customer instead of immutable snapshot containers")
     parser.add_argument("--clean", action="store_true", help="Remove existing containers and indexes before rebuilding")
+    parser.add_argument("--lmstudio-vector", action="store_true", help="Also build the LM Studio embedding vector index using the local /v1/embeddings endpoint")
     args = parser.parse_args()
 
     root = args.root
@@ -29,6 +31,7 @@ def main() -> None:
     index_dir = root / "index"
     sqlite_path = index_dir / "evidence_index.db"
     vector_path = index_dir / "evidence_vector.pkl"
+    lmstudio_vector_path = index_dir / "evidence_lmstudio_vector.pkl"
 
     root.mkdir(parents=True, exist_ok=True)
     if args.clean:
@@ -61,6 +64,10 @@ def main() -> None:
 
     vector_count = build_vector_index(sqlite_path, vector_path)
     print(f"Rebuilt local vector index with {vector_count} objects: {vector_path}")
+
+    if args.lmstudio_vector:
+        lmstudio_count = build_lmstudio_vector_index(sqlite_path, lmstudio_vector_path)
+        print(f"Rebuilt LM Studio embedding vector index with {lmstudio_count} objects: {lmstudio_vector_path}")
 
     print("\nSmoke-test commands:")
     print(f"python scripts\\search_index.py --sqlite {sqlite_path} --query \"source of wealth\" --limit 3")

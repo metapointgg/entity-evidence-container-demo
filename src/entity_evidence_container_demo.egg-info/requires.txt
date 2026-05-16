@@ -8,6 +8,7 @@ streamlit>=1.35.0
 fastapi>=0.110.0
 uvicorn>=0.29.0
 scikit-learn>=1.4.0
+openai>=1.0.0
 
 [ocr]
 pytesseract>=0.3.10

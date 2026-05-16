@@ -11,3 +11,5 @@ uvicorn>=0.29.0
 scikit-learn>=1.4.0
 # Optional local OCR support. Requires native Tesseract installed separately.
 pytesseract>=0.3.10
+
+openai>=1.0.0
