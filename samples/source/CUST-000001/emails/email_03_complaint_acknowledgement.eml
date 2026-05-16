@@ -1,0 +1,16 @@
+From: support@example-bank.test
+To: oliver.hartley@example.test
+Subject: Complaint acknowledgement
+Date: Tue, 13 Feb 2026 09:33:00 +0000
+Message-ID: <CUST-000001-3@example-bank.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear Oliver,
+
+We acknowledge your complaint regarding interest calculation query. We will investigate and respond within the required timeframe.
+
+Customer reference: CUST-000001
+
+Regards,
+Customer Operations

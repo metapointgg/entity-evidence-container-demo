@@ -1,0 +1,16 @@
+From: support@example-bank.test
+To: oscar.mauger@example.test
+Subject: Complaint acknowledgement
+Date: Tue, 13 Feb 2026 09:33:00 +0000
+Message-ID: <CUST-000003-3@example-bank.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear Oscar,
+
+We acknowledge your complaint regarding payment delay. We will investigate and respond within the required timeframe.
+
+Customer reference: CUST-000003
+
+Regards,
+Customer Operations

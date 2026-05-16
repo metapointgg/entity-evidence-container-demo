@@ -1,0 +1,7 @@
+Island Utilities Statement
+Proof of address evidence for Oscar Mauger
+Account holder: Oscar Mauger
+Service address: 10 Harbour Road, St Peter Port, Guernsey
+Bill date: 2026-04-02
+Amount due: £156.00
+Synthetic utility bill generated for document preservation testing.

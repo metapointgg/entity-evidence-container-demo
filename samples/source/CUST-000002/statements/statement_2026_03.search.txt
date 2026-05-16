@@ -1,0 +1,11 @@
+Monthly Account Statement
+Statement for Charlotte Ferbrache / CUST-000002
+Statement period: 2026-03-01 to 2026-03-28
+Customer ID: CUST-000002
+Customer name: Charlotte Ferbrache
+Opening balance: £22,209.44
+Closing balance: £20,701.78
+Product references: Easy access savings, Fixed term deposit, Cash ISA
+Narrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.
+Please retain this statement for your records.
+Contact support immediately if any transaction appears incorrect.

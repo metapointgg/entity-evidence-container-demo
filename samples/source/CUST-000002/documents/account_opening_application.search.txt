@@ -1,0 +1,13 @@
+Account Opening Application
+Synthetic customer onboarding pack for Charlotte Ferbrache / CUST-000002
+Customer ID: CUST-000002
+Name: Charlotte Ferbrache
+Jurisdiction: Isle of Man
+Occupation: Retail Business Owner
+Risk rating: Medium
+Product 1: Easy access savings
+Product 2: Fixed term deposit
+Product 3: Cash ISA
+Customer has confirmed tax residency and source of wealth information.
+Customer has accepted account terms and data processing notice.
+Consent recorded for electronic communications and statement delivery.

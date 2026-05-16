@@ -1,0 +1,26 @@
+[
+  {
+    "account_id": "ACC-000002-1",
+    "product": "Easy access savings",
+    "currency": "GBP",
+    "opened_on": "2024-06-01",
+    "status": "Open",
+    "balance": 148106.41
+  },
+  {
+    "account_id": "ACC-000002-2",
+    "product": "Fixed term deposit",
+    "currency": "GBP",
+    "opened_on": "2024-04-19",
+    "status": "Open",
+    "balance": 57003.8
+  },
+  {
+    "account_id": "ACC-000002-3",
+    "product": "Cash ISA",
+    "currency": "GBP",
+    "opened_on": "2024-02-23",
+    "status": "Open",
+    "balance": 158697.98
+  }
+]

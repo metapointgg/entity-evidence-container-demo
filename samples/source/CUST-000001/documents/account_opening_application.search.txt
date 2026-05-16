@@ -1,0 +1,12 @@
+Account Opening Application
+Synthetic customer onboarding pack for Oliver Hartley / CUST-000001
+Customer ID: CUST-000001
+Name: Oliver Hartley
+Jurisdiction: Malta
+Occupation: Property Developer
+Risk rating: Medium
+Product 1: Regular saver
+Product 2: Easy access savings
+Customer has confirmed tax residency and source of wealth information.
+Customer has accepted account terms and data processing notice.
+Consent recorded for electronic communications and statement delivery.

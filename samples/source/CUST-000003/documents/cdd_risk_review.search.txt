@@ -1,0 +1,11 @@
+Customer Due Diligence Risk Review
+CDD periodic review for Oscar Mauger / CUST-000003
+Risk rating: Low
+Source of wealth: company sale proceeds
+PEP screening: No match
+Sanctions screening: Clear
+Adverse media: No material adverse media
+Decision: Continue relationship
+Reviewer: Compliance Officer 2
+Rationale: Documentation supports declared activity and expected account usage.
+Enhanced due diligence applied where risk rating is High.

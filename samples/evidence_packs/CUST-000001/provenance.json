@@ -1,0 +1,11 @@
+[
+  {
+    "event_id": "PROV-CUST-000001-0001",
+    "entity_id": "CUST-000001",
+    "event_type": "CONTAINER_CREATED",
+    "source_system": "Entity Evidence Container POC",
+    "actor": "system",
+    "timestamp": "2026-05-16T07:52:26Z",
+    "details": "Created FITS evidence container from source folder CUST-000001"
+  }
+]

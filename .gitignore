@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# Generated demo data
+data/source/
+data/containers/
+data/index/
+data/extracted/
+data/evidence_packs/
+data/demo-output/
+
+# Large generated files
+*.fits
+*.db
+*.sqlite
+*.sqlite3
+!samples/**/*.fits
+!samples/**/*.db

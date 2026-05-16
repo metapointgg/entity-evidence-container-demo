@@ -1,0 +1,12 @@
+Account Opening Application
+Synthetic customer onboarding pack for Oscar Mauger / CUST-000003
+Customer ID: CUST-000003
+Name: Oscar Mauger
+Jurisdiction: Guernsey
+Occupation: Marine Engineer
+Risk rating: Low
+Product 1: Regular saver
+Product 2: Current account
+Customer has confirmed tax residency and source of wealth information.
+Customer has accepted account terms and data processing notice.
+Consent recorded for electronic communications and statement delivery.

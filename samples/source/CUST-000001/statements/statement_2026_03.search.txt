@@ -1,0 +1,11 @@
+Monthly Account Statement
+Statement for Oliver Hartley / CUST-000001
+Statement period: 2026-03-01 to 2026-03-28
+Customer ID: CUST-000001
+Customer name: Oliver Hartley
+Opening balance: £45,471.70
+Closing balance: £45,058.13
+Product references: Regular saver, Easy access savings
+Narrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.
+Please retain this statement for your records.
+Contact support immediately if any transaction appears incorrect.

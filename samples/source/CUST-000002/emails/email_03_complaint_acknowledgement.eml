@@ -1,0 +1,16 @@
+From: support@example-bank.test
+To: charlotte.ferbrache@example.test
+Subject: Complaint acknowledgement
+Date: Tue, 13 Feb 2026 09:33:00 +0000
+Message-ID: <CUST-000002-3@example-bank.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear Charlotte,
+
+We acknowledge your complaint regarding overdraft charge. We will investigate and respond within the required timeframe.
+
+Customer reference: CUST-000002
+
+Regards,
+Customer Operations

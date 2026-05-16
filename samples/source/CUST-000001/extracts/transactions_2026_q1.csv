@@ -1,0 +1,41 @@
+date,account_id,description,amount,balance,channel
+2026-01-01,ACC-000001-1,Interest credit,-462.71,37948.5,Mobile
+2026-01-03,ACC-000001-1,Standing order,384.63,38333.13,Online
+2026-01-05,ACC-000001-1,ATM withdrawal,1863.52,40196.65,Operations
+2026-01-07,ACC-000001-1,Interest credit,969.55,41166.2,Mobile
+2026-01-09,ACC-000001-1,ATM withdrawal,1021.73,42187.93,Online
+2026-01-11,ACC-000001-1,ATM withdrawal,1105.26,43293.19,Mobile
+2026-01-13,ACC-000001-1,Card settlement,-648.78,42644.41,Online
+2026-01-15,ACC-000001-1,Card settlement,2451.23,45095.64,Mobile
+2026-01-17,ACC-000001-1,Interest credit,454.42,45550.06,Online
+2026-01-19,ACC-000001-1,Standing order,-263.24,45286.82,Branch
+2026-01-21,ACC-000001-1,ATM withdrawal,1411.58,46698.4,Mobile
+2026-01-23,ACC-000001-1,Card settlement,1210.13,47908.53,Branch
+2026-01-25,ACC-000001-1,Interest credit,-260.77,47647.76,Online
+2026-01-27,ACC-000001-1,ATM withdrawal,2465.43,50113.19,Branch
+2026-01-29,ACC-000001-1,Salary credit,1459.23,51572.42,Branch
+2026-01-31,ACC-000001-1,Standing order,1911.95,53484.37,Operations
+2026-02-02,ACC-000001-1,Card settlement,83.54,53567.91,Online
+2026-02-04,ACC-000001-1,Interest credit,-98.33,53469.58,Operations
+2026-02-06,ACC-000001-1,ATM withdrawal,2119.45,55589.03,Operations
+2026-02-08,ACC-000001-1,Card settlement,-328.52,55260.51,Branch
+2026-02-10,ACC-000001-1,Transfer to savings,1658.46,56918.97,Online
+2026-02-12,ACC-000001-1,Interest credit,1665.15,58584.12,Operations
+2026-02-14,ACC-000001-1,Card settlement,394.59,58978.71,Operations
+2026-02-16,ACC-000001-1,Salary credit,-500.0,58478.71,Mobile
+2026-02-18,ACC-000001-1,Card settlement,-295.62,58183.09,Operations
+2026-02-20,ACC-000001-1,Interest credit,1168.15,59351.24,Operations
+2026-02-22,ACC-000001-1,Interest credit,1166.43,60517.67,Online
+2026-02-24,ACC-000001-1,Salary credit,2404.56,62922.23,Mobile
+2026-02-26,ACC-000001-1,Transfer to savings,1449.64,64371.87,Online
+2026-02-28,ACC-000001-1,Standing order,1736.38,66108.25,Mobile
+2026-03-02,ACC-000001-1,Card settlement,168.55,66276.8,Operations
+2026-03-04,ACC-000001-1,ATM withdrawal,-789.29,65487.51,Online
+2026-03-06,ACC-000001-1,Card settlement,2407.23,67894.74,Mobile
+2026-03-08,ACC-000001-1,Standing order,2072.71,69967.45,Branch
+2026-03-10,ACC-000001-1,Card settlement,-295.63,69671.82,Mobile
+2026-03-12,ACC-000001-1,Interest credit,1176.52,70848.34,Mobile
+2026-03-14,ACC-000001-1,Standing order,-430.84,70417.5,Online
+2026-03-16,ACC-000001-1,Card settlement,-9.81,70407.69,Mobile
+2026-03-18,ACC-000001-1,Interest credit,-517.34,69890.35,Mobile
+2026-03-20,ACC-000001-1,Transfer to savings,2427.35,72317.7,Branch

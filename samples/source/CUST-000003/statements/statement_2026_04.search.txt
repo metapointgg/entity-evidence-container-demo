@@ -1,0 +1,11 @@
+Monthly Account Statement
+Statement for Oscar Mauger / CUST-000003
+Statement period: 2026-04-01 to 2026-04-28
+Customer ID: CUST-000003
+Customer name: Oscar Mauger
+Opening balance: £93,375.71
+Closing balance: £98,167.19
+Product references: Regular saver, Current account
+Narrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.
+Please retain this statement for your records.
+Contact support immediately if any transaction appears incorrect.
