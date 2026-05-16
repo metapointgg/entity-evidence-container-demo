@@ -661,3 +661,104 @@ The ingestion layer preserves the original document bytes and writes metadata si
 - `none` only indexes direct text formats.
 
 This keeps ingestion and preservation separate: ingestion captures and classifies evidence, while the container build extracts text and embeds the searchable text in the FITS manifest.
+
+## Architecture update: one active FITS file per entity
+
+The default container build now follows **Option A — rebuild the customer/entity FITS file on update**.
+
+Default build:
+
+```bash
+python scripts/build_containers.py \
+  --source data/source \
+  --output data/containers
+```
+
+This produces one active FITS file per entity:
+
+```text
+data/containers/CUST-000001.fits
+data/containers/CUST-000002.fits
+data/containers/CUST-999001.fits
+```
+
+Each entity FITS file contains internal logical snapshots in the `SNAPSHOTS` and `MANIFEST` HDUs. For example, a single `CUST-000001.fits` can contain evidence grouped as:
+
+```text
+ONBOARDING
+CDD_REVIEW_2026
+STATEMENTS_2026_Q1
+CORRESPONDENCE_2026
+TRANSACTIONS_2026_Q1
+LEGAL_DISCLOSURE
+```
+
+The previous split-snapshot mode is still available for comparison or testing:
+
+```bash
+python scripts/build_containers.py \
+  --source data/source \
+  --output data/containers \
+  --split-snapshots
+```
+
+### Rebuild-on-update
+
+After bulk or continuous ingestion updates one customer's source folder, rebuild only that customer's active FITS container:
+
+```bash
+python scripts/rebuild_entity_container.py \
+  --entity-id CUST-000001 \
+  --source data/source \
+  --output data/containers \
+  --retain-version \
+  --rebuild-index \
+  --sqlite data/index/evidence_index.db
+```
+
+When `--retain-version` is supplied, the previous active container is copied into:
+
+```text
+data/containers/_versions/<ENTITY_ID>/
+```
+
+This keeps the simple user-facing model — one current entity archive — while preserving previous sealed versions for audit/rollback.
+
+## Direct FITS search
+
+The archive now supports direct search of a customer/entity FITS file without using the SQLite or vector indexes. This is intended to demonstrate that the FITS container is the preserved, self-describing source of truth. The indexes remain useful as rebuildable acceleration layers for cohort and cross-customer search.
+
+Search a specific customer/entity container directly:
+
+```bash
+python scripts/search_fits_direct.py \
+  --container samples/containers/CUST-000001.fits \
+  --query "source of wealth" \
+  --limit 5
+```
+
+Or search by entity ID:
+
+```bash
+python scripts/search_fits_direct.py \
+  --containers samples/containers \
+  --entity-id CUST-000001 \
+  --query "where did the customer money come from" \
+  --limit 5
+```
+
+In the Streamlit UI, selected-customer evidence searches default to direct FITS search. Cross-customer searches continue to use the rebuilt SQLite/FTS and vector indexes.
+
+API endpoint:
+
+```text
+GET /search/direct-fits?root=samples&entity_id=CUST-000001&q=source%20of%20wealth
+GET /search/direct-fits?root=samples&container_name=CUST-000001.fits&q=source%20of%20wealth
+```
+
+Architectural rule:
+
+```text
+FITS container = durable source of truth
+SQLite/vector indexes = disposable search acceleration rebuilt from FITS
+```

@@ -30,10 +30,18 @@ def read_provenance(container: Path) -> List[Dict[str, Any]]:
         return _read_json_hdu(hdul, "PROVENANCE")
 
 
+def read_snapshots(container: Path) -> List[Dict[str, Any]]:
+    with fits.open(container, memmap=True) as hdul:
+        if "SNAPSHOTS" not in hdul:
+            return []
+        return _read_json_hdu(hdul, "SNAPSHOTS")
+
+
 def inspect_container(container: Path) -> Dict[str, Any]:
     with fits.open(container, memmap=True) as hdul:
         entity = _read_json_hdu(hdul, "ENTITY_METADATA")
         manifest = _read_json_hdu(hdul, "MANIFEST")
+        snapshots = _read_json_hdu(hdul, "SNAPSHOTS") if "SNAPSHOTS" in hdul else []
         retention = sorted(set(item["retention_class"] for item in manifest))
         sensitivity = sorted(set(item["sensitivity"] for item in manifest))
         return {
@@ -47,6 +55,8 @@ def inspect_container(container: Path) -> Dict[str, Any]:
             "payload_size_bytes": sum(item["size_bytes"] for item in manifest),
             "retention_classes": retention,
             "sensitivities": sensitivity,
+            "snapshot_count": len(snapshots),
+            "snapshots": snapshots,
             "hdu_count": len(hdul),
         }
 
@@ -90,9 +100,11 @@ def extract_container(container: Path, output_dir: Path) -> List[Path]:
         manifest = _read_json_hdu(hdul, "MANIFEST")
         entity = _read_json_hdu(hdul, "ENTITY_METADATA")
         provenance = _read_json_hdu(hdul, "PROVENANCE")
+        snapshots = _read_json_hdu(hdul, "SNAPSHOTS") if "SNAPSHOTS" in hdul else []
         write_json(output_dir / "_entity_metadata.json", entity)
         write_json(output_dir / "_manifest.json", manifest)
         write_json(output_dir / "_provenance.json", provenance)
+        write_json(output_dir / "_snapshots.json", snapshots)
         for item in manifest:
             data = bytes(hdul[item["hdu_name"]].data.tolist())
             out = output_dir / item["relative_path"]

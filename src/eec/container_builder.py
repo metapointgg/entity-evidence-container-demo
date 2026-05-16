@@ -99,9 +99,62 @@ def _slug(value: str) -> str:
     return re.sub(r"[^A-Z0-9]+", "_", value.upper()).strip("_")[:40] or "SNAPSHOT"
 
 
+
+
+INTERNAL_SNAPSHOTS = [
+    ("ONBOARDING", "Onboarding Evidence Snapshot"),
+    ("CDD_REVIEW_2026", "CDD / AML Review Snapshot"),
+    ("STATEMENTS_2026_Q1", "Statement Snapshot 2026 Q1"),
+    ("CORRESPONDENCE_2026", "Correspondence Snapshot 2026"),
+    ("TRANSACTIONS_2026_Q1", "Transaction Extract Snapshot 2026 Q1"),
+    ("LEGAL_DISCLOSURE", "Legal Hold / Disclosure Snapshot"),
+]
+
+SNAPSHOT_TYPE_BY_ID = {snapshot_id: snapshot_type for snapshot_id, snapshot_type in INTERNAL_SNAPSHOTS}
+
+
+def _infer_snapshot_for_path(source_dir: Path, path: Path, override: Dict[str, str] | None = None) -> tuple[str, str]:
+    """Infer the logical snapshot/event grouping for a payload inside a single entity container.
+
+    In the Option A architecture, the active FITS container is one file per entity.
+    Snapshots are logical groupings stored inside the manifest, not separate FITS files.
+    Ingestion sidecars may explicitly set snapshot_id/snapshot_type; otherwise we infer
+    a practical demo grouping from folder and file names.
+    """
+    override = override or {}
+    explicit_id = override.get("snapshot_id") or override.get("snapshot")
+    explicit_type = override.get("snapshot_type")
+    if explicit_id:
+        snapshot_id = _slug(explicit_id)
+        return snapshot_id, explicit_type or SNAPSHOT_TYPE_BY_ID.get(snapshot_id, snapshot_id.replace("_", " ").title())
+
+    try:
+        rel = path.relative_to(source_dir)
+    except ValueError:
+        rel = path
+
+    parts = set(p.lower() for p in rel.parts)
+    name = path.name.lower()
+
+    if "statements" in parts:
+        return "STATEMENTS_2026_Q1", SNAPSHOT_TYPE_BY_ID["STATEMENTS_2026_Q1"]
+    if "emails" in parts:
+        return "CORRESPONDENCE_2026", SNAPSHOT_TYPE_BY_ID["CORRESPONDENCE_2026"]
+    if "extracts" in parts:
+        return "TRANSACTIONS_2026_Q1", SNAPSHOT_TYPE_BY_ID["TRANSACTIONS_2026_Q1"]
+    if "complaint" in name or "legal" in name:
+        return "LEGAL_DISCLOSURE", SNAPSHOT_TYPE_BY_ID["LEGAL_DISCLOSURE"]
+    if "cdd" in name or "source_of_wealth" in name or "source_of_funds" in name:
+        return "CDD_REVIEW_2026", SNAPSHOT_TYPE_BY_ID["CDD_REVIEW_2026"]
+    if "documents" in parts or "scans" in parts or "metadata" in parts or "passport" in name or "proof_of_address" in name:
+        return "ONBOARDING", SNAPSHOT_TYPE_BY_ID["ONBOARDING"]
+
+    return "ONBOARDING", SNAPSHOT_TYPE_BY_ID["ONBOARDING"]
+
+
 def _files_for_snapshot(source_dir: Path, snapshot_id: str) -> List[Path]:
     all_files = [p for p in sorted(source_dir.rglob("*")) if p.is_file() and not p.name.endswith(".search.txt") and not p.name.endswith(".eec.json") and not p.name.endswith(".metadata.json")]
-    if snapshot_id == "FULL":
+    if snapshot_id in {"FULL", "ENTITY_ARCHIVE"}:
         return all_files
     selected: List[Path] = []
     for path in all_files:
@@ -135,7 +188,7 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
     source_files = list(files) if files is not None else _files_for_snapshot(source_dir, snapshot_id)
 
     primary = fits.PrimaryHDU()
-    primary.header["EECVER"] = "0.2"
+    primary.header["EECVER"] = "0.3"
     primary.header["ENTITY"] = entity_id
     primary.header["ETYPE"] = entity.get("entity_type", "Entity")[:68]
     primary.header["NAME"] = entity.get("display_name", "")[:68]
@@ -143,6 +196,7 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
     primary.header["SNAPSHOT"] = snapshot_id[:68]
     primary.header["SNAPTYPE"] = snapshot_type[:68]
     primary.header["VERSION"] = int(container_version)
+    primary.header["MODEL"] = "ENTITY_SINGLE" if snapshot_id in {"FULL", "ENTITY_ARCHIVE"} else "SPLIT_SNAPSHOT"
     primary.header["PURPOSE"] = "Entity evidence preservation container"
 
     hdus: List[fits.hdu.base.ExtensionHDU] = []
@@ -160,7 +214,8 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
     ).to_dict())
 
     payload_index = 1
-    snapshot_slug = _slug(snapshot_id)
+    container_snapshot_slug = _slug(snapshot_id)
+    snapshot_rows: Dict[str, Dict[str, str | int]] = {}
     for path in source_files:
         rel = path.relative_to(source_dir)
         data = path.read_bytes()
@@ -170,13 +225,24 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
         for key in ["category", "document_type", "source_system", "retention_class", "sensitivity"]:
             if override.get(key):
                 cat[key] = override[key]
+        item_snapshot_id, item_snapshot_type = (
+            (container_snapshot_slug, snapshot_type)
+            if container_snapshot_slug not in {"FULL", "ENTITY_ARCHIVE"}
+            else _infer_snapshot_for_path(source_dir, path, override)
+        )
+        snapshot_rows.setdefault(item_snapshot_id, {
+            "snapshot_id": item_snapshot_id,
+            "snapshot_type": item_snapshot_type,
+            "object_count": 0,
+            "payload_bytes": 0,
+        })
         search_text, ocr_source = extract_search_text(path)
-        retention = _retention_metadata(cat["retention_class"], cat["sensitivity"], snapshot_slug)
+        retention = _retention_metadata(cat["retention_class"], cat["sensitivity"], item_snapshot_id)
         for key in ["retention_until", "legal_hold_status", "deletion_eligible"]:
             if override.get(key):
                 retention[key] = override[key]
         rec = PayloadRecord(
-            object_id=f"{entity_id}-{snapshot_slug}-OBJ-{payload_index:06d}",
+            object_id=f"{entity_id}-{item_snapshot_id}-OBJ-{payload_index:06d}",
             entity_id=entity_id,
             category=cat["category"],
             document_type=cat["document_type"],
@@ -194,12 +260,14 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
             ocr_text=search_text,
             ocr_source=ocr_source,
             description=f"Preserved source file {safe_rel_path(rel)}",
-            snapshot_id=snapshot_slug,
-            snapshot_type=snapshot_type,
+            snapshot_id=item_snapshot_id,
+            snapshot_type=item_snapshot_type,
             container_version=container_version,
             **retention,
         )
         manifest.append(rec.to_dict())
+        snapshot_rows[item_snapshot_id]["object_count"] = int(snapshot_rows[item_snapshot_id]["object_count"]) + 1
+        snapshot_rows[item_snapshot_id]["payload_bytes"] = int(snapshot_rows[item_snapshot_id]["payload_bytes"]) + len(data)
         hdus.append(_payload_hdu(hdu_name, data, rec))
         payload_index += 1
 
@@ -210,34 +278,46 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
         "total_payload_bytes": sum(item["size_bytes"] for item in manifest),
         "created_at": utc_now_iso(),
         "container_model": "FITS with JSON metadata HDUs and uint8 payload HDUs",
-        "snapshot_id": snapshot_slug,
+        "snapshot_id": container_snapshot_slug,
         "snapshot_type": snapshot_type,
         "container_version": container_version,
+        "container_scope": "entity" if container_snapshot_slug in {"FULL", "ENTITY_ARCHIVE"} else "snapshot",
+        "internal_snapshot_count": len(snapshot_rows),
     }
-    entity_with_snapshot = {**entity, "snapshot_id": snapshot_slug, "snapshot_type": snapshot_type, "container_version": container_version}
-    all_hdus = [primary, _json_hdu("ENTITY_METADATA", entity_with_snapshot), _json_hdu("SUMMARY", summary), _json_hdu("MANIFEST", manifest), _json_hdu("PROVENANCE", provenance)] + hdus
+    snapshots = sorted(snapshot_rows.values(), key=lambda row: str(row["snapshot_id"]))
+    entity_with_snapshot = {
+        **entity,
+        "snapshot_id": container_snapshot_slug,
+        "snapshot_type": snapshot_type,
+        "container_version": container_version,
+        "container_scope": "entity" if container_snapshot_slug in {"FULL", "ENTITY_ARCHIVE"} else "snapshot",
+    }
+    all_hdus = [
+        primary,
+        _json_hdu("ENTITY_METADATA", entity_with_snapshot),
+        _json_hdu("SUMMARY", summary),
+        _json_hdu("SNAPSHOTS", snapshots),
+        _json_hdu("MANIFEST", manifest),
+        _json_hdu("PROVENANCE", provenance),
+    ] + hdus
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fits.HDUList(all_hdus).writeto(output_path, overwrite=True, checksum=True)
     return output_path
 
 
-def build_all_containers(source_root: Path, output_root: Path, *, snapshot_model: bool = False) -> List[Path]:
+def build_all_containers(source_root: Path, output_root: Path, *, split_snapshots: bool = False, snapshot_model: bool | None = None) -> List[Path]:
     output_root.mkdir(parents=True, exist_ok=True)
     outputs: List[Path] = []
-    snapshots = [
-        ("ONBOARDING", "Onboarding Evidence Snapshot"),
-        ("CDD_REVIEW_2026", "CDD / AML Review Snapshot"),
-        ("STATEMENTS_2026_Q1", "Statement Snapshot 2026 Q1"),
-        ("CORRESPONDENCE_2026", "Correspondence Snapshot 2026"),
-        ("TRANSACTIONS_2026_Q1", "Transaction Extract Snapshot 2026 Q1"),
-        ("LEGAL_DISCLOSURE", "Legal Hold / Disclosure Snapshot"),
-    ]
+    if snapshot_model is not None:
+        # Backward compatibility for older callers. The new name is split_snapshots.
+        split_snapshots = snapshot_model
+    snapshots = INTERNAL_SNAPSHOTS
     for entity_dir in sorted(p for p in source_root.iterdir() if p.is_dir()):
         customer_path = entity_dir / "metadata" / "customer.json"
         if not customer_path.exists():
             continue
         entity = read_json(customer_path)
-        if snapshot_model:
+        if split_snapshots:
             for snapshot_id, snapshot_type in snapshots:
                 files = _files_for_snapshot(entity_dir, snapshot_id)
                 if not files:
@@ -246,5 +326,5 @@ def build_all_containers(source_root: Path, output_root: Path, *, snapshot_model
                 outputs.append(build_container(entity_dir, out, snapshot_id=snapshot_id, snapshot_type=snapshot_type, files=files))
         else:
             out = output_root / f"{entity['entity_id']}.fits"
-            outputs.append(build_container(entity_dir, out))
+            outputs.append(build_container(entity_dir, out, snapshot_id="ENTITY_ARCHIVE", snapshot_type="Full Entity Archive"))
     return outputs

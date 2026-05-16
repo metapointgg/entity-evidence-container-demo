@@ -49,7 +49,14 @@ def build_vector_index(sqlite_path: Path, output_path: Path) -> int:
         raise RuntimeError("Vector search requires scikit-learn. Install with: python -m pip install scikit-learn") from exc
 
     rows = _load_rows(sqlite_path)
-    texts = [_row_text(row) for row in rows]
+    texts = [_row_text(row).strip() for row in rows]
+
+    if not rows or not any(texts):
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with output_path.open("wb") as f:
+            pickle.dump({"rows": [], "vectorizer": None, "matrix": None, "nn": None}, f)
+        return 0
+
     vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), max_features=50000)
     matrix = vectorizer.fit_transform(texts)
     nn = NearestNeighbors(metric="cosine", algorithm="brute")
@@ -68,8 +75,10 @@ def vector_search(index_path: Path, query: str, limit: int = 50) -> List[Dict[st
     rows = payload["rows"]
     if not rows or not query.strip():
         return rows[:limit]
-    vectorizer = payload["vectorizer"]
-    nn = payload["nn"]
+    vectorizer = payload.get("vectorizer")
+    nn = payload.get("nn")
+    if vectorizer is None or nn is None:
+        return []
     q = vectorizer.transform([query])
     k = min(limit, len(rows))
     distances, indices = nn.kneighbors(q, n_neighbors=k)

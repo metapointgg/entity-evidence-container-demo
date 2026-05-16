@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse
 from eec.archive_health import indexed_health, integrity_health
 from eec.container_reader import inspect_container, validate_container
 from eec.indexer import rebuild_index
+from eec.fits_direct_search import direct_search_container, direct_search_entity
 from eec.search import advanced_search_index
 from eec.ui_data import list_entities, list_objects_for_entity, read_payload, resolve_archive_paths
 from eec.vector_search import vector_search
@@ -55,6 +56,19 @@ def search(root: str = "samples", q: str = "", mode: str = Query("keyword", patt
     if mode == "lmstudio-vector":
         return lmstudio_vector_search(paths.root / "index" / "evidence_lmstudio_vector.pkl", q, limit)
     return advanced_search_index(paths.index, query=q, limit=limit, mode=mode)
+
+
+@app.get("/search/direct-fits")
+def direct_fits_search(root: str = "samples", entity_id: Optional[str] = None, container_name: Optional[str] = None, q: str = "", limit: int = 50):
+    paths = _paths(root)
+    if container_name:
+        container = paths.containers / container_name
+        if not container.exists():
+            raise HTTPException(status_code=404, detail="Container not found")
+        return direct_search_container(container, q, limit=limit)
+    if not entity_id:
+        raise HTTPException(status_code=400, detail="entity_id or container_name is required")
+    return direct_search_entity(paths.containers, entity_id, q, limit=limit)
 
 
 @app.get("/containers/{container_name}/inspect")

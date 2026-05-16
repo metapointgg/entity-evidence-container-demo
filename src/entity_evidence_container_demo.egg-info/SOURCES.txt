@@ -8,6 +8,7 @@ src/eec/container_reader.py
 src/eec/corruption.py
 src/eec/demo_data.py
 src/eec/exporter.py
+src/eec/fits_direct_search.py
 src/eec/indexer.py
 src/eec/ingestion.py
 src/eec/lmstudio_vector_search.py

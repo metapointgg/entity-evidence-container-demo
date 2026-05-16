@@ -10,12 +10,22 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build FITS entity evidence containers")
     parser.add_argument("--source", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
-    parser.add_argument("--snapshot-model", action="store_true", help="Build multiple immutable snapshot containers per entity rather than one full container")
+    parser.add_argument(
+        "--split-snapshots",
+        action="store_true",
+        help="Legacy mode: build multiple snapshot FITS files per entity. Default is one active FITS file per entity with internal snapshots.",
+    )
+    parser.add_argument(
+        "--snapshot-model",
+        action="store_true",
+        help="Deprecated alias for --split-snapshots.",
+    )
     args = parser.parse_args()
-    outputs = build_all_containers(args.source, args.output, snapshot_model=args.snapshot_model)
+    outputs = build_all_containers(args.source, args.output, split_snapshots=args.split_snapshots or args.snapshot_model)
     for out in outputs:
         print(out)
-    print(f"Built {len(outputs)} container(s).")
+    model = "split snapshot containers" if args.split_snapshots or args.snapshot_model else "single entity containers"
+    print(f"Built {len(outputs)} {model}.")
 
 
 if __name__ == "__main__":

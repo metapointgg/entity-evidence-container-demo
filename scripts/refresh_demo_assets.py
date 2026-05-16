@@ -13,14 +13,14 @@ from eec.lmstudio_vector_search import build_lmstudio_vector_index
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Refresh demo assets: optional sample-data generation, snapshot FITS containers, SQLite index and vector index."
+        description="Refresh demo assets: optional sample-data generation, single-entity FITS containers, SQLite index and vector index."
     )
     parser.add_argument("--root", type=Path, default=Path("samples"), help="Demo root folder containing source/containers/index")
     parser.add_argument("--regenerate", action="store_true", help="Regenerate synthetic source data before rebuilding containers and indexes")
     parser.add_argument("--customers", type=int, default=3, help="Customer count when --regenerate is used")
     parser.add_argument("--target-mb-per-customer", type=int, default=2, help="Approximate source size per customer when --regenerate is used")
     parser.add_argument("--seed", type=int, default=42, help="Synthetic data seed when --regenerate is used")
-    parser.add_argument("--full-container", action="store_true", help="Build one full container per customer instead of immutable snapshot containers")
+    parser.add_argument("--split-snapshots", action="store_true", help="Legacy mode: build multiple immutable snapshot containers instead of one active FITS file per entity")
     parser.add_argument("--clean", action="store_true", help="Remove existing containers and indexes before rebuilding")
     parser.add_argument("--lmstudio-vector", action="store_true", help="Also build the LM Studio embedding vector index using the local /v1/embeddings endpoint")
     parser.add_argument("--include-edge-cases", action="store_true", help="Add deterministic edge-case customers for demo testing when --regenerate is used")
@@ -55,7 +55,7 @@ def main() -> None:
     containers.mkdir(parents=True, exist_ok=True)
     index_dir.mkdir(parents=True, exist_ok=True)
 
-    built = build_all_containers(source, containers, snapshot_model=not args.full_container)
+    built = build_all_containers(source, containers, split_snapshots=args.split_snapshots)
     print(f"Built {len(built)} FITS container(s) in {containers}")
     for item in built[:12]:
         print(f"  {item}")

@@ -16,6 +16,7 @@ from eec.archive_health import indexed_health, integrity_health
 from eec.container_reader import inspect_container, validate_container
 from eec.corruption import corrupt_container
 from eec.exporter import export_evidence_pack
+from eec.fits_direct_search import direct_search_entity
 from eec.indexer import rebuild_index
 from eec.ingestion import bulk_ingest, process_event_queue, write_ingestion_report
 from eec.presets import REGULATORY_PRESETS
@@ -89,13 +90,23 @@ def cached_vector_search(vector_path: str, query: str, limit: int) -> List[Dict[
 def cached_lmstudio_vector_search(vector_path: str, query: str, limit: int) -> List[Dict[str, Any]]:
     return lmstudio_vector_search(Path(vector_path), query, limit)
 
+
+@st.cache_data(show_spinner=False)
+def cached_direct_fits_search(containers_dir: str, entity_id: str, query: str, structured_payload: dict[str, Any], limit: int) -> List[Dict[str, Any]]:
+    # Recreate a lightweight object with attribute access for direct_search_entity.
+    class _Structured:
+        def __init__(self, payload: dict[str, Any]):
+            self.__dict__.update(payload)
+
+    return direct_search_entity(Path(containers_dir), entity_id, query, structured=_Structured(structured_payload), limit=limit)
+
 @st.cache_data(show_spinner=False)
 def cached_validate(container_path: str) -> Dict[str, Any]:
     return validate_container(Path(container_path)).to_dict()
 
 
 def clear_caches() -> None:
-    cached_summary.clear(); cached_entities.clear(); cached_objects.clear(); cached_facets.clear(); cached_search.clear(); cached_vector_search.clear(); cached_lmstudio_vector_search.clear(); cached_validate.clear()
+    cached_summary.clear(); cached_entities.clear(); cached_objects.clear(); cached_facets.clear(); cached_search.clear(); cached_vector_search.clear(); cached_lmstudio_vector_search.clear(); cached_direct_fits_search.clear(); cached_validate.clear()
 
 
 def run_generator(customers: int, target_mb: int, seed: int, root: Path) -> None:
@@ -103,10 +114,10 @@ def run_generator(customers: int, target_mb: int, seed: int, root: Path) -> None
     subprocess.run(command, check=True)
 
 
-def run_build_containers(root: Path, snapshot_model: bool) -> None:
+def run_build_containers(root: Path, split_snapshots: bool) -> None:
     command = [sys.executable, "scripts/build_containers.py", "--source", str(root / "source"), "--output", str(root / "containers")]
-    if snapshot_model:
-        command.append("--snapshot-model")
+    if split_snapshots:
+        command.append("--split-snapshots")
     completed = subprocess.run(command, check=True, capture_output=True, text=True)
     st.code(completed.stdout or completed.stderr or "Containers built.")
 
@@ -231,7 +242,7 @@ def dashboard_tab(root: Path) -> None:
     customers = col_a.number_input("Customers", min_value=1, max_value=500, value=3, step=1)
     target_mb = col_b.number_input("Approx. MB per customer", min_value=1, max_value=1024, value=2, step=1)
     seed = col_c.number_input("Seed", min_value=1, max_value=999999, value=42, step=1)
-    snapshot_model = col_d.checkbox("Snapshot model", value=True, help="Build immutable event/snapshot containers instead of one large file per entity.")
+    split_snapshots = col_d.checkbox("Legacy split-snapshot mode", value=False, help="Default is one active FITS file per entity with internal logical snapshots. Enable only to build separate FITS files per snapshot.")
     a1, a2, a3, a4 = st.columns(4)
     if a1.button("Generate sample evidence"):
         with st.spinner("Generating sample evidence..."):
@@ -239,7 +250,7 @@ def dashboard_tab(root: Path) -> None:
         clear_caches(); st.success("Generated.")
     if a2.button("Build FITS containers"):
         with st.spinner("Building FITS containers..."):
-            run_build_containers(root, snapshot_model)
+            run_build_containers(root, split_snapshots)
         clear_caches(); st.success("Containers built.")
     if a3.button("Rebuild SQLite/FTS index", type="primary"):
         with st.spinner("Rebuilding index from FITS containers..."):
@@ -367,7 +378,7 @@ def _evidence_table(rows: list[dict[str, Any]], *, key: str, height: int = 420):
         "category", "document_type", "filename", "source_system", "retention_class",
         "retention_until", "legal_hold_status", "sensitivity", "ocr_source", "size_bytes",
     ]
-    for score_col in ["lmstudio_vector_score", "vector_score", "semantic_score"]:
+    for score_col in ["direct_fits_score", "lmstudio_vector_score", "vector_score", "semantic_score"]:
         if score_col in df.columns:
             cols.insert(3, score_col)
     out = df[[c for c in cols if c in df.columns]].copy()
@@ -654,6 +665,8 @@ def search_tab(root: Path) -> None:
             st.caption(status.get("error", ""))
         use_local_ai = st.checkbox("Interpret natural language locally", value=status.get("available", False), disabled=not status.get("available"), key="search_use_local_ai")
         include_summary = st.checkbox("Generate AI evidence summary when relevant", value=status.get("available", False), disabled=not status.get("available"), key="search_include_summary")
+        use_direct_fits = st.checkbox("Use direct FITS search for selected-customer evidence queries", value=True, key="search_use_direct_fits")
+        st.caption("Direct FITS search opens the selected customer/entity FITS file and searches its manifest/OCR/metadata tables without using SQLite. Cross-customer searches still use the rebuildable index.")
         show_interpreted = st.checkbox("Show interpreted structured query", value=True, key="search_show_interpreted")
         limit = st.slider("Result limit", min_value=5, max_value=250, value=50, step=5, key="search_limit")
         with st.expander("Supported query capabilities", expanded=False):
@@ -697,6 +710,34 @@ def search_tab(root: Path) -> None:
             structured.requires_summary = True
 
         result = execute_structured_query(paths.index, structured)
+
+        # For selected-customer evidence questions/retrieval, prefer direct FITS search.
+        # This proves that the customer archive object is self-describing and searchable
+        # without relying on the rebuildable SQLite/FTS index.
+        if (
+            use_direct_fits
+            and selected_entity_id
+            and structured.result_type == "evidence"
+            and structured.intent in {"customer_evidence_question", "customer_evidence_retrieval", "general_archive_search"}
+        ):
+            try:
+                direct_rows = cached_direct_fits_search(
+                    str(paths.containers),
+                    selected_entity_id,
+                    structured.semantic_query or structured.raw_query or query,
+                    structured.to_dict(),
+                    structured.limit,
+                )
+                result = {
+                    "type": "evidence",
+                    "rows": direct_rows,
+                    "grouped": None,
+                    "search_source": "direct_fits",
+                    "source_note": f"Searched {selected_entity_id}.fits directly. SQLite/vector indexes were not used for this result set.",
+                }
+            except Exception as exc:
+                result["source_note"] = f"Direct FITS search failed, falling back to rebuilt index: {exc}"
+
         for key in list(st.session_state.keys()):
             if key.startswith(f"ai_summary::{state_key}"):
                 st.session_state.pop(key, None)
@@ -731,6 +772,8 @@ def search_tab(root: Path) -> None:
             st.json(structured_dict)
 
     result_type = result.get("type")
+    if result.get("source_note"):
+        st.info(result.get("source_note"))
     rows: list[dict[str, Any]] = result.get("rows") or []
 
     if result_type == "customers":
@@ -1169,11 +1212,11 @@ def ingestion_tab(root: Path) -> None:
 
     with st.expander("Post-ingestion rebuild", expanded=True):
         st.caption("After ingestion, rebuild FITS containers and indexes so the new evidence becomes searchable.")
-        snapshot_model = st.checkbox("Build immutable snapshot containers", value=True, key="ingest-snapshot-build")
+        split_snapshots = st.checkbox("Legacy split-snapshot mode", value=False, key="ingest-snapshot-build", help="Default rebuilds one active FITS file per entity with internal snapshots.")
         build_lmstudio = st.checkbox("Also rebuild LM Studio embedding index", value=False, key="ingest-lmstudio-build")
         if st.button("Rebuild containers and indexes", type="primary", key="ingest-rebuild"):
             try:
-                run_build_containers(root, snapshot_model=snapshot_model)
+                run_build_containers(root, split_snapshots=split_snapshots)
                 count = rebuild_index(paths.containers, paths.index)
                 st.success(f"Rebuilt SQLite index with {count} objects")
                 try:
