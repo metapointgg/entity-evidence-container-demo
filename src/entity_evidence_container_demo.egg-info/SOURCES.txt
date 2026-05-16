@@ -11,6 +11,7 @@ src/eec/indexer.py
 src/eec/models.py
 src/eec/render_docs.py
 src/eec/search.py
+src/eec/ui_data.py
 src/eec/utils.py
 src/entity_evidence_container_demo.egg-info/PKG-INFO
 src/entity_evidence_container_demo.egg-info/SOURCES.txt

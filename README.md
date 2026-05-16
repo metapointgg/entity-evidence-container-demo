@@ -254,3 +254,37 @@ This is a demonstrator, not production software. Before production use, you woul
 - Add optional compression and chunking strategy.
 - Add object-level retention/legal hold metadata.
 - Add IIIF-style image viewing for scanned evidence.
+
+## Streamlit demo UI
+
+The repository includes a lightweight Streamlit interface for demonstrating the archive concept visually.
+
+Run it from the repository root:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m pip install -e .
+streamlit run app\streamlit_app.py
+```
+
+The UI includes:
+
+- dashboard metrics for containers, entities, preserved objects and storage size;
+- controls to generate sample evidence, build FITS containers and rebuild the SQLite/FTS index;
+- customer/entity browser with container metadata and object manifest;
+- object preview/download for text, email, JSON, CSV, images and preserved binary payloads;
+- full-text search across the rebuilt index;
+- integrity validation for one or all containers;
+- corruption-copy creation to demonstrate SHA-256 failure detection;
+- evidence pack export with metadata, manifest, provenance and validation report.
+
+For a larger demonstrator, generate data from the CLI first, then open the UI:
+
+```powershell
+python scripts\generate_sample_data.py --customers 50 --output data\source --target-mb-per-customer 25 --seed 42
+python scripts\build_containers.py --source data\source --output data\containers
+python scripts\rebuild_index.py --containers data\containers --sqlite data\index\evidence_index.db
+streamlit run app\streamlit_app.py
+```
+
+Then change the UI sidebar root folder from `samples` to `data`.
