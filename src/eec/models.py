@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -22,7 +21,15 @@ class PayloadRecord:
     size_bytes: int
     hdu_name: str
     search_text: str = ""
+    ocr_text: str = ""
+    ocr_source: str = "none"
     description: str = ""
+    snapshot_id: str = "FULL"
+    snapshot_type: str = "Full Entity Archive"
+    container_version: int = 1
+    retention_until: str = ""
+    legal_hold_status: str = "None"
+    deletion_eligible: str = "No"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

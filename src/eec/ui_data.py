@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 from astropy.io import fits
 
 from .container_reader import read_entity, read_manifest, validate_container
+from .search import get_facets
 
 
 @dataclass(frozen=True)
@@ -87,11 +88,12 @@ def list_objects_for_entity(sqlite_path: Path, entity_id: str) -> List[Dict[str,
     try:
         rows = conn.execute(
             """
-            SELECT object_id, entity_id, category, document_type, filename, relative_path, mime_type,
-                   source_system, retention_class, sensitivity, sha256, size_bytes, container_path, hdu_name
+            SELECT object_id, entity_id, container_id, snapshot_id, snapshot_type, category, document_type, filename, relative_path, mime_type,
+                   source_system, retention_class, retention_until, legal_hold_status, deletion_eligible, sensitivity, sha256, size_bytes, container_path, hdu_name,
+                   captured_at, ocr_source
             FROM objects
             WHERE entity_id = ?
-            ORDER BY category, document_type, filename
+            ORDER BY snapshot_id, category, document_type, filename
             """,
             (entity_id,),
         ).fetchall()
@@ -110,6 +112,10 @@ def get_entity_by_id(sqlite_path: Path, entity_id: str) -> Optional[Dict[str, An
         return dict(row) if row else None
     finally:
         conn.close()
+
+
+def list_facets(sqlite_path: Path) -> Dict[str, List[str]]:
+    return get_facets(sqlite_path)
 
 
 def read_payload(container: Path, object_id: str) -> tuple[Dict[str, Any], bytes]:
@@ -132,6 +138,62 @@ def validate_all_containers(containers_dir: Path) -> List[Dict[str, Any]]:
         results.append(row)
     return results
 
+
+
+def get_index_schema_status(sqlite_path: Path) -> Dict[str, Any]:
+    """Return whether the SQLite index matches the current UI/search schema.
+
+    Older demo indexes can still exist after code updates. Rather than allowing
+    Streamlit to fail with opaque `no such column` errors, the UI uses this to
+    prompt the user to rebuild the index from the current FITS containers.
+    """
+    if not sqlite_path.exists():
+        return {
+            "exists": False,
+            "is_current": False,
+            "missing_tables": ["entities", "objects", "object_search"],
+            "missing_columns": {},
+            "message": "Index does not exist. Rebuild the search index from the Dashboard tab.",
+        }
+
+    required = {
+        "entities": {"entity_id", "display_name", "jurisdiction", "risk_rating", "occupation", "container_path"},
+        "containers": {"container_id", "entity_id", "snapshot_id", "snapshot_type", "container_version", "container_path", "object_count", "payload_bytes", "container_bytes"},
+        "objects": {
+            "object_id", "entity_id", "container_id", "snapshot_id", "snapshot_type", "container_version", "category", "document_type", "filename", "relative_path",
+            "mime_type", "source_system", "retention_class", "retention_until", "legal_hold_status", "deletion_eligible", "sensitivity", "captured_at",
+            "sha256", "size_bytes", "container_path", "hdu_name", "ocr_source", "ocr_text", "search_text",
+        },
+        "object_search": {
+            "object_id", "entity_id", "container_id", "snapshot_id", "snapshot_type", "display_name", "jurisdiction", "risk_rating", "occupation",
+            "category", "document_type", "filename", "relative_path", "source_system",
+            "retention_class", "retention_until", "legal_hold_status", "deletion_eligible", "sensitivity", "ocr_source", "search_text", "semantic_text",
+        },
+    }
+
+    conn = sqlite3.connect(sqlite_path)
+    try:
+        existing_tables = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type IN ('table', 'virtual')").fetchall()}
+        missing_tables = sorted(set(required) - existing_tables)
+        missing_columns: Dict[str, List[str]] = {}
+        for table, required_columns in required.items():
+            if table not in existing_tables:
+                continue
+            existing_columns = {row[1] for row in conn.execute(f"PRAGMA table_info({table})").fetchall()}
+            missing = sorted(required_columns - existing_columns)
+            if missing:
+                missing_columns[table] = missing
+        is_current = not missing_tables and not missing_columns
+        message = "Index schema is current." if is_current else "Index schema is out of date. Rebuild the search index from the Dashboard tab."
+        return {
+            "exists": True,
+            "is_current": is_current,
+            "missing_tables": missing_tables,
+            "missing_columns": missing_columns,
+            "message": message,
+        }
+    finally:
+        conn.close()
 
 def format_bytes(value: int | float | None) -> str:
     if value is None:

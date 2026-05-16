@@ -1,6 +1,7 @@
 README.md
 pyproject.toml
 src/eec/__init__.py
+src/eec/archive_health.py
 src/eec/cli_common.py
 src/eec/container_builder.py
 src/eec/container_reader.py
@@ -9,10 +10,16 @@ src/eec/demo_data.py
 src/eec/exporter.py
 src/eec/indexer.py
 src/eec/models.py
+src/eec/ocr.py
+src/eec/presets.py
 src/eec/render_docs.py
+src/eec/retention.py
 src/eec/search.py
+src/eec/search_result_exporter.py
+src/eec/semantic.py
 src/eec/ui_data.py
 src/eec/utils.py
+src/eec/vector_search.py
 src/entity_evidence_container_demo.egg-info/PKG-INFO
 src/entity_evidence_container_demo.egg-info/SOURCES.txt
 src/entity_evidence_container_demo.egg-info/dependency_links.txt

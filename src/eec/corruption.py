@@ -24,3 +24,12 @@ def corrupt_container_payload(container: Path, output: Path, object_index: int =
         arr[idx] = (int(arr[idx]) + 1) % 255
         hdul.flush()
     return output
+
+
+def corrupt_container(container: Path, output: Path, object_index: int = 1) -> Path:
+    """Backward-compatible wrapper used by the Streamlit UI.
+
+    Creates a corrupted copy of ``container`` by modifying one payload HDU.
+    ``object_index`` is 1-based and corresponds to the manifest row number.
+    """
+    return corrupt_container_payload(container, output, object_index)
