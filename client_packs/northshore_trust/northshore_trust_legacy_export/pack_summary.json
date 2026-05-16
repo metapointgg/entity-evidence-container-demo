@@ -1,0 +1,11 @@
+{
+  "pack": "Northshore Trust Legacy Source Data Pack",
+  "generated_at": "2026-05-16T18:34:38.156585Z",
+  "customer_count": 12,
+  "manifest_rows": 199,
+  "edge_cases": [
+    "NTC-0002 missing Proof of Address remedied by EVT-000001",
+    "NTC-0007 missing Beneficial Owner Evidence",
+    "NTC-0012 missing EDD Approval"
+  ]
+}

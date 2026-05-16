@@ -162,28 +162,172 @@ def expand_search_query(query: str, model: str | None = None, max_terms: int = 2
     return terms[:max_terms]
 
 
-def summarise_search_results(query: str, result_rows: Iterable[dict[str, Any]], model: str | None = None, max_rows: int = 10) -> str:
-    rows = list(result_rows)[:max_rows]
-    if not rows:
-        return "No retrieved evidence was provided for summarisation."
-    evidence_blocks: list[str] = []
-    for idx, row in enumerate(rows, start=1):
-        evidence_blocks.append(
-            f"""
-Result {idx}
-Entity: {row.get('entity_id', '')}
-Customer: {row.get('display_name', '')}
-Object: {row.get('object_id', '')}
-Snapshot: {row.get('snapshot_id', '')}
-Category: {row.get('category', '')}
-Document type: {row.get('document_type', '')}
-Source system: {row.get('source_system', '')}
-Filename: {row.get('filename', '')}
-Retention: {row.get('retention_class', '')} / {row.get('retention_until', '')}
-Legal hold: {row.get('legal_hold_status', '')}
-Evidence text: {(row.get('search_text') or row.get('snippet') or '')[:1600]}
-""".strip()
+
+def _safe_row_text(row: dict[str, Any], max_chars: int = 280) -> str:
+    """Return the best available evidence text, trimmed for local LLM prompts."""
+    return str(row.get("search_text") or row.get("ocr_text") or row.get("snippet") or row.get("content") or "")[:max_chars]
+
+
+def _deduplicate_evidence_rows(rows: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+    """De-duplicate repeated logical evidence rows while preserving order.
+
+    Search results can include the same logical document multiple times because the
+    same payload may appear in more than one snapshot or match both keyword and
+    semantic search paths. For AI summaries, repeated rows encourage the model to
+    over-count or treat OCR variants as separate customers. This function keeps
+    one representative row per logical evidence item.
+    """
+    unique: list[dict[str, Any]] = []
+    seen: set[tuple[str, str, str, str]] = set()
+
+    for row in rows:
+        entity_id = str(row.get("entity_id") or "")
+        object_id = str(row.get("object_id") or "")
+        filename = str(row.get("filename") or "")
+        document_type = str(row.get("document_type") or "")
+
+        # Prefer object_id where stable; fall back to filename/document type.
+        key = (
+            entity_id.lower(),
+            object_id.lower() if object_id else filename.lower(),
+            document_type.lower(),
+            str(row.get("sha256") or "")[:16].lower(),
         )
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+        unique.append(row)
+
+    return unique
+
+
+def _customer_display_name(row: dict[str, Any]) -> str:
+    """Return authoritative customer display name from metadata/index fields only."""
+    return str(
+        row.get("display_name")
+        or row.get("entity_name")
+        or row.get("customer_name")
+        or row.get("name")
+        or ""
+    )
+
+
+def _group_evidence_for_ai(rows: Iterable[dict[str, Any]], max_rows: int = 30) -> list[dict[str, Any]]:
+    """Build a compact customer-grouped payload for AI summarisation.
+
+    The LLM should see one authoritative customer entry with a de-duplicated list
+    of evidence items. OCR text is included as supporting evidence only; customer
+    identity comes from entity metadata, not from OCR.
+    """
+    deduped = _deduplicate_evidence_rows(list(rows))[:max_rows]
+    groups: dict[str, dict[str, Any]] = {}
+
+    for row in deduped:
+        entity_id = str(row.get("entity_id") or "UNKNOWN")
+        group = groups.setdefault(
+            entity_id,
+            {
+                "entity_id": entity_id,
+                "display_name": _customer_display_name(row),
+                "risk_rating": row.get("risk_rating") or "",
+                "jurisdiction": row.get("jurisdiction") or "",
+                "evidence": [],
+                "indicators": set(),
+            },
+        )
+
+        # Fill authoritative metadata if the first row lacked it.
+        if not group.get("display_name") and _customer_display_name(row):
+            group["display_name"] = _customer_display_name(row)
+        if not group.get("risk_rating") and row.get("risk_rating"):
+            group["risk_rating"] = row.get("risk_rating")
+        if not group.get("jurisdiction") and row.get("jurisdiction"):
+            group["jurisdiction"] = row.get("jurisdiction")
+
+        evidence_text = _safe_row_text(row, 260)
+        lower_text = evidence_text.lower()
+        indicators: set[str] = group["indicators"]
+        for phrase in [
+            "property sale",
+            "source of wealth",
+            "source of funds",
+            "investment income",
+            "investment portfolio",
+            "company sale",
+            "sale contract",
+            "accountant letter",
+            "tax computation",
+            "bank statement",
+            "enhanced due diligence",
+            "proof of address",
+        ]:
+            if phrase in lower_text:
+                indicators.add(phrase)
+
+        group["evidence"].append(
+            {
+                "object_id": row.get("object_id") or "",
+                "snapshot_id": row.get("snapshot_id") or "",
+                "category": row.get("category") or "",
+                "document_type": row.get("document_type") or "",
+                "source_system": row.get("source_system") or "",
+                "filename": row.get("filename") or "",
+                "retention_class": row.get("retention_class") or "",
+                "legal_hold_status": row.get("legal_hold_status") or "",
+                "text_excerpt": evidence_text,
+            }
+        )
+
+    normalised: list[dict[str, Any]] = []
+    for group in groups.values():
+        group["indicators"] = sorted(group["indicators"])
+        normalised.append(group)
+    return normalised
+
+
+def _format_grouped_evidence_for_prompt(groups: list[dict[str, Any]], max_evidence_per_customer: int = 3, max_customers: int = 8, max_chars: int = 9000) -> str:
+    blocks: list[str] = []
+    for idx, group in enumerate(groups[:max_customers], start=1):
+        customer_name = group.get("display_name") or "Unknown customer"
+        evidence_lines: list[str] = []
+        for item in group.get("evidence", [])[:max_evidence_per_customer]:
+            evidence_lines.append(
+                f"- {item.get('document_type') or 'Evidence'} | "
+                f"{item.get('category') or 'Uncategorised'} | "
+                f"{item.get('filename') or ''} | "
+                f"Source: {item.get('source_system') or ''} | "
+                f"Snapshot: {item.get('snapshot_id') or ''}\n"
+                f"  Excerpt: {str(item.get('text_excerpt') or '')[:240]}"
+            )
+        indicators = ", ".join(group.get("indicators") or []) or "None detected in extracted text"
+        blocks.append(
+            f"Customer {idx}: {customer_name} ({group.get('entity_id')})\n"
+            f"Risk rating: {group.get('risk_rating') or 'Unknown'}\n"
+            f"Jurisdiction: {group.get('jurisdiction') or 'Unknown'}\n"
+            f"Detected indicators from extracted text: {indicators}\n"
+            f"Evidence items ({len(group.get('evidence', []))} de-duplicated):\n"
+            + "\n".join(evidence_lines)
+        )
+    text = "\n\n".join(blocks)
+    if len(text) > max_chars:
+        text = text[:max_chars] + "\n\n[Prompt evidence truncated to stay within local model context window.]"
+    return text
+
+
+def summarise_search_results(query: str, result_rows: Iterable[dict[str, Any]], model: str | None = None, max_rows: int = 18) -> str:
+    """Summarise search results using a normalised, customer-grouped evidence view.
+
+    This deliberately avoids sending raw duplicate rows to the LLM. Customer names
+    and identifiers are treated as authoritative metadata; OCR/extracted text is
+    supporting evidence and may contain transcription errors.
+    """
+    groups = _group_evidence_for_ai(result_rows, max_rows=max_rows)
+    if not groups:
+        return "No retrieved evidence was provided for summarisation."
+
+    prompt_evidence = _format_grouped_evidence_for_prompt(groups, max_evidence_per_customer=3, max_customers=8, max_chars=8500)
     client = get_lm_studio_client()
     response = client.chat.completions.create(
         model=model or get_chat_model(),
@@ -193,20 +337,24 @@ Evidence text: {(row.get('search_text') or row.get('snippet') or '')[:1600]}
                 "content": (
                     "You summarise retrieved financial services evidence for compliance and operations users. "
                     "Use only the supplied evidence. Do not invent facts. "
-                    "If evidence is insufficient, say so. Keep the summary concise and grounded."
+                    "Customer names and entity IDs supplied as metadata are authoritative. "
+                    "OCR and extracted text may contain recognition errors; do not infer alternative customer identities from OCR text. "
+                    "Do not list the same customer twice. Summarise by customer where useful. "
+                    "If evidence is insufficient or inconsistent, say so clearly."
                 ),
             },
             {
                 "role": "user",
                 "content": (
-                    f"User query:\n{query}\n\nRetrieved evidence:\n"
-                    + "\n\n".join(evidence_blocks)
-                    + "\n\nProvide a concise summary with key evidence types and any limitations."
+                    f"User query:\n{query}\n\n"
+                    f"Retrieved evidence grouped by authoritative customer metadata. The evidence list may be truncated for model context limits.\n{prompt_evidence}\n\n"
+                    "Provide a concise compliance-style summary. Do not list every row. Summarise patterns and call out up to 5 notable customers. "
+                    "Include key evidence types and limitations. Add a short note that original preserved evidence remains the source of truth where OCR is involved."
                 ),
             },
         ],
         temperature=0.1,
-        max_tokens=1200,
+        max_tokens=900,
     )
     return _extract_text_from_message(response.choices[0].message)
 

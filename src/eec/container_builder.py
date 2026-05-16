@@ -10,7 +10,7 @@ import numpy as np
 from astropy.io import fits
 
 from .models import PayloadRecord, ProvenanceRecord
-from .ocr import extract_search_text
+from .extraction import extract_document, summarise_extraction_fields
 from .utils import guess_mime, read_json, safe_rel_path, sha256_bytes, utc_now_iso
 
 
@@ -202,6 +202,9 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
     hdus: List[fits.hdu.base.ExtensionHDU] = []
     manifest: List[Dict] = []
     provenance: List[Dict] = []
+    ocr_rows: List[Dict] = []
+    extracted_fields: List[Dict] = []
+    extraction_events: List[Dict] = []
 
     provenance.append(ProvenanceRecord(
         event_id=f"PROV-{entity_id}-{snapshot_id}-0001",
@@ -236,13 +239,25 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
             "object_count": 0,
             "payload_bytes": 0,
         })
-        search_text, ocr_source = extract_search_text(path)
+        object_id = f"{entity_id}-{item_snapshot_id}-OBJ-{payload_index:06d}"
+        extraction = extract_document(
+            path=path,
+            object_id=object_id,
+            filename=path.name,
+            document_type=cat["document_type"],
+            category=cat["category"],
+        )
+        search_text = extraction.get("text", "")
+        ocr_source = extraction.get("ocr_source", "none")
+        extraction_confidence = float(extraction.get("confidence", 0.0) or 0.0)
+        extracted_field_rows = list(extraction.get("fields", []) or [])
+        extraction_event = extraction.get("event")
         retention = _retention_metadata(cat["retention_class"], cat["sensitivity"], item_snapshot_id)
         for key in ["retention_until", "legal_hold_status", "deletion_eligible"]:
             if override.get(key):
                 retention[key] = override[key]
         rec = PayloadRecord(
-            object_id=f"{entity_id}-{item_snapshot_id}-OBJ-{payload_index:06d}",
+            object_id=object_id,
             entity_id=entity_id,
             category=cat["category"],
             document_type=cat["document_type"],
@@ -265,7 +280,23 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
             container_version=container_version,
             **retention,
         )
-        manifest.append(rec.to_dict())
+        rec_dict = rec.to_dict()
+        rec_dict["extraction_confidence"] = extraction_confidence
+        rec_dict["extracted_fields_count"] = len(extracted_field_rows)
+        rec_dict["extracted_fields_json"] = extraction.get("fields_json", "[]")
+        manifest.append(rec_dict)
+        ocr_rows.append({
+            "object_id": object_id,
+            "filename": path.name,
+            "extracted_text": search_text,
+            "extraction_method": ocr_source,
+            "extraction_confidence": extraction_confidence,
+            "extracted_at": rec.captured_at,
+            "character_count": len(search_text or ""),
+        })
+        extracted_fields.extend(extracted_field_rows)
+        if extraction_event:
+            extraction_events.append(extraction_event)
         snapshot_rows[item_snapshot_id]["object_count"] = int(snapshot_rows[item_snapshot_id]["object_count"]) + 1
         snapshot_rows[item_snapshot_id]["payload_bytes"] = int(snapshot_rows[item_snapshot_id]["payload_bytes"]) + len(data)
         hdus.append(_payload_hdu(hdu_name, data, rec))
@@ -283,6 +314,7 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
         "container_version": container_version,
         "container_scope": "entity" if container_snapshot_slug in {"FULL", "ENTITY_ARCHIVE"} else "snapshot",
         "internal_snapshot_count": len(snapshot_rows),
+        "extraction_summary": summarise_extraction_fields(extracted_fields),
     }
     snapshots = sorted(snapshot_rows.values(), key=lambda row: str(row["snapshot_id"]))
     entity_with_snapshot = {
@@ -299,6 +331,9 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
         _json_hdu("SNAPSHOTS", snapshots),
         _json_hdu("MANIFEST", manifest),
         _json_hdu("PROVENANCE", provenance),
+        _json_hdu("OCR_TEXT", ocr_rows),
+        _json_hdu("EXTRACTED_FIELDS", extracted_fields),
+        _json_hdu("EXTRACTION_EVENTS", extraction_events),
     ] + hdus
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fits.HDUList(all_hdus).writeto(output_path, overwrite=True, checksum=True)

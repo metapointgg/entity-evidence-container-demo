@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0004",
+  "display_name": "Noah Carey",
+  "entity_type": "Individual",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0004/06_statements/statement_2026_01.pdf",
+  "filename": "statement_2026_01.pdf",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-01-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "STATEMENTS_2026_Q1",
+  "snapshot_type": "Statements",
+  "sha256": "9b2b867ef168d56bc7fe8e68607dc30218a26f9a289b8ffd86159b3d0ec84c8a",
+  "missing_flag": "No"
+}

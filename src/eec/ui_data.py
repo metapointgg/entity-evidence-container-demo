@@ -90,7 +90,7 @@ def list_objects_for_entity(sqlite_path: Path, entity_id: str) -> List[Dict[str,
             """
             SELECT object_id, entity_id, container_id, snapshot_id, snapshot_type, category, document_type, filename, relative_path, mime_type,
                    source_system, retention_class, retention_until, legal_hold_status, deletion_eligible, sensitivity, sha256, size_bytes, container_path, hdu_name,
-                   captured_at, ocr_source
+                   captured_at, ocr_source, extraction_confidence, extracted_fields_count, extracted_fields_json
             FROM objects
             WHERE entity_id = ?
             ORDER BY snapshot_id, category, document_type, filename
@@ -162,12 +162,12 @@ def get_index_schema_status(sqlite_path: Path) -> Dict[str, Any]:
         "objects": {
             "object_id", "entity_id", "container_id", "snapshot_id", "snapshot_type", "container_version", "category", "document_type", "filename", "relative_path",
             "mime_type", "source_system", "retention_class", "retention_until", "legal_hold_status", "deletion_eligible", "sensitivity", "captured_at",
-            "sha256", "size_bytes", "container_path", "hdu_name", "ocr_source", "ocr_text", "search_text",
+            "sha256", "size_bytes", "container_path", "hdu_name", "ocr_source", "ocr_text", "search_text", "extraction_confidence", "extracted_fields_count", "extracted_fields_json",
         },
         "object_search": {
             "object_id", "entity_id", "container_id", "snapshot_id", "snapshot_type", "display_name", "jurisdiction", "risk_rating", "occupation",
             "category", "document_type", "filename", "relative_path", "source_system",
-            "retention_class", "retention_until", "legal_hold_status", "deletion_eligible", "sensitivity", "ocr_source", "search_text", "semantic_text",
+            "retention_class", "retention_until", "legal_hold_status", "deletion_eligible", "sensitivity", "ocr_source", "extraction_confidence", "extracted_fields_json", "search_text", "semantic_text",
         },
     }
 

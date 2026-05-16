@@ -1,0 +1,16 @@
+date,description,amount,currency,balance
+2026-03-23,Fee,1500,GBP,23500
+2026-03-21,Interest payment,1500,GBP,25000
+2026-02-23,Standing order,1500,GBP,26500
+2026-03-13,Standing order,5000,GBP,31500
+2026-03-28,Standing order,-2000,GBP,29500
+2026-02-10,Fee,250,GBP,29750
+2026-02-21,Card payment,-80,GBP,29670
+2026-03-11,Card payment,-120,GBP,29550
+2026-03-15,Fee,-120,GBP,29430
+2026-02-22,Card payment,-2000,GBP,27430
+2026-01-09,Fee,5000,GBP,32430
+2026-01-18,Standing order,-120,GBP,32310
+2026-01-19,Fee,250,GBP,32560
+2026-02-15,Standing order,1500,GBP,34060
+2026-03-16,Standing order,-120,GBP,33940

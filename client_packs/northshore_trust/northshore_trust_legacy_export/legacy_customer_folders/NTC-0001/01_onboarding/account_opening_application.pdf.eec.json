@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0001",
+  "display_name": "Amelia Le Page",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0001/01_onboarding/account_opening_application.pdf",
+  "filename": "account_opening_application.pdf",
+  "category": "Onboarding",
+  "document_type": "Application",
+  "source_system": "Legacy Onboarding Portal",
+  "captured_at": "2026-01-13",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "7b38cda86eaaccb8068e7be9e126c2807e6ebfba30db03f402ecb41b35b52d4c",
+  "missing_flag": "No"
+}

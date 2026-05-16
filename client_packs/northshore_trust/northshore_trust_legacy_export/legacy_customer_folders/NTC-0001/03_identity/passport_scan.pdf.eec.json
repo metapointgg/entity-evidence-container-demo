@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0001",
+  "display_name": "Amelia Le Page",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0001/03_identity/passport_scan.pdf",
+  "filename": "passport_scan.pdf",
+  "category": "Identity",
+  "document_type": "Passport / ID",
+  "source_system": "Document Store",
+  "captured_at": "2026-01-13",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "de2060ec69d6077359aebf4da33c483aaba5214abe0f76ac86c7dab699e01496",
+  "missing_flag": "No"
+}

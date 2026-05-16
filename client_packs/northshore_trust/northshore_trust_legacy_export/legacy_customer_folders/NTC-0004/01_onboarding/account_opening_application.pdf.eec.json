@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0004",
+  "display_name": "Noah Carey",
+  "entity_type": "Individual",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0004/01_onboarding/account_opening_application.pdf",
+  "filename": "account_opening_application.pdf",
+  "category": "Onboarding",
+  "document_type": "Application",
+  "source_system": "Legacy Onboarding Portal",
+  "captured_at": "2026-01-04",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "c13352a80bf1cad918809a8c8b341b3dad5c9cafdc57935bb24542d1233fb2a0",
+  "missing_flag": "No"
+}

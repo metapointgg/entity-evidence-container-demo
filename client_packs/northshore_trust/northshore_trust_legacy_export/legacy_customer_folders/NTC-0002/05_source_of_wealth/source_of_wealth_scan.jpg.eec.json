@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0002",
+  "display_name": "Oliver Hartley",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0002/05_source_of_wealth/source_of_wealth_scan.jpg",
+  "filename": "source_of_wealth_scan.jpg",
+  "category": "Due Diligence",
+  "document_type": "Source of Wealth",
+  "source_system": "AML Platform",
+  "captured_at": "2026-01-13",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "7f64c3790630656390f0b17a0edf73980d79fc47e364ccd55d33e386b65ce50c",
+  "missing_flag": "No"
+}

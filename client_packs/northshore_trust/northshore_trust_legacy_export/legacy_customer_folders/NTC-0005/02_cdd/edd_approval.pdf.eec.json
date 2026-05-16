@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0005",
+  "display_name": "Sophie Morgan",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0005/02_cdd/edd_approval.pdf",
+  "filename": "edd_approval.pdf",
+  "category": "Due Diligence",
+  "document_type": "EDD Approval",
+  "source_system": "AML Platform",
+  "captured_at": "2026-01-07",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "29d2557d19f54273c243b6a1d9cf31eebee4054e133f391b7e5472653fd23842",
+  "missing_flag": "No"
+}

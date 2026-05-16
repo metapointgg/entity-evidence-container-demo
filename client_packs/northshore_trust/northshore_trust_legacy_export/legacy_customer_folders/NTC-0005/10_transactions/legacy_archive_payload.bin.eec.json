@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0005",
+  "display_name": "Sophie Morgan",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0005/10_transactions/legacy_archive_payload.bin",
+  "filename": "legacy_archive_payload.bin",
+  "category": "Archive",
+  "document_type": "Legacy Binary Payload",
+  "source_system": "Legacy Archive Export",
+  "captured_at": "2026-01-01",
+  "retention_class": "Archive",
+  "sensitivity": "Restricted",
+  "legal_hold_status": "None",
+  "snapshot_id": "LEGACY_BULK",
+  "snapshot_type": "Legacy Archive",
+  "sha256": "1ea43b991eb4a27d1f54c1b6933bf2c5d354d4a85cd48b49ffae029d70016e06",
+  "missing_flag": "No"
+}

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0006",
+  "display_name": "Oscar Mauger",
+  "entity_type": "Individual",
+  "jurisdiction": "Isle of Man",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0006/02_cdd/cdd_risk_review.pdf",
+  "filename": "cdd_risk_review.pdf",
+  "category": "Due Diligence",
+  "document_type": "CDD Review",
+  "source_system": "AML Platform",
+  "captured_at": "2025-12-30",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "6876c4595a73198e523ace5e38127a6ca0245aa89e9e75bc037ab9f346b3a9e3",
+  "missing_flag": "No"
+}

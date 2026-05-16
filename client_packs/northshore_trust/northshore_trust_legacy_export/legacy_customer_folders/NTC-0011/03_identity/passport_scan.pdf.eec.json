@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/03_identity/passport_scan.pdf",
+  "filename": "passport_scan.pdf",
+  "category": "Identity",
+  "document_type": "Passport / ID",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-14",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "f2ce05844b96f5587b97e64a867bbbff82ecea156819331d6a1b86150d135bdc",
+  "missing_flag": "No"
+}

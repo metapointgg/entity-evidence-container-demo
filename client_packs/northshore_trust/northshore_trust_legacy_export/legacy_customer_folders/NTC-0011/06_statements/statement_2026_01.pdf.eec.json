@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/06_statements/statement_2026_01.pdf",
+  "filename": "statement_2026_01.pdf",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-01-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "STATEMENTS_2026_Q1",
+  "snapshot_type": "Statements",
+  "sha256": "c4e626b13cf126d81bd067ac35a8209ce4ff63d80b1deb5d68554c93a35ae289",
+  "missing_flag": "No"
+}

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0010",
+  "display_name": "Isla De Carteret",
+  "entity_type": "Individual",
+  "jurisdiction": "Jersey",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0010/05_source_of_wealth/source_of_wealth_scan.jpg",
+  "filename": "source_of_wealth_scan.jpg",
+  "category": "Due Diligence",
+  "document_type": "Source of Wealth",
+  "source_system": "AML Platform",
+  "captured_at": "2025-12-20",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "7180ba6e2d69379b32adc94400c73c08ade7e5445847efe7e1d6bd3c5174ae2a",
+  "missing_flag": "No"
+}

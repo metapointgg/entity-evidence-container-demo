@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0002",
+  "display_name": "Oliver Hartley",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0002/10_transactions/legacy_archive_payload.bin",
+  "filename": "legacy_archive_payload.bin",
+  "category": "Archive",
+  "document_type": "Legacy Binary Payload",
+  "source_system": "Legacy Archive Export",
+  "captured_at": "2026-01-10",
+  "retention_class": "Archive",
+  "sensitivity": "Restricted",
+  "legal_hold_status": "None",
+  "snapshot_id": "LEGACY_BULK",
+  "snapshot_type": "Legacy Archive",
+  "sha256": "b81b6ca18ca0a2fca16f09a0aaa08c327cd4efd2747eca6295574ebe861764fe",
+  "missing_flag": "No"
+}

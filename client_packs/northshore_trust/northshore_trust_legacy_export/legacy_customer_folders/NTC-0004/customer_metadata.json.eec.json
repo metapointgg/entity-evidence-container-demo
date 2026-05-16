@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0004",
+  "display_name": "Noah Carey",
+  "entity_type": "Individual",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0004/customer_metadata.json",
+  "filename": "customer_metadata.json",
+  "category": "Metadata",
+  "document_type": "Customer Metadata",
+  "source_system": "Legacy CRM Export",
+  "captured_at": "2026-01-04",
+  "retention_class": "Permanent",
+  "sensitivity": "Internal",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "a6f39e8912219ec25e31a185bd4150db83d7d8553bc49085ebe1e8ce1e169ceb",
+  "missing_flag": "No"
+}

@@ -1,0 +1,12 @@
+{
+  "entity_id": "NTC-0002",
+  "entity_type": "Individual",
+  "display_name": "Oliver Hartley",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "occupation": "Imported customer",
+  "profile": "Imported customer",
+  "created_at": "2026-05-16T19:23:20Z",
+  "source_systems": [],
+  "ingestion_source": "bulk-import"
+}

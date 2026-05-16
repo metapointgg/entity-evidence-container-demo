@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0001",
+  "display_name": "Amelia Le Page",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0001/customer_metadata.json",
+  "filename": "customer_metadata.json",
+  "category": "Metadata",
+  "document_type": "Customer Metadata",
+  "source_system": "Legacy CRM Export",
+  "captured_at": "2026-01-13",
+  "retention_class": "Permanent",
+  "sensitivity": "Internal",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "d63b03a44ca0f85e248dfef91298cc5016945f13b72f975bfe96bd1e0a6ca995",
+  "missing_flag": "No"
+}

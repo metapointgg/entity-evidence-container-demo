@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0002",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-02-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "STATEMENTS_2026_Q1",
+  "snapshot_type": "Statements",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0002/06_statements/statement_2026_02.pdf",
+  "original_relative_path": "statement_2026_02.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "9c64562ec72eab386b8073b3fe205a1ee7788b51eeffb32dfb34a678125cc3f0"
+}

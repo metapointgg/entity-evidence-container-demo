@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0001",
+  "display_name": "Amelia Le Page",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0001/04_address/proof_of_address_utility_bill.pdf",
+  "filename": "proof_of_address_utility_bill.pdf",
+  "category": "Address",
+  "document_type": "Proof of Address",
+  "source_system": "Document Store",
+  "captured_at": "2026-01-15",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "4bfda4f5ed5195778995d64656e57a9abd57a2d62adf7b613696a0bfda023752",
+  "missing_flag": "No"
+}

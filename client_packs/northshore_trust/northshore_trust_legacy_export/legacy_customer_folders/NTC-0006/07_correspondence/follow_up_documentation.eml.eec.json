@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0006",
+  "display_name": "Oscar Mauger",
+  "entity_type": "Individual",
+  "jurisdiction": "Isle of Man",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0006/07_correspondence/follow_up_documentation.eml",
+  "filename": "follow_up_documentation.eml",
+  "category": "Correspondence",
+  "document_type": "Customer Correspondence",
+  "source_system": "Email Archive",
+  "captured_at": "2026-01-03",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CORRESPONDENCE_2026",
+  "snapshot_type": "Correspondence",
+  "sha256": "67aac8c44b633201d5983310b98d7cee2f313c59d8102ce2fefcb6c4e9eac89d",
+  "missing_flag": "No"
+}

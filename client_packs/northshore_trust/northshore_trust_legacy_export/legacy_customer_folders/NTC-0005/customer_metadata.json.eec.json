@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0005",
+  "display_name": "Sophie Morgan",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0005/customer_metadata.json",
+  "filename": "customer_metadata.json",
+  "category": "Metadata",
+  "document_type": "Customer Metadata",
+  "source_system": "Legacy CRM Export",
+  "captured_at": "2026-01-01",
+  "retention_class": "Permanent",
+  "sensitivity": "Internal",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "02d25c89e9ebf68c5fafb20c5547913203adcad1babdf3ddbf9c8e7724483b39",
+  "missing_flag": "No"
+}

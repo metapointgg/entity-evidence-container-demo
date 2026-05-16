@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0007",
+  "display_name": "Aurelia Holdings Limited",
+  "entity_type": "Corporate",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0007/06_statements/statement_2026_03.pdf",
+  "filename": "statement_2026_03.pdf",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-03-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "STATEMENTS_2026_Q1",
+  "snapshot_type": "Statements",
+  "sha256": "4b6c6cfb2dfba86b4a3231e497df3b36cf5af20a757ed0d0fd67584a3a6df2f1",
+  "missing_flag": "No"
+}

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/01_onboarding/account_opening_application.pdf",
+  "filename": "account_opening_application.pdf",
+  "category": "Onboarding",
+  "document_type": "Application",
+  "source_system": "Legacy Onboarding Portal",
+  "captured_at": "2025-12-14",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "93ce0e823b43710b95749127c055d8c0d576abd782cf80f11555e775d20cfba6",
+  "missing_flag": "No"
+}

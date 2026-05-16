@@ -58,6 +58,7 @@ def _row_text(entity: dict[str, Any], item: dict[str, Any]) -> str:
             item.get("sensitivity"),
             item.get("ocr_text"),
             item.get("search_text"),
+            item.get("extracted_fields_json"),
         ]
     )
 
@@ -233,6 +234,9 @@ def direct_search_container(
                 "ocr_source": item.get("ocr_source", "none"),
                 "ocr_text": item.get("ocr_text", item.get("search_text", "")),
                 "search_text": item.get("search_text", "") or item.get("ocr_text", ""),
+                "extraction_confidence": item.get("extraction_confidence", 0.0),
+                "extracted_fields_count": item.get("extracted_fields_count", 0),
+                "extracted_fields_json": item.get("extracted_fields_json", "[]"),
                 "snippet": _make_snippet(text, [str(t) for t in query_terms if t]),
                 "direct_fits_score": round(score, 4),
                 "search_source": "direct_fits",

@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0006",
+  "category": "Transactions",
+  "document_type": "Transaction Extract",
+  "source_system": "Core Banking Export",
+  "captured_at": "2026-03-31",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "TRANSACTIONS_2026_Q1",
+  "snapshot_type": "Transactions",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0006/10_transactions/transactions_q1_2026.csv",
+  "original_relative_path": "transactions_q1_2026.csv",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "67c70972188b8441a1240a1ece0184b7ad0d338c6397d22b5a662a6694c37447"
+}

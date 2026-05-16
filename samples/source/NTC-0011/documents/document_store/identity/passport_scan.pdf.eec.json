@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0011",
+  "category": "Identity",
+  "document_type": "Passport / ID",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-14",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0011/03_identity/passport_scan.pdf",
+  "original_relative_path": "passport_scan.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "f2ce05844b96f5587b97e64a867bbbff82ecea156819331d6a1b86150d135bdc"
+}

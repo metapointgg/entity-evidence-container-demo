@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/09_corporate/authorised_signatory_id.pdf",
+  "filename": "authorised_signatory_id.pdf",
+  "category": "Corporate",
+  "document_type": "Authorised Signatory ID",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-14",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "470aa7074eaac658999ad864cfb61b2bcafc812dc76fdaff101edbfcabbe6fc3",
+  "missing_flag": "No"
+}

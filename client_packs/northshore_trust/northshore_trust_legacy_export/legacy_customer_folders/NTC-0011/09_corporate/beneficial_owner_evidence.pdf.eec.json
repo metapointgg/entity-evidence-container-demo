@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/09_corporate/beneficial_owner_evidence.pdf",
+  "filename": "beneficial_owner_evidence.pdf",
+  "category": "Corporate",
+  "document_type": "Beneficial Owner Evidence",
+  "source_system": "Legacy CRM Export",
+  "captured_at": "2025-12-14",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "58e50ace0e770e04a693e4331552beae5d59c2d0f291120f9bbb495b61e0f119",
+  "missing_flag": "No"
+}

@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0008",
+  "category": "Archive",
+  "document_type": "Legacy Binary Payload",
+  "source_system": "Legacy Archive Export",
+  "captured_at": "2025-12-23",
+  "retention_class": "Archive",
+  "sensitivity": "Restricted",
+  "snapshot_id": "LEGACY_BULK",
+  "snapshot_type": "Legacy Archive",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0008/10_transactions/legacy_archive_payload.bin",
+  "original_relative_path": "legacy_archive_payload.bin",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "02e92daf01fbe8d7933467b4a1e88494f2422fd11759a84294e2659a384edb4f"
+}

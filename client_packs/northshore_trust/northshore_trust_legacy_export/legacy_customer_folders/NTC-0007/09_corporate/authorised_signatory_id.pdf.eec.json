@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0007",
+  "display_name": "Aurelia Holdings Limited",
+  "entity_type": "Corporate",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0007/09_corporate/authorised_signatory_id.pdf",
+  "filename": "authorised_signatory_id.pdf",
+  "category": "Corporate",
+  "document_type": "Authorised Signatory ID",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-26",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "bbb6d684221447f49df1142cd663d27415bd5efa2bac50a52fc28d2de9134eea",
+  "missing_flag": "No"
+}

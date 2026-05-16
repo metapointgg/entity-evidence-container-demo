@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0012",
+  "display_name": "Elena Rouget",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0012/03_identity/passport_scan.jpg",
+  "filename": "passport_scan.jpg",
+  "category": "Identity",
+  "document_type": "Passport / ID",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-11",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "6c58fb3406e0d50a48d934b612e8d75571782ff116f5a87db9295208415a2ffc",
+  "missing_flag": "No"
+}

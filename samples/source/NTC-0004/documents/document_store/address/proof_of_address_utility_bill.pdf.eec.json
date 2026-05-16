@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0004",
+  "category": "Address",
+  "document_type": "Proof of Address",
+  "source_system": "Document Store",
+  "captured_at": "2026-01-06",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0004/04_address/proof_of_address_utility_bill.pdf",
+  "original_relative_path": "proof_of_address_utility_bill.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "1ea7678a85a58e35b588f1ca270d9e5d057b6c75772bcc96702432e6d5207184"
+}

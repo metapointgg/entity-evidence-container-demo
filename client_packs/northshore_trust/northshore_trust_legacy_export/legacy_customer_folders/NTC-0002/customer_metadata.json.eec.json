@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0002",
+  "display_name": "Oliver Hartley",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0002/customer_metadata.json",
+  "filename": "customer_metadata.json",
+  "category": "Metadata",
+  "document_type": "Customer Metadata",
+  "source_system": "Legacy CRM Export",
+  "captured_at": "2026-01-10",
+  "retention_class": "Permanent",
+  "sensitivity": "Internal",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "d36a95ae45e7909340a186c5a023ba7f8a8ba0d45c62645c8995c039513ffa0e",
+  "missing_flag": "No"
+}

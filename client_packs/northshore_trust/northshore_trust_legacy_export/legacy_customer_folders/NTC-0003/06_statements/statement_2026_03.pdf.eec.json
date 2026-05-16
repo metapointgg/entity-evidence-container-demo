@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0003",
+  "display_name": "Charlotte Ferbrache",
+  "entity_type": "Individual",
+  "jurisdiction": "Jersey",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0003/06_statements/statement_2026_03.pdf",
+  "filename": "statement_2026_03.pdf",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-03-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "STATEMENTS_2026_Q1",
+  "snapshot_type": "Statements",
+  "sha256": "55867a0d138897af8dcdd5ce78d9e20a36efbfaa78eb48056c9fe931790b64cd",
+  "missing_flag": "No"
+}

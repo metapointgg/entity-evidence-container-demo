@@ -30,6 +30,9 @@ class PayloadRecord:
     retention_until: str = ""
     legal_hold_status: str = "None"
     deletion_eligible: str = "No"
+    extraction_confidence: float = 0.0
+    extracted_fields_count: int = 0
+    extracted_fields_json: str = "[]"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0009",
+  "display_name": "Henry Ozanne",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0009/customer_metadata.json",
+  "filename": "customer_metadata.json",
+  "category": "Metadata",
+  "document_type": "Customer Metadata",
+  "source_system": "Legacy CRM Export",
+  "captured_at": "2025-12-20",
+  "retention_class": "Permanent",
+  "sensitivity": "Internal",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "44bce46201c6494dc50adb8124a6d7d9eacd97585d770cf4ceb585ebfd1d2b8b",
+  "missing_flag": "No"
+}

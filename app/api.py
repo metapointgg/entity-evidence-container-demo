@@ -17,6 +17,7 @@ from eec.local_llm import answer_question_from_evidence, expand_search_query, lm
 from eec.lmstudio_vector_search import build_lmstudio_vector_index, lmstudio_vector_search
 from eec.query_interpreter import execute_structured_query, interpret_archive_query
 from eec.ingestion import bulk_ingest, ingest_event, process_event_queue, write_ingestion_report
+from eec.extraction_report import extraction_dashboard, extracted_fields_for_entity, extraction_report_for_container
 
 app = FastAPI(title="Entity Evidence Container API", version="0.1.0")
 
@@ -70,6 +71,24 @@ def direct_fits_search(root: str = "samples", entity_id: Optional[str] = None, c
         raise HTTPException(status_code=400, detail="entity_id or container_name is required")
     return direct_search_entity(paths.containers, entity_id, q, limit=limit)
 
+
+
+@app.get("/extraction/dashboard")
+def api_extraction_dashboard(root: str = "samples"):
+    return extraction_dashboard(_paths(root).index)
+
+
+@app.get("/extraction/entities/{entity_id}/fields")
+def api_extracted_fields(entity_id: str, root: str = "samples"):
+    return extracted_fields_for_entity(_paths(root).index, entity_id)
+
+
+@app.get("/containers/{container_name}/extraction")
+def api_container_extraction(container_name: str, root: str = "samples"):
+    container = _paths(root).containers / container_name
+    if not container.exists():
+        raise HTTPException(status_code=404, detail="Container not found")
+    return extraction_report_for_container(container)
 
 @app.get("/containers/{container_name}/inspect")
 def inspect(container_name: str, root: str = "samples"):

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/07_correspondence/follow_up_documentation.eml",
+  "filename": "follow_up_documentation.eml",
+  "category": "Correspondence",
+  "document_type": "Customer Correspondence",
+  "source_system": "Email Archive",
+  "captured_at": "2025-12-19",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CORRESPONDENCE_2026",
+  "snapshot_type": "Correspondence",
+  "sha256": "91e01d38c36b45d8669ea05ff1db8007a898dcd1ecf61dafff2142587167cd7e",
+  "missing_flag": "No"
+}

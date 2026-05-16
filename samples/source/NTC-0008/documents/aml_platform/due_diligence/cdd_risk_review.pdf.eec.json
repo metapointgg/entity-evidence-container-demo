@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0008",
+  "category": "Due Diligence",
+  "document_type": "CDD Review",
+  "source_system": "AML Platform",
+  "captured_at": "2025-12-24",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0008/02_cdd/cdd_risk_review.pdf",
+  "original_relative_path": "cdd_risk_review.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "b842705c9bacd65dfe8f40eb04594457a6de61e121d56939e926a9f7f7f5b9d1"
+}

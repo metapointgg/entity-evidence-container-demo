@@ -8,7 +8,7 @@ from .container_reader import read_entity, read_manifest
 from .semantic import expand_query
 
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 def create_schema(conn: sqlite3.Connection) -> None:
@@ -21,7 +21,7 @@ def create_schema(conn: sqlite3.Connection) -> None:
         DROP TABLE IF EXISTS object_search;
 
         CREATE TABLE schema_info (version INTEGER NOT NULL);
-        INSERT INTO schema_info(version) VALUES (3);
+        INSERT INTO schema_info(version) VALUES (4);
 
         CREATE TABLE entities (
             entity_id TEXT PRIMARY KEY,
@@ -69,7 +69,10 @@ def create_schema(conn: sqlite3.Connection) -> None:
             hdu_name TEXT,
             ocr_source TEXT,
             ocr_text TEXT,
-            search_text TEXT
+            search_text TEXT,
+            extraction_confidence REAL,
+            extracted_fields_count INTEGER,
+            extracted_fields_json TEXT
         );
 
         CREATE VIRTUAL TABLE object_search USING fts5(
@@ -93,6 +96,8 @@ def create_schema(conn: sqlite3.Connection) -> None:
             deletion_eligible,
             sensitivity,
             ocr_source,
+            extraction_confidence,
+            extracted_fields_json,
             search_text,
             semantic_text
         );
@@ -142,6 +147,14 @@ def rebuild_index(containers_dir: Path, sqlite_path: Path) -> int:
             entity_text = " ".join(str(entity.get(k, "")) for k in ["entity_id", "display_name", "jurisdiction", "risk_rating", "occupation"])
             for item in manifest:
                 search_text = item.get("search_text", "") or item.get("ocr_text", "") or ""
+                extracted_fields_json = item.get("extracted_fields_json", "[]") or "[]"
+                extracted_fields_text = ""
+                try:
+                    import json as _json
+                    extracted_fields = _json.loads(extracted_fields_json) if extracted_fields_json else []
+                    extracted_fields_text = " ".join(str(f.get("field_name", "")) + " " + str(f.get("field_value", "")) for f in extracted_fields if isinstance(f, dict))
+                except Exception:
+                    extracted_fields_text = str(extracted_fields_json)
                 item_snapshot_id = item.get("snapshot_id", snapshot_id)
                 item_snapshot_type = item.get("snapshot_type", snapshot_type)
                 semantic_text = " ".join([
@@ -149,15 +162,15 @@ def rebuild_index(containers_dir: Path, sqlite_path: Path) -> int:
                     str(item_snapshot_id), str(item_snapshot_type),
                     str(item.get("category", "")), str(item.get("document_type", "")), str(item.get("filename", "")),
                     str(item.get("source_system", "")), str(item.get("retention_class", "")), str(item.get("legal_hold_status", "")),
-                    str(item.get("sensitivity", "")), search_text,
+                    str(item.get("sensitivity", "")), extracted_fields_text, search_text,
                 ])
                 conn.execute(
                     """
                     INSERT INTO objects(object_id, entity_id, container_id, snapshot_id, snapshot_type, container_version,
                     category, document_type, filename, relative_path, mime_type, source_system, retention_class, retention_until,
                     legal_hold_status, deletion_eligible, sensitivity, captured_at, sha256, size_bytes, container_path, hdu_name,
-                    ocr_source, ocr_text, search_text)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ocr_source, ocr_text, search_text, extraction_confidence, extracted_fields_count, extracted_fields_json)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         item["object_id"], item["entity_id"], container_id, item_snapshot_id, item_snapshot_type, item.get("container_version", container_version),
@@ -165,22 +178,23 @@ def rebuild_index(containers_dir: Path, sqlite_path: Path) -> int:
                         item.get("source_system"), item.get("retention_class"), item.get("retention_until", ""), item.get("legal_hold_status", "None"),
                         item.get("deletion_eligible", "No"), item.get("sensitivity"), item.get("captured_at"), item.get("sha256"), item.get("size_bytes"),
                         str(container), item.get("hdu_name"), item.get("ocr_source", "none"), item.get("ocr_text", search_text), search_text,
+                        float(item.get("extraction_confidence", 0.0) or 0.0), int(item.get("extracted_fields_count", 0) or 0), extracted_fields_json,
                     ),
                 )
                 conn.execute(
                     """
                     INSERT INTO object_search(object_id, entity_id, container_id, snapshot_id, snapshot_type, display_name, jurisdiction, risk_rating, occupation,
                     category, document_type, filename, relative_path, source_system, retention_class, retention_until, legal_hold_status, deletion_eligible,
-                    sensitivity, ocr_source, search_text, semantic_text)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    sensitivity, ocr_source, extraction_confidence, extracted_fields_json, search_text, semantic_text)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         item["object_id"], item["entity_id"], container_id, item_snapshot_id, item_snapshot_type,
                         entity.get("display_name"), entity.get("jurisdiction"), entity.get("risk_rating"), entity.get("occupation"),
                         item.get("category"), item.get("document_type"), item.get("filename"), item.get("relative_path"), item.get("source_system"),
                         item.get("retention_class"), item.get("retention_until", ""), item.get("legal_hold_status", "None"), item.get("deletion_eligible", "No"),
-                        item.get("sensitivity"), item.get("ocr_source", "none"), search_text,
-                        semantic_text + " " + expand_query(semantic_text[:1000]),
+                        item.get("sensitivity"), item.get("ocr_source", "none"), float(item.get("extraction_confidence", 0.0) or 0.0), extracted_fields_json, search_text,
+                        semantic_text + " " + extracted_fields_text + " " + expand_query(semantic_text[:1000]),
                     ),
                 )
                 count += 1

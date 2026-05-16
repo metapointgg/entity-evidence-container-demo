@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0012",
+  "display_name": "Elena Rouget",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0012/04_address/proof_of_address_utility_bill.pdf",
+  "filename": "proof_of_address_utility_bill.pdf",
+  "category": "Address",
+  "document_type": "Proof of Address",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-13",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "6ee6a3996a1f0fd463440f4c02c705b55f989cad65776b60fbe2905355396448",
+  "missing_flag": "No"
+}

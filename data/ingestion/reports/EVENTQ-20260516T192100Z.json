@@ -1,0 +1,13 @@
+{
+  "run_id": "EVENTQ-20260516T192100Z",
+  "mode": "continuous-queue",
+  "started_at": "2026-05-16T19:21:00Z",
+  "completed_at": "2026-05-16T19:21:00Z",
+  "source": "client_packs/northshore_trust/northshore_trust_legacy_export/continuous_ingestion_queue",
+  "target_source_root": "data/source",
+  "total_items": 0,
+  "ingested_items": 0,
+  "skipped_items": 0,
+  "failed_items": 0,
+  "items": []
+}

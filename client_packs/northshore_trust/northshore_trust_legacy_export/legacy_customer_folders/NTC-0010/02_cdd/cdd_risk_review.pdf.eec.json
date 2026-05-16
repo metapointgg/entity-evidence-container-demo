@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0010",
+  "display_name": "Isla De Carteret",
+  "entity_type": "Individual",
+  "jurisdiction": "Jersey",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0010/02_cdd/cdd_risk_review.pdf",
+  "filename": "cdd_risk_review.pdf",
+  "category": "Due Diligence",
+  "document_type": "CDD Review",
+  "source_system": "AML Platform",
+  "captured_at": "2025-12-18",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "0b78e4790d6183f40788bca587b4e934d1ac194df69162605c5b947bb9c77688",
+  "missing_flag": "No"
+}

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0002",
+  "display_name": "Oliver Hartley",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0002/01_onboarding/account_opening_application.pdf",
+  "filename": "account_opening_application.pdf",
+  "category": "Onboarding",
+  "document_type": "Application",
+  "source_system": "Legacy Onboarding Portal",
+  "captured_at": "2026-01-10",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "013e073342f73bf346ee8d7bf9108345f781c36def39a8331221434ed1148c64",
+  "missing_flag": "No"
+}

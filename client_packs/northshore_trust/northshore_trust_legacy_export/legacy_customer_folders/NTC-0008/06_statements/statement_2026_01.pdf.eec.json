@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0008",
+  "display_name": "St Martin Family Trust",
+  "entity_type": "Trust",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0008/06_statements/statement_2026_01.pdf",
+  "filename": "statement_2026_01.pdf",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-01-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "STATEMENTS_2026_Q1",
+  "snapshot_type": "Statements",
+  "sha256": "5b8444d5318b7da53111a8c3f912bfd1c1e5dc5ed8677abbc2b3c1c1a691b001",
+  "missing_flag": "No"
+}

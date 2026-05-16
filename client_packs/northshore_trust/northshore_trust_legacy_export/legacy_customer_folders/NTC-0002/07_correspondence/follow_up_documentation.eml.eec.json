@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0002",
+  "display_name": "Oliver Hartley",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0002/07_correspondence/follow_up_documentation.eml",
+  "filename": "follow_up_documentation.eml",
+  "category": "Correspondence",
+  "document_type": "Customer Correspondence",
+  "source_system": "Email Archive",
+  "captured_at": "2026-01-15",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CORRESPONDENCE_2026",
+  "snapshot_type": "Correspondence",
+  "sha256": "51f421c52f414bcfe4ef567f7bae0ebd797c1a0a814a64c2dde7b9228cb24f7a",
+  "missing_flag": "No"
+}

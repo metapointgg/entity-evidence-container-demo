@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0005",
+  "display_name": "Sophie Morgan",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0005/03_identity/passport_scan.jpg",
+  "filename": "passport_scan.jpg",
+  "category": "Identity",
+  "document_type": "Passport / ID",
+  "source_system": "Document Store",
+  "captured_at": "2026-01-01",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "2a666ea0a2b3d6ca8b5ff204d10fe6b51c21d606d9200d761432ba3736bda003",
+  "missing_flag": "No"
+}

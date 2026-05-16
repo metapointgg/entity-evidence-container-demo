@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0001",
+  "display_name": "Amelia Le Page",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0001/05_source_of_wealth/source_of_funds_statement.pdf",
+  "filename": "source_of_funds_statement.pdf",
+  "category": "Due Diligence",
+  "document_type": "Source of Funds",
+  "source_system": "AML Platform",
+  "captured_at": "2026-01-17",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "629153b43788155617d82d4d10e1b39d2781f9e813acad928fe31d8e5cbb3f70",
+  "missing_flag": "No"
+}

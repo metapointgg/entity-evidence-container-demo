@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0009",
+  "category": "Metadata",
+  "document_type": "Customer Metadata",
+  "source_system": "Legacy CRM Export",
+  "captured_at": "2025-12-20",
+  "retention_class": "Permanent",
+  "sensitivity": "Internal",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0009/customer_metadata.json",
+  "original_relative_path": "customer_metadata.json",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "44bce46201c6494dc50adb8124a6d7d9eacd97585d770cf4ceb585ebfd1d2b8b"
+}

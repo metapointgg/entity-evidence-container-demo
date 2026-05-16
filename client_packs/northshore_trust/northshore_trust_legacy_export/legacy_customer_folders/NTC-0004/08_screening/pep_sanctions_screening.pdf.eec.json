@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0004",
+  "display_name": "Noah Carey",
+  "entity_type": "Individual",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0004/08_screening/pep_sanctions_screening.pdf",
+  "filename": "pep_sanctions_screening.pdf",
+  "category": "Screening",
+  "document_type": "Screening Evidence",
+  "source_system": "Screening Provider",
+  "captured_at": "2026-01-05",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "2e205c285270456f4c43ffa6fb3528061c9eda7b6d3d0e399fc2cead07ba255d",
+  "missing_flag": "No"
+}

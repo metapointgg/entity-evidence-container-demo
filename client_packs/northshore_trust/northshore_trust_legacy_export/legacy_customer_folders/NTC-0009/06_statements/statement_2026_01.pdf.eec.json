@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0009",
+  "display_name": "Henry Ozanne",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0009/06_statements/statement_2026_01.pdf",
+  "filename": "statement_2026_01.pdf",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-01-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "STATEMENTS_2026_Q1",
+  "snapshot_type": "Statements",
+  "sha256": "8216aaba22f5029374c5f0144f0e1d06003054289b3a1c4cf6859cb2a8e7a5e4",
+  "missing_flag": "No"
+}

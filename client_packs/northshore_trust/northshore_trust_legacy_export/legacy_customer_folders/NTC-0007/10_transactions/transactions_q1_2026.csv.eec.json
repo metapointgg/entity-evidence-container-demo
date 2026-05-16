@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0007",
+  "display_name": "Aurelia Holdings Limited",
+  "entity_type": "Corporate",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0007/10_transactions/transactions_q1_2026.csv",
+  "filename": "transactions_q1_2026.csv",
+  "category": "Transactions",
+  "document_type": "Transaction Extract",
+  "source_system": "Core Banking Export",
+  "captured_at": "2026-03-31",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "TRANSACTIONS_2026_Q1",
+  "snapshot_type": "Transactions",
+  "sha256": "c11eaa6626328a7b87a96c082e9a2898ca2d6939f93c37e2f2b3680b755ff355",
+  "missing_flag": "No"
+}

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0005",
+  "display_name": "Sophie Morgan",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0005/05_source_of_wealth/source_of_wealth_scan.jpg",
+  "filename": "source_of_wealth_scan.jpg",
+  "category": "Due Diligence",
+  "document_type": "Source of Wealth",
+  "source_system": "AML Platform",
+  "captured_at": "2026-01-04",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "82832fd973134f39b9ba4dcbaf7278161c722bf36f328c605b0e727de73b490d",
+  "missing_flag": "No"
+}

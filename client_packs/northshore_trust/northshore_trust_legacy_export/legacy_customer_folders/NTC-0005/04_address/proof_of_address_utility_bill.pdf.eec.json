@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0005",
+  "display_name": "Sophie Morgan",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0005/04_address/proof_of_address_utility_bill.pdf",
+  "filename": "proof_of_address_utility_bill.pdf",
+  "category": "Address",
+  "document_type": "Proof of Address",
+  "source_system": "Document Store",
+  "captured_at": "2026-01-03",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "ca6231ee7327b5236e096a865ce7c8ade9ea43cb91292f21f9c7b0d3f14edfd1",
+  "missing_flag": "No"
+}

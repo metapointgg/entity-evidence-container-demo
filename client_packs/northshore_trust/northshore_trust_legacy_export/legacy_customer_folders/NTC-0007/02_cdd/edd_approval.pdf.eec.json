@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0007",
+  "display_name": "Aurelia Holdings Limited",
+  "entity_type": "Corporate",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0007/02_cdd/edd_approval.pdf",
+  "filename": "edd_approval.pdf",
+  "category": "Due Diligence",
+  "document_type": "EDD Approval",
+  "source_system": "AML Platform",
+  "captured_at": "2026-01-01",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "59c91267b0ea577b4ccf237e04ebf38945806f8f1076f5e1869465c395ff2846",
+  "missing_flag": "No"
+}

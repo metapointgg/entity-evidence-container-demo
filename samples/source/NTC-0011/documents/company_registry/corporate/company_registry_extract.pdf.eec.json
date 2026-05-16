@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0011",
+  "category": "Corporate",
+  "document_type": "Company Registry Extract",
+  "source_system": "Company Registry",
+  "captured_at": "2025-12-14",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0011/09_corporate/company_registry_extract.pdf",
+  "original_relative_path": "company_registry_extract.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "378b0d8c3ff74da5b9654bab502f618b37e63dd0aad9842f6a862f971563fdf1"
+}

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0001",
+  "display_name": "Amelia Le Page",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0001/02_cdd/edd_approval.pdf",
+  "filename": "edd_approval.pdf",
+  "category": "Due Diligence",
+  "document_type": "EDD Approval",
+  "source_system": "AML Platform",
+  "captured_at": "2026-01-19",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "e1bbfcb918426facce9d136016d678b9edeb948d662d3a68e7b7258b4154de39",
+  "missing_flag": "No"
+}

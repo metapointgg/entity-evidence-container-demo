@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0008",
+  "display_name": "St Martin Family Trust",
+  "entity_type": "Trust",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0008/05_source_of_wealth/source_of_funds_statement.pdf",
+  "filename": "source_of_funds_statement.pdf",
+  "category": "Due Diligence",
+  "document_type": "Source of Funds",
+  "source_system": "AML Platform",
+  "captured_at": "2025-12-27",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "7357951713478cdd0950bdd9bd41b4bd52a9ce0603db318fd5fb9aa1e1b9cd1d",
+  "missing_flag": "No"
+}

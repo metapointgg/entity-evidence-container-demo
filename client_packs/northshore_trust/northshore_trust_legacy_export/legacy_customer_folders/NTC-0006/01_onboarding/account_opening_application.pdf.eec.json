@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0006",
+  "display_name": "Oscar Mauger",
+  "entity_type": "Individual",
+  "jurisdiction": "Isle of Man",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0006/01_onboarding/account_opening_application.pdf",
+  "filename": "account_opening_application.pdf",
+  "category": "Onboarding",
+  "document_type": "Application",
+  "source_system": "Legacy Onboarding Portal",
+  "captured_at": "2025-12-29",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "9c8ffbbdde530c8af64cc71c9e19f7ced565ae2965b48df827e9c7784622fadc",
+  "missing_flag": "No"
+}

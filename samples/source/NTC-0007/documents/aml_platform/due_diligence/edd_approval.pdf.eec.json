@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0007",
+  "category": "Due Diligence",
+  "document_type": "EDD Approval",
+  "source_system": "AML Platform",
+  "captured_at": "2026-01-01",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0007/02_cdd/edd_approval.pdf",
+  "original_relative_path": "edd_approval.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "59c91267b0ea577b4ccf237e04ebf38945806f8f1076f5e1869465c395ff2846"
+}

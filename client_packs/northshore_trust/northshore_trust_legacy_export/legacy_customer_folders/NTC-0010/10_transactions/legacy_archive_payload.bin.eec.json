@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0010",
+  "display_name": "Isla De Carteret",
+  "entity_type": "Individual",
+  "jurisdiction": "Jersey",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0010/10_transactions/legacy_archive_payload.bin",
+  "filename": "legacy_archive_payload.bin",
+  "category": "Archive",
+  "document_type": "Legacy Binary Payload",
+  "source_system": "Legacy Archive Export",
+  "captured_at": "2025-12-17",
+  "retention_class": "Archive",
+  "sensitivity": "Restricted",
+  "legal_hold_status": "None",
+  "snapshot_id": "LEGACY_BULK",
+  "snapshot_type": "Legacy Archive",
+  "sha256": "73d2a2541c3f1d520207e197eaa2fe3aa1c538360450832312b4e4cb6bcc71c4",
+  "missing_flag": "No"
+}

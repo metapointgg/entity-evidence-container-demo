@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Sequence
+from types import SimpleNamespace
 
 import pandas as pd
 import streamlit as st
@@ -16,6 +17,7 @@ from eec.archive_health import indexed_health, integrity_health
 from eec.container_reader import inspect_container, validate_container
 from eec.corruption import corrupt_container
 from eec.exporter import export_evidence_pack
+from eec.extraction_report import extraction_dashboard, extracted_fields_for_entity, extraction_report_for_container
 from eec.fits_direct_search import direct_search_entity
 from eec.indexer import rebuild_index
 from eec.ingestion import bulk_ingest, process_event_queue, write_ingestion_report
@@ -51,6 +53,101 @@ from eec.vector_search import build_vector_index, vector_search
 
 st.set_page_config(page_title="Entity Evidence Container Demo", page_icon="🗃️", layout="wide")
 DEFAULT_ROOT = Path("samples")
+
+
+PATH_SESSION_KEYS = {
+    "source": "archive_source_path",
+    "containers": "archive_containers_path",
+    "index": "archive_index_path",
+    "vector": "archive_vector_path",
+    "lm_vector": "archive_lm_vector_path",
+    "exports": "archive_exports_path",
+}
+
+
+def _default_archive_path_values(root: Path) -> dict[str, Path]:
+    """Return the default derived archive paths for a root folder."""
+    defaults = resolve_archive_paths(root)
+    return {
+        "source": defaults.source,
+        "containers": defaults.containers,
+        "index": defaults.index,
+        "vector": defaults.root / "index" / "evidence_vector.pkl",
+        "lm_vector": defaults.root / "index" / "evidence_lmstudio_vector.pkl",
+        "exports": defaults.exports,
+    }
+
+
+def configure_archive_paths(root: Path):
+    """Configure archive paths from the sidebar and store them in session state.
+
+    The root folder remains a convenience default, but the source, containers,
+    index and vector locations can be explicitly overridden. This prevents
+    ingestion/rebuild actions accidentally targeting the sample container path.
+    """
+    root = Path(root)
+    defaults = _default_archive_path_values(root)
+    root_key = str(root)
+
+    if st.session_state.get("archive_paths_root_key") != root_key:
+        st.session_state["archive_paths_root_key"] = root_key
+        for name, session_key in PATH_SESSION_KEYS.items():
+            st.session_state[session_key] = str(defaults[name])
+
+    with st.sidebar.expander("Archive paths", expanded=not is_basic_mode()):
+        st.caption("Set these explicitly when using imported client data rather than the sample dataset.")
+        source = Path(st.text_input("Source folder", key=PATH_SESSION_KEYS["source"]))
+        containers = Path(st.text_input("Containers folder", key=PATH_SESSION_KEYS["containers"]))
+        index = Path(st.text_input("SQLite index", key=PATH_SESSION_KEYS["index"]))
+        vector = Path(st.text_input("Local vector index", key=PATH_SESSION_KEYS["vector"]))
+        lm_vector = Path(st.text_input("LM Studio vector index", key=PATH_SESSION_KEYS["lm_vector"]))
+        exports = Path(st.text_input("Exports folder", key=PATH_SESSION_KEYS["exports"]))
+
+        if st.button("Reset paths from root", key="archive-paths-reset"):
+            for name, session_key in PATH_SESSION_KEYS.items():
+                st.session_state[session_key] = str(defaults[name])
+            st.rerun()
+
+    return SimpleNamespace(
+        root=root,
+        source=source,
+        containers=containers,
+        index=index,
+        vector=vector,
+        lm_vector=lm_vector,
+        exports=exports,
+    )
+
+
+def get_ui_archive_paths(root: Path):
+    """Return path settings chosen in the sidebar, falling back to root defaults."""
+    root = Path(root)
+    defaults = _default_archive_path_values(root)
+    return SimpleNamespace(
+        root=root,
+        source=Path(st.session_state.get(PATH_SESSION_KEYS["source"], str(defaults["source"]))),
+        containers=Path(st.session_state.get(PATH_SESSION_KEYS["containers"], str(defaults["containers"]))),
+        index=Path(st.session_state.get(PATH_SESSION_KEYS["index"], str(defaults["index"]))),
+        vector=Path(st.session_state.get(PATH_SESSION_KEYS["vector"], str(defaults["vector"]))),
+        lm_vector=Path(st.session_state.get(PATH_SESSION_KEYS["lm_vector"], str(defaults["lm_vector"]))),
+        exports=Path(st.session_state.get(PATH_SESSION_KEYS["exports"], str(defaults["exports"]))),
+    )
+
+
+def is_basic_mode() -> bool:
+    return st.session_state.get("ui_mode", "Basic") == "Basic"
+
+
+def basic_defaults_for_search() -> dict[str, Any]:
+    status = lm_studio_status()
+    return {
+        "use_local_ai": bool(status.get("available", False)),
+        "include_summary": bool(status.get("available", False)),
+        "use_direct_fits": True,
+        "show_interpreted": False,
+        "limit": 50,
+        "status": status,
+    }
 
 
 @st.cache_data(show_spinner=False)
@@ -115,7 +212,15 @@ def run_generator(customers: int, target_mb: int, seed: int, root: Path) -> None
 
 
 def run_build_containers(root: Path, split_snapshots: bool) -> None:
-    command = [sys.executable, "scripts/build_containers.py", "--source", str(root / "source"), "--output", str(root / "containers")]
+    paths = get_ui_archive_paths(root)
+    command = [
+        sys.executable,
+        "scripts/build_containers.py",
+        "--source",
+        str(paths.source),
+        "--output",
+        str(paths.containers),
+    ]
     if split_snapshots:
         command.append("--split-snapshots")
     completed = subprocess.run(command, check=True, capture_output=True, text=True)
@@ -229,7 +334,7 @@ def _open_preview_once(row: Dict[str, Any], unique_key: str, *, session_key: str
 
 
 def dashboard_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     summary = cached_summary(str(root))
     st.subheader("Archive overview")
     c1, c2, c3, c4 = st.columns(4)
@@ -258,7 +363,7 @@ def dashboard_tab(root: Path) -> None:
         clear_caches(); st.success(f"Indexed {count} objects.")
     if a4.button("Build local vector index"):
         with st.spinner("Building local offline vector index..."):
-            count = build_vector_index(paths.index, paths.root / "index" / "evidence_vector.pkl")
+            count = build_vector_index(paths.index, paths.vector)
         cached_vector_search.clear(); st.success(f"Vector indexed {count} objects.")
     st.divider()
     st.subheader("Local LM Studio AI")
@@ -268,7 +373,7 @@ def dashboard_tab(root: Path) -> None:
         st.caption("Models: " + ", ".join(status.get("models", [])))
         if st.button("Build LM Studio embedding index"):
             with st.spinner("Calling LM Studio embeddings endpoint and building local vector index..."):
-                count = build_lmstudio_vector_index(paths.index, paths.root / "index" / "evidence_lmstudio_vector.pkl")
+                count = build_lmstudio_vector_index(paths.index, paths.lm_vector)
             cached_lmstudio_vector_search.clear(); st.success(f"LM Studio embedding indexed {count} objects.")
     else:
         st.warning("LM Studio is not available. Start LM Studio server on http://127.0.0.1:1234 and refresh.")
@@ -277,7 +382,7 @@ def dashboard_tab(root: Path) -> None:
 
 
 def health_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     st.subheader("Archive health and integrity dashboard")
     indexed = indexed_health(paths.index)
     c1, c2, c3, c4 = st.columns(4)
@@ -316,7 +421,7 @@ The key architectural proposition is that the database is **an access/index laye
 
 
 def customers_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     schema_status = get_index_schema_status(paths.index)
     if not schema_status["is_current"]:
         st.error(schema_status["message"]); st.json(schema_status); return
@@ -580,7 +685,7 @@ def _show_customer_evidence_from_search(paths, selected_customer: dict[str, Any]
 
 
 def search_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     st.subheader("Search the Evidence Archive")
     schema_status = get_index_schema_status(paths.index)
     if not schema_status["is_current"]:
@@ -594,10 +699,17 @@ def search_tab(root: Path) -> None:
     entity_options = {"": "No selected customer"}
     entity_options.update({entity["entity_id"]: _customer_label(entity) for entity in entities})
 
-    st.markdown(
-        "Ask in natural language. The app interprets the request into a controlled structured query, "
-        "executes deterministic filters/search, and only then uses the local LLM to summarise retrieved evidence."
-    )
+    basic_mode = is_basic_mode()
+    if basic_mode:
+        st.markdown(
+            "Ask a business question, select a customer when needed, and the archive will return "
+            "the relevant evidence, checklist or customer list."
+        )
+    else:
+        st.markdown(
+            "Ask in natural language. The app interprets the request into a controlled structured query, "
+            "executes deterministic filters/search, and only then uses the local LLM to summarise retrieved evidence."
+        )
 
     # Keep selected customer stable across reruns and row clicks.
     if "search_scope" not in st.session_state:
@@ -630,6 +742,12 @@ def search_tab(root: Path) -> None:
         c_customer.caption("Searching across all indexed customer evidence.")
         st.session_state["search_selected_entity_id"] = st.session_state.get("search_selected_entity_id", "")
 
+    if basic_mode:
+        if scope == "Selected customer":
+            st.caption("Use this for questions about one customer, such as source of wealth, onboarding completeness, or held evidence.")
+        else:
+            st.caption("Use this for portfolio questions, such as high-risk customers, missing evidence, or cohort evidence requests.")
+
     examples = {
         "Customer source of wealth": "What is the customer's source of wealth?",
         "High-risk customers": "Show me customers who are high risk",
@@ -638,11 +756,26 @@ def search_tab(root: Path) -> None:
         "Legal hold review": "Show me documents past retention date but blocked by legal hold",
         "Regulatory pack": "Prepare evidence for high-risk Guernsey customers showing CDD, source of wealth and screening evidence",
     }
-    example_name = st.selectbox("Example requests", ["Custom"] + list(examples.keys()), key="search_example")
-    default_query = examples.get(
-        example_name,
-        "What is the customer's source of wealth?" if scope == "Selected customer" else "Show me customers who are high risk",
-    )
+    if basic_mode:
+        quick_examples = {
+            "Ask about selected customer source of wealth": "What is the customer's source of wealth?",
+            "Check selected customer onboarding completeness": "Is this customer's onboarding file complete?",
+            "Find high-risk customers": "Show me customers who are high risk",
+            "Find high-risk Guernsey customers": "Show me customers in Guernsey who are high risk",
+            "Find missing proof of address": "Show me customers who are high risk and do not have proof of address",
+            "Retrieve cohort onboarding evidence": "Show me all onboarding documentation for high risk clients in Guernsey",
+        }
+        example_name = st.selectbox("Quick examples", ["Custom"] + list(quick_examples.keys()), key="search_example")
+        default_query = quick_examples.get(
+            example_name,
+            "What is the customer's source of wealth?" if scope == "Selected customer" else "Show me customers who are high risk",
+        )
+    else:
+        example_name = st.selectbox("Example requests", ["Custom"] + list(examples.keys()), key="search_example")
+        default_query = examples.get(
+            example_name,
+            "What is the customer's source of wealth?" if scope == "Selected customer" else "Show me customers who are high risk",
+        )
 
     # Do not overwrite the user's text on every rerun caused by table selection.
     if "search_query_text" not in st.session_state or example_name != st.session_state.get("search_last_example"):
@@ -650,51 +783,75 @@ def search_tab(root: Path) -> None:
         st.session_state["search_last_example"] = example_name
 
     query = st.text_area(
-        "Ask a question or request evidence",
-        height=88,
+        "What would you like to find?" if basic_mode else "Ask a question or request evidence",
+        height=72 if basic_mode else 88,
         key="search_query_text",
+        placeholder="For example: What is the customer's source of wealth?",
     )
 
-    with st.expander("Advanced options", expanded=False):
-        status = lm_studio_status()
-        if status.get("available"):
-            st.success(f"LM Studio available: {status.get('base_url')}")
-            st.caption(f"Query model: {status.get('query_model')} · Chat model: {status.get('chat_model')} · Embedding model: {status.get('embedding_model')}")
-        else:
-            st.warning("LM Studio is not currently available. The app will use deterministic rule-based interpretation.")
-            st.caption(status.get("error", ""))
-        use_local_ai = st.checkbox("Interpret natural language locally", value=status.get("available", False), disabled=not status.get("available"), key="search_use_local_ai")
-        include_summary = st.checkbox("Generate AI evidence summary when relevant", value=status.get("available", False), disabled=not status.get("available"), key="search_include_summary")
-        use_direct_fits = st.checkbox("Use direct FITS search for selected-customer evidence queries", value=True, key="search_use_direct_fits")
-        st.caption("Direct FITS search opens the selected customer/entity FITS file and searches its manifest/OCR/metadata tables without using SQLite. Cross-customer searches still use the rebuildable index.")
-        show_interpreted = st.checkbox("Show interpreted structured query", value=True, key="search_show_interpreted")
-        limit = st.slider("Result limit", min_value=5, max_value=250, value=50, step=5, key="search_limit")
-        with st.expander("Supported query capabilities", expanded=False):
-            matrix = query_capability_matrix()
-            st.dataframe(
-                pd.DataFrame([
-                    {
-                        "capability": key,
-                        "intent": value.get("intent"),
-                        "result_type": value.get("result_type"),
-                        "requires_selected_customer": value.get("requires_selected_entity"),
-                        "filters": ", ".join(value.get("supports_filters", [])),
-                        "description": value.get("description"),
-                    }
-                    for key, value in matrix.items()
-                ]),
-                use_container_width=True,
-                hide_index=True,
-                height=280,
-            )
-        if st.button("Clear last search result", key="search_clear_state"):
-            st.session_state.pop(state_key, None)
-            for key in list(st.session_state.keys()):
-                if key.startswith(f"ai_summary::{state_key}"):
-                    st.session_state.pop(key, None)
-            st.rerun()
+    if basic_mode:
+        defaults = basic_defaults_for_search()
+        use_local_ai = defaults["use_local_ai"]
+        include_summary = defaults["include_summary"]
+        use_direct_fits = defaults["use_direct_fits"]
+        show_interpreted = defaults["show_interpreted"]
+        limit = defaults["limit"]
+        status = defaults["status"]
+        with st.expander("How this search will run", expanded=False):
+            st.write("The app will interpret the question, apply controlled filters, search the relevant FITS containers/indexes, and summarise evidence where useful.")
+            st.caption("Selected-customer evidence searches use the customer FITS file directly. Portfolio searches use the rebuildable index for speed.")
+            if status.get("available"):
+                st.success("Local AI is available for interpretation and summaries.")
+            else:
+                st.info("Local AI is unavailable, so deterministic query interpretation will be used.")
+    else:
+        with st.expander("Advanced options", expanded=False):
+            status = lm_studio_status()
+            if status.get("available"):
+                st.success(f"LM Studio available: {status.get('base_url')}")
+                st.caption(f"Query model: {status.get('query_model')} · Chat model: {status.get('chat_model')} · Embedding model: {status.get('embedding_model')}")
+            else:
+                st.warning("LM Studio is not currently available. The app will use deterministic rule-based interpretation.")
+                st.caption(status.get("error", ""))
+            use_local_ai = st.checkbox("Interpret natural language locally", value=status.get("available", False), disabled=not status.get("available"), key="search_use_local_ai")
+            include_summary = st.checkbox("Generate AI evidence summary when relevant", value=status.get("available", False), disabled=not status.get("available"), key="search_include_summary")
+            use_direct_fits = st.checkbox("Use direct FITS search for selected-customer evidence queries", value=True, key="search_use_direct_fits")
+            st.caption("Direct FITS search opens the selected customer/entity FITS file and searches its manifest/OCR/metadata tables without using SQLite. Cross-customer searches still use the rebuildable index.")
+            show_interpreted = st.checkbox("Show interpreted structured query", value=True, key="search_show_interpreted")
+            limit = st.slider("Result limit", min_value=5, max_value=250, value=50, step=5, key="search_limit")
+            with st.expander("Supported query capabilities", expanded=False):
+                matrix = query_capability_matrix()
+                st.dataframe(
+                    pd.DataFrame([
+                        {
+                            "capability": key,
+                            "intent": value.get("intent"),
+                            "result_type": value.get("result_type"),
+                            "requires_selected_customer": value.get("requires_selected_entity"),
+                            "filters": ", ".join(value.get("supports_filters", [])),
+                            "description": value.get("description"),
+                        }
+                        for key, value in matrix.items()
+                    ]),
+                    use_container_width=True,
+                    hide_index=True,
+                    height=280,
+                )
+            if st.button("Clear last search result", key="search_clear_state"):
+                st.session_state.pop(state_key, None)
+                for key in list(st.session_state.keys()):
+                    if key.startswith(f"ai_summary::{state_key}"):
+                        st.session_state.pop(key, None)
+                st.rerun()
 
-    search_clicked = st.button("Search evidence archive", type="primary", key="intent_search_button")
+    c_search, c_clear = st.columns([1, 1])
+    search_clicked = c_search.button("Search", type="primary", key="intent_search_button")
+    if basic_mode and c_clear.button("Clear", key="intent_search_clear_basic"):
+        st.session_state.pop(state_key, None)
+        for key in list(st.session_state.keys()):
+            if key.startswith(f"ai_summary::{state_key}"):
+                st.session_state.pop(key, None)
+        st.rerun()
 
     if search_clicked:
         structured = interpret_archive_query(
@@ -749,7 +906,7 @@ def search_tab(root: Path) -> None:
             "created_at": datetime.now().isoformat(timespec="seconds"),
         }
     elif state_key not in st.session_state:
-        st.info("Choose a scope, enter a request, then click Search evidence archive.")
+        st.info("Choose a scope, enter a request, then click Search." if basic_mode else "Choose a scope, enter a request, then click Search evidence archive.")
         return
 
     search_state = st.session_state.get(state_key)
@@ -761,7 +918,8 @@ def search_tab(root: Path) -> None:
     structured_flags = _restore_structured_flags(structured_dict)
     result = search_state.get("result", {})
 
-    st.caption(f"Showing last search result from {search_state.get('created_at', 'this session')}. Row selections will not reset this result.")
+    if not basic_mode:
+        st.caption(f"Showing last search result from {search_state.get('created_at', 'this session')}. Row selections will not reset this result.")
 
     if show_interpreted:
         with st.expander("Interpreted request", expanded=True):
@@ -773,7 +931,10 @@ def search_tab(root: Path) -> None:
 
     result_type = result.get("type")
     if result.get("source_note"):
-        st.info(result.get("source_note"))
+        if basic_mode:
+            st.caption(result.get("source_note"))
+        else:
+            st.info(result.get("source_note"))
     rows: list[dict[str, Any]] = result.get("rows") or []
 
     if result_type == "customers":
@@ -968,7 +1129,7 @@ def _render_checklist(row: dict[str, Any]) -> None:
 
 
 def evidence_completeness_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     st.subheader("Evidence completeness")
     schema_status = get_index_schema_status(paths.index)
     if not schema_status["is_current"]:
@@ -1161,9 +1322,13 @@ def ruleset_builder_tab(root: Path) -> None:
 
 
 def ingestion_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     st.subheader("Ingestion")
     st.caption("Import historical evidence in bulk, or process continuous update events from source systems. Imported files are normalised into the source archive structure with metadata sidecars, then built into FITS containers and indexed.")
+    st.info(
+        "Current archive target: "
+        f"source `{paths.source}` · containers `{paths.containers}` · index `{paths.index}`"
+    )
 
     reports_dir = paths.root / "ingestion" / "reports"
     queue_dir_default = paths.root / "ingestion" / "queue"
@@ -1212,20 +1377,25 @@ def ingestion_tab(root: Path) -> None:
 
     with st.expander("Post-ingestion rebuild", expanded=True):
         st.caption("After ingestion, rebuild FITS containers and indexes so the new evidence becomes searchable.")
+        st.caption(f"Rebuild source: `{paths.source}`")
+        st.caption(f"Rebuild containers: `{paths.containers}`")
+        st.caption(f"Rebuild index: `{paths.index}`")
         split_snapshots = st.checkbox("Legacy split-snapshot mode", value=False, key="ingest-snapshot-build", help="Default rebuilds one active FITS file per entity with internal snapshots.")
         build_lmstudio = st.checkbox("Also rebuild LM Studio embedding index", value=False, key="ingest-lmstudio-build")
         if st.button("Rebuild containers and indexes", type="primary", key="ingest-rebuild"):
             try:
+                paths.containers.mkdir(parents=True, exist_ok=True)
+                paths.index.parent.mkdir(parents=True, exist_ok=True)
                 run_build_containers(root, split_snapshots=split_snapshots)
                 count = rebuild_index(paths.containers, paths.index)
                 st.success(f"Rebuilt SQLite index with {count} objects")
                 try:
-                    vector_count = build_vector_index(paths.index, paths.root / "index" / "evidence_vector.pkl")
+                    vector_count = build_vector_index(paths.index, paths.vector)
                     st.success(f"Rebuilt local vector index with {vector_count} objects")
                 except Exception as exc:
                     st.warning(f"Local vector index rebuild skipped/failed: {exc}")
                 if build_lmstudio:
-                    lm_count = build_lmstudio_vector_index(paths.index, paths.root / "index" / "evidence_lmstudio_vector.pkl")
+                    lm_count = build_lmstudio_vector_index(paths.index, paths.lm_vector)
                     st.success(f"Rebuilt LM Studio vector index with {lm_count} objects")
                 clear_caches()
             except Exception as exc:
@@ -1246,8 +1416,88 @@ def ingestion_tab(root: Path) -> None:
                         st.text(report.read_text(encoding="utf-8", errors="replace"))
 
 
+
+def extraction_tab(root: Path) -> None:
+    paths = get_ui_archive_paths(root)
+    st.subheader("OCR and structured extraction")
+    st.markdown(
+        "The FITS containers preserve original payloads plus OCR/search text, extracted fields and extraction events. "
+        "The rebuilt indexes accelerate discovery, but the extraction artefacts are also embedded in the FITS files."
+    )
+
+    report = extraction_dashboard(paths.index)
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Indexed objects", report.get("object_count", 0))
+    c2.metric("With searchable text", report.get("with_search_text", 0))
+    c3.metric("With extracted fields", report.get("with_extracted_fields", 0))
+    c4.metric("Low confidence", report.get("low_confidence_objects", 0))
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("#### OCR / extraction sources")
+        sources = pd.DataFrame(report.get("ocr_sources", []))
+        if sources.empty:
+            st.info("No OCR/index source data found. Rebuild containers and index.")
+        else:
+            st.dataframe(sources, use_container_width=True, hide_index=True)
+    with col_b:
+        st.markdown("#### Extracted field counts")
+        field_counts = report.get("field_counts", {}) or {}
+        if not field_counts:
+            st.info("No extracted fields found yet.")
+        else:
+            fields_df = pd.DataFrame([{"field_name": k, "count": v} for k, v in sorted(field_counts.items(), key=lambda kv: (-kv[1], kv[0]))])
+            st.dataframe(fields_df, use_container_width=True, hide_index=True, height=280)
+
+    low_rows = report.get("low_confidence_rows", [])
+    with st.expander("Low-confidence extraction rows", expanded=bool(low_rows)):
+        if low_rows:
+            st.dataframe(pd.DataFrame(low_rows), use_container_width=True, hide_index=True, height=320)
+        else:
+            st.success("No low-confidence extraction rows in the current index.")
+
+    st.divider()
+    st.markdown("### Per-customer extracted fields")
+    entities = cached_entities(str(paths.index)) if paths.index.exists() else []
+    if not entities:
+        st.info("No indexed entities found. Rebuild the index first.")
+    else:
+        selected_entity = st.selectbox(
+            "Customer / entity",
+            options=[e["entity_id"] for e in entities],
+            format_func=lambda entity_id: next((f"{e['entity_id']} — {e.get('display_name', '')}" for e in entities if e["entity_id"] == entity_id), entity_id),
+            key="extraction-entity-select",
+        )
+        field_rows = extracted_fields_for_entity(paths.index, selected_entity)
+        if not field_rows:
+            st.info("No extracted fields for this entity.")
+        else:
+            field_df = pd.DataFrame(field_rows)
+            visible_cols = [
+                "object_id", "snapshot_id", "category", "document_type", "filename", "ocr_source",
+                "extraction_confidence", "field_name", "field_value", "field_type", "field_confidence", "source_system",
+            ]
+            st.dataframe(field_df[[c for c in visible_cols if c in field_df.columns]], use_container_width=True, hide_index=True, height=420)
+
+    st.divider()
+    st.markdown("### FITS-level extraction inspection")
+    containers = sorted(paths.containers.glob("*.fits"))
+    if not containers:
+        st.info("No FITS containers found.")
+        return
+    selected_container = st.selectbox("Container", options=containers, format_func=lambda p: p.name, key="extraction-container-select")
+    if st.button("Inspect extraction HDUs", key="inspect-extraction-hdus"):
+        container_report = extraction_report_for_container(selected_container)
+        st.json({k: v for k, v in container_report.items() if k not in {"fields", "events"}})
+        with st.expander("Extracted fields embedded in FITS", expanded=True):
+            fields = container_report.get("fields", [])
+            st.dataframe(pd.DataFrame(fields), use_container_width=True, hide_index=True) if fields else st.info("No extracted fields HDU rows.")
+        with st.expander("Extraction events embedded in FITS", expanded=False):
+            events = container_report.get("events", [])
+            st.dataframe(pd.DataFrame(events), use_container_width=True, hide_index=True) if events else st.info("No extraction event HDU rows.")
+
 def retention_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     st.subheader("Retention and legal hold")
     report = retention_report(paths.index)
     summary = report.get("summary", {})
@@ -1263,7 +1513,7 @@ def retention_tab(root: Path) -> None:
 
 
 def integrity_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     st.subheader("Integrity and corruption detection")
     containers = sorted(paths.containers.glob("*.fits"))
     if not containers:
@@ -1281,7 +1531,7 @@ def integrity_tab(root: Path) -> None:
 
 
 def export_tab(root: Path) -> None:
-    paths = resolve_archive_paths(root)
+    paths = get_ui_archive_paths(root)
     st.subheader("Export evidence pack")
     containers = sorted(paths.containers.glob("*.fits"))
     if not containers:
@@ -1318,31 +1568,53 @@ GET  /containers/{container_name}/validate?root=samples""")
 
 def main() -> None:
     st.title("Entity Evidence Container Demo")
-    st.caption("FITS-based portable evidence objects with snapshot containers, integrity validation, retention/legal hold, OCR indexing, local vector search, evidence export and API access.")
+    st.caption("FITS-based portable evidence objects with embedded OCR, extracted fields, internal snapshots, integrity validation, retention/legal hold, direct FITS search, local vector search, evidence export and API access.")
+    st.sidebar.markdown("### Mode")
+    st.sidebar.radio(
+        "Interface mode",
+        ["Basic", "Advanced"],
+        index=0,
+        key="ui_mode",
+        help="Basic shows the normal user workflow. Advanced exposes diagnostics, build tools and implementation controls.",
+    )
     root = Path(st.sidebar.text_input("Demo root folder", value=str(DEFAULT_ROOT)))
-    paths = resolve_archive_paths(root)
+    paths = configure_archive_paths(root)
     schema_status = get_index_schema_status(paths.index)
     if paths.index.exists() and not schema_status["is_current"]:
         st.warning("The SQLite search index was built with an older schema. Use Dashboard → Rebuild SQLite/FTS index.")
-    st.sidebar.markdown("### Paths")
-    st.sidebar.caption(f"Source: `{paths.source}`"); st.sidebar.caption(f"Containers: `{paths.containers}`"); st.sidebar.caption(f"Index: `{paths.index}`")
-    st.sidebar.caption(f"Vector: `{paths.root / 'index' / 'evidence_vector.pkl'}`")
-    st.sidebar.caption(f"LM vector: `{paths.root / 'index' / 'evidence_lmstudio_vector.pkl'}`")
-    if st.sidebar.button("Refresh UI caches"):
-        clear_caches(); st.rerun()
-    tabs = st.tabs(["Dashboard", "Health", "Comparison", "Customers", "Search", "Completeness", "Rulesets", "Ingestion", "Retention", "Integrity", "Export", "API"])
-    with tabs[0]: dashboard_tab(root)
-    with tabs[1]: health_tab(root)
-    with tabs[2]: comparison_tab(root)
-    with tabs[3]: customers_tab(root)
-    with tabs[4]: search_tab(root)
-    with tabs[5]: evidence_completeness_tab(root)
-    with tabs[6]: ruleset_builder_tab(root)
-    with tabs[7]: ingestion_tab(root)
-    with tabs[8]: retention_tab(root)
-    with tabs[9]: integrity_tab(root)
-    with tabs[10]: export_tab(root)
-    with tabs[11]: api_tab(root)
+    if is_basic_mode():
+        st.sidebar.markdown("### Archive")
+        st.sidebar.caption(f"Root: `{paths.root}`")
+        st.sidebar.caption(f"Containers: `{paths.containers}`")
+        st.sidebar.caption(f"Index: `{paths.index}`")
+        if st.sidebar.button("Refresh UI caches"):
+            clear_caches(); st.rerun()
+        tabs = st.tabs(["Search", "Customers", "Completeness", "Evidence Packs"])
+        with tabs[0]: search_tab(root)
+        with tabs[1]: customers_tab(root)
+        with tabs[2]: evidence_completeness_tab(root)
+        with tabs[3]: export_tab(root)
+    else:
+        st.sidebar.markdown("### Paths")
+        st.sidebar.caption(f"Source: `{paths.source}`"); st.sidebar.caption(f"Containers: `{paths.containers}`"); st.sidebar.caption(f"Index: `{paths.index}`")
+        st.sidebar.caption(f"Vector: `{paths.root / 'index' / 'evidence_vector.pkl'}`")
+        st.sidebar.caption(f"LM vector: `{paths.root / 'index' / 'evidence_lmstudio_vector.pkl'}`")
+        if st.sidebar.button("Refresh UI caches"):
+            clear_caches(); st.rerun()
+        tabs = st.tabs(["Dashboard", "Health", "Comparison", "Customers", "Search", "Completeness", "Rulesets", "Ingestion", "Extraction", "Retention", "Integrity", "Export", "API"])
+        with tabs[0]: dashboard_tab(root)
+        with tabs[1]: health_tab(root)
+        with tabs[2]: comparison_tab(root)
+        with tabs[3]: customers_tab(root)
+        with tabs[4]: search_tab(root)
+        with tabs[5]: evidence_completeness_tab(root)
+        with tabs[6]: ruleset_builder_tab(root)
+        with tabs[7]: ingestion_tab(root)
+        with tabs[8]: extraction_tab(root)
+        with tabs[9]: retention_tab(root)
+        with tabs[10]: integrity_tab(root)
+        with tabs[11]: export_tab(root)
+        with tabs[12]: api_tab(root)
 
 
 if __name__ == "__main__":

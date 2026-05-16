@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0002",
+  "display_name": "Oliver Hartley",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0002/10_transactions/transactions_q1_2026.csv",
+  "filename": "transactions_q1_2026.csv",
+  "category": "Transactions",
+  "document_type": "Transaction Extract",
+  "source_system": "Core Banking Export",
+  "captured_at": "2026-03-31",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "TRANSACTIONS_2026_Q1",
+  "snapshot_type": "Transactions",
+  "sha256": "347e399e25fdd3c08b89b9803b619a62fda14917dd04ce0c983b649fcbfa3e5d",
+  "missing_flag": "No"
+}

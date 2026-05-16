@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0009",
+  "display_name": "Henry Ozanne",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0009/03_identity/passport_scan.jpg",
+  "filename": "passport_scan.jpg",
+  "category": "Identity",
+  "document_type": "Passport / ID",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-20",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "2759fbeebf3cbf275636b17ffd426229911a6fb07788849069381d752f84b375",
+  "missing_flag": "No"
+}

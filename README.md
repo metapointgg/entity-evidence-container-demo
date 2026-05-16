@@ -762,3 +762,74 @@ Architectural rule:
 FITS container = durable source of truth
 SQLite/vector indexes = disposable search acceleration rebuilt from FITS
 ```
+
+## OCR and structured extraction
+
+The current architecture now treats each FITS container as more than a binary evidence store. During container build, each source payload is processed through a deterministic extraction pipeline:
+
+1. preserve the original payload byte-for-byte;
+2. extract searchable text using generated sidecars, direct text, PDF text, or optional Tesseract OCR;
+3. derive structured fields such as detected names, addresses, dates, jurisdictions, source-of-wealth signals, risk-rating signals and evidence-quality flags;
+4. store the original payload, OCR text, extracted fields and extraction events inside the customer/entity FITS file.
+
+The following FITS HDUs are now included where available:
+
+```text
+OCR_TEXT
+EXTRACTED_FIELDS
+EXTRACTION_EVENTS
+```
+
+The rebuilt SQLite/FTS and vector indexes remain disposable acceleration layers. The source of truth is still the customer/entity FITS file.
+
+### OCR provider
+
+Set the OCR provider before building containers:
+
+```bash
+export EEC_OCR_PROVIDER=auto       # sidecar/direct/PDF text first, optional OCR fallback
+export EEC_OCR_PROVIDER=sidecar    # generated sidecars/direct/PDF text, no native OCR
+export EEC_OCR_PROVIDER=tesseract  # prefer native image OCR where possible
+export EEC_OCR_PROVIDER=none       # direct text only
+```
+
+For native OCR on macOS:
+
+```bash
+brew install tesseract
+python -m pip install pytesseract
+```
+
+Then rebuild containers and indexes:
+
+```bash
+python scripts/refresh_demo_assets.py --root samples --clean --regenerate --customers 3 --target-mb-per-customer 2 --seed 42 --include-edge-cases
+```
+
+### Inspect extraction results
+
+```bash
+python scripts/extraction_report.py --sqlite samples/index/evidence_index.db
+python scripts/extraction_report.py --container samples/containers/CUST-000001.fits
+```
+
+The Streamlit app now includes an **Extraction** tab showing OCR source counts, extracted field counts, low-confidence extraction rows, and per-customer extracted field details.
+
+### Example extraction-led queries
+
+```text
+Show me proof of address documents with low OCR confidence.
+What address was extracted from this customer's proof of address?
+Show me customers where source of wealth mentions property sale.
+Show me documents where source of wealth mentions investment income.
+Show me documents with low text extraction signal.
+```
+
+## Basic and Advanced UI modes
+
+The Streamlit UI now supports two modes from the sidebar:
+
+- **Basic**: a clean operational interface for normal users. It shows Search, Customers, Completeness and Evidence Packs. Search uses sensible defaults: local AI interpretation where available, direct FITS search for selected-customer evidence, AI summaries where relevant, and the rebuildable index for portfolio/cohort queries.
+- **Advanced**: the full technical/demo interface with dashboard, health, comparison, rulesets, ingestion, extraction, retention, integrity, export and API tabs, plus detailed search controls and interpreted-query diagnostics.
+
+Use Basic mode for business-user walkthroughs and Advanced mode for development, diagnostics and architecture demonstrations.

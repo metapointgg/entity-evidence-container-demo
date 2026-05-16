@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/10_transactions/transactions_q1_2026.csv",
+  "filename": "transactions_q1_2026.csv",
+  "category": "Transactions",
+  "document_type": "Transaction Extract",
+  "source_system": "Core Banking Export",
+  "captured_at": "2026-03-31",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "TRANSACTIONS_2026_Q1",
+  "snapshot_type": "Transactions",
+  "sha256": "af900e573e18b6ce0bc5e9ffad78e5314de611dc68cb44310808a93e0ac263df",
+  "missing_flag": "No"
+}

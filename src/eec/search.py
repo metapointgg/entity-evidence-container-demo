@@ -35,6 +35,7 @@ def _base_select() -> str:
                s.source_system, s.retention_class, s.retention_until, s.legal_hold_status, s.deletion_eligible, s.sensitivity, s.risk_rating, s.jurisdiction, s.ocr_source,
                snippet(object_search, 20, '[', ']', ' ... ', 22) AS snippet,
                o.container_path, o.hdu_name, o.size_bytes, o.mime_type, o.search_text,
+               o.extraction_confidence, o.extracted_fields_count, o.extracted_fields_json,
                e.occupation
         FROM object_search s
         JOIN objects o ON o.object_id = s.object_id
@@ -74,7 +75,7 @@ def advanced_search_index(sqlite_path: Path, query: str = "", filters: Dict[str,
             params: list[Any] = [*filter_params, candidate_limit]
             rows = _rows_to_dicts(conn.execute(sql, params).fetchall())
             for row in rows:
-                score_text = " ".join(str(row.get(k, "")) for k in ["display_name", "risk_rating", "snapshot_type", "category", "document_type", "filename", "source_system", "retention_class", "legal_hold_status", "search_text"])
+                score_text = " ".join(str(row.get(k, "")) for k in ["display_name", "risk_rating", "snapshot_type", "category", "document_type", "filename", "source_system", "retention_class", "legal_hold_status", "search_text", "extracted_fields_json"])
                 row["semantic_score"] = cosine_score(query, score_text)
             rows.sort(key=lambda r: r.get("semantic_score", 0.0), reverse=True)
             return rows[:limit]

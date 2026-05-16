@@ -1,0 +1,18 @@
+{
+  "event_id": "EVT-000001",
+  "event_type": "DOCUMENT_CAPTURED",
+  "entity_id": "NTC-0002",
+  "display_name": "Oliver Hartley",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "payload_path": "incoming_payloads/NTC-0002_new_proof_of_address.pdf",
+  "category": "Address",
+  "document_type": "Proof of Address",
+  "source_system": "Salesforce FSC",
+  "captured_at": "2026-05-16T09:15:00Z",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "CDD_REMEDIATION_2026",
+  "snapshot_type": "CDD Remediation"
+}

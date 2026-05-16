@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0006",
+  "display_name": "Oscar Mauger",
+  "entity_type": "Individual",
+  "jurisdiction": "Isle of Man",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0006/06_statements/statement_2026_03.pdf",
+  "filename": "statement_2026_03.pdf",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-03-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "STATEMENTS_2026_Q1",
+  "snapshot_type": "Statements",
+  "sha256": "b426f3b8e708e11e74874a714af6257ff56b643b920c6125110bf8906add4d1e",
+  "missing_flag": "No"
+}

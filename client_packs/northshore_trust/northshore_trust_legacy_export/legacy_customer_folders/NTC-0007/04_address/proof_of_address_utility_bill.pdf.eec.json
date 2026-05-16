@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0007",
+  "display_name": "Aurelia Holdings Limited",
+  "entity_type": "Corporate",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0007/04_address/proof_of_address_utility_bill.pdf",
+  "filename": "proof_of_address_utility_bill.pdf",
+  "category": "Address",
+  "document_type": "Proof of Address",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-28",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "1519e23d7027d18399b407d2d1146673ed9678cebccc516e5f62350482206226",
+  "missing_flag": "No"
+}

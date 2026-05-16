@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0009",
+  "display_name": "Henry Ozanne",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0009/02_cdd/cdd_risk_review.pdf",
+  "filename": "cdd_risk_review.pdf",
+  "category": "Due Diligence",
+  "document_type": "CDD Review",
+  "source_system": "AML Platform",
+  "captured_at": "2025-12-21",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "0a664462f9b548a5ce961ce92033c2815b7ebe14413568975bfb6f69fd124e7c",
+  "missing_flag": "No"
+}

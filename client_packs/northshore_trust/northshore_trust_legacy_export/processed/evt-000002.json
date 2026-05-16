@@ -1,0 +1,18 @@
+{
+  "event_id": "EVT-000002",
+  "event_type": "STATEMENT_GENERATED",
+  "entity_id": "NTC-0001",
+  "display_name": "Amelia Le Page",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "payload_path": "incoming_payloads/NTC-0001_statement_2026_04.pdf",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "source_system": "Statement Engine",
+  "captured_at": "2026-05-16T10:00:00Z",
+  "retention_class": "Statements",
+  "sensitivity": "Confidential",
+  "snapshot_id": "STATEMENTS_2026_Q2",
+  "snapshot_type": "Statements"
+}

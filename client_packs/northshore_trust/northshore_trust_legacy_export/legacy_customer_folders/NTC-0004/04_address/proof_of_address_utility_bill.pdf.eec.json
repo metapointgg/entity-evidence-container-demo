@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0004",
+  "display_name": "Noah Carey",
+  "entity_type": "Individual",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0004/04_address/proof_of_address_utility_bill.pdf",
+  "filename": "proof_of_address_utility_bill.pdf",
+  "category": "Address",
+  "document_type": "Proof of Address",
+  "source_system": "Document Store",
+  "captured_at": "2026-01-06",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "1ea7678a85a58e35b588f1ca270d9e5d057b6c75772bcc96702432e6d5207184",
+  "missing_flag": "No"
+}

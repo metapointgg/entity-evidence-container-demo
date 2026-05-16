@@ -1,0 +1,16 @@
+date,description,amount,currency,balance
+2026-02-11,Fee,-2000,GBP,13000
+2026-01-06,Inbound transfer,-2000,GBP,11000
+2026-03-12,Inbound transfer,5000,GBP,16000
+2026-02-28,Inbound transfer,5000,GBP,21000
+2026-01-05,Fee,1500,GBP,22500
+2026-01-17,Investment receipt,-80,GBP,22420
+2026-03-06,Inbound transfer,-120,GBP,22300
+2026-03-06,Fee,-80,GBP,22220
+2026-02-10,Investment receipt,-2000,GBP,20220
+2026-02-15,Card payment,-2000,GBP,18220
+2026-01-10,Inbound transfer,1500,GBP,19720
+2026-01-27,Card payment,5000,GBP,24720
+2026-02-06,Fee,5000,GBP,29720
+2026-03-27,Fee,-2000,GBP,27720
+2026-02-28,Inbound transfer,1500,GBP,29220

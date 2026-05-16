@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0007",
+  "category": "Corporate",
+  "document_type": "Authorised Signatory ID",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-26",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0007/09_corporate/authorised_signatory_id.pdf",
+  "original_relative_path": "authorised_signatory_id.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "bbb6d684221447f49df1142cd663d27415bd5efa2bac50a52fc28d2de9134eea"
+}

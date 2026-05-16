@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0002",
+  "display_name": "Oliver Hartley",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "relative_path": "legacy_customer_folders/NTC-0002/08_screening/pep_sanctions_screening.pdf",
+  "filename": "pep_sanctions_screening.pdf",
+  "category": "Screening",
+  "document_type": "Screening Evidence",
+  "source_system": "Screening Provider",
+  "captured_at": "2026-01-11",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "9799d82c265de79dc9606de6dd096a73ce8874b56191678ff318d0e0be56582b",
+  "missing_flag": "No"
+}

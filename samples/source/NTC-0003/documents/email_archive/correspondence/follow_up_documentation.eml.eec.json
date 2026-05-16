@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0003",
+  "category": "Correspondence",
+  "document_type": "Customer Correspondence",
+  "source_system": "Email Archive",
+  "captured_at": "2026-01-12",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "CORRESPONDENCE_2026",
+  "snapshot_type": "Correspondence",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0003/07_correspondence/follow_up_documentation.eml",
+  "original_relative_path": "follow_up_documentation.eml",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "55ff52439e7d5bbbfe881aa677f5b334a2b4ecceb402ccebc0451cf3380b5d4d"
+}

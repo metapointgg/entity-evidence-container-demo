@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0009",
+  "display_name": "Henry Ozanne",
+  "entity_type": "Individual",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0009/04_address/proof_of_address_utility_bill.pdf",
+  "filename": "proof_of_address_utility_bill.pdf",
+  "category": "Address",
+  "document_type": "Proof of Address",
+  "source_system": "Document Store",
+  "captured_at": "2025-12-22",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "11ec3ee4ff32ccfa3acc39b91539d4f7786be7aa8e5cb9daf60d614626dfdbce",
+  "missing_flag": "No"
+}

@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/10_transactions/legacy_archive_payload.bin",
+  "filename": "legacy_archive_payload.bin",
+  "category": "Archive",
+  "document_type": "Legacy Binary Payload",
+  "source_system": "Legacy Archive Export",
+  "captured_at": "2025-12-14",
+  "retention_class": "Archive",
+  "sensitivity": "Restricted",
+  "legal_hold_status": "None",
+  "snapshot_id": "LEGACY_BULK",
+  "snapshot_type": "Legacy Archive",
+  "sha256": "139738726c826afe5849b65f815bdcb2c07076be5a634b14f1583eb48ff8c40e",
+  "missing_flag": "No"
+}

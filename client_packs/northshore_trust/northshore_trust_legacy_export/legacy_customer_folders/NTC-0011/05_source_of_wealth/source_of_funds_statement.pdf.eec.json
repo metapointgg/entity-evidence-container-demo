@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0011",
+  "display_name": "Maritime Ventures Ltd",
+  "entity_type": "Corporate",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0011/05_source_of_wealth/source_of_funds_statement.pdf",
+  "filename": "source_of_funds_statement.pdf",
+  "category": "Due Diligence",
+  "document_type": "Source of Funds",
+  "source_system": "AML Platform",
+  "captured_at": "2025-12-18",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "sha256": "81c2f2f8c1cf74000fd677cbceb0119c5e4041348a2fedfba4566a39ddb6174a",
+  "missing_flag": "No"
+}

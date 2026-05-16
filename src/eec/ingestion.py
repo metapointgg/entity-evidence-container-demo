@@ -246,16 +246,32 @@ def ingest_records(records: Iterable[dict[str, Any]], *, source_root: Path, inpu
 
     for raw in records:
         try:
-            source_path_value = raw.get("file_path") or raw.get("source_path") or raw.get("path")
+            source_path_value = (
+                raw.get("file_path")
+                or raw.get("source_path")
+                or raw.get("path")
+                or raw.get("relative_path")
+                or raw.get("payload_path")
+            )
+
             if not source_path_value:
-                raise ValueError("Record has no file_path/source_path/path")
-            source_file = Path(str(source_path_value))
+                raise ValueError("Record has no file_path/source_path/path/relative_path/payload_path")
+
+            source_file = Path(str(source_path_value)).expanduser()
+
             if input_root and not source_file.is_absolute():
-                source_file = input_root / source_file
-            source_file = source_file.expanduser().resolve()
+                candidates = [
+                    input_root / source_file,
+                    input_root.parent / source_file,
+                    input_root.parent.parent / source_file,
+                ]
+
+                source_file = next((candidate for candidate in candidates if candidate.exists()), candidates[0])
+
+            source_file = source_file.resolve()
+
             if not source_file.exists():
                 raise FileNotFoundError(f"Source file not found: {source_file}")
-
             entity_id = str(raw.get("entity_id") or "").strip() or _entity_id_from_folder(source_file.parent)
             entity = _normalise_entity_metadata(raw, entity_id=entity_id, display_name=raw.get("display_name"))
             entity_dir = _ensure_entity_folder(source_root, entity)
@@ -370,7 +386,13 @@ def process_event_queue(queue_dir: Path, source_root: Path, *, processed_dir: Pa
     for event_file in sorted(queue_dir.glob("*.json")):
         try:
             event = _read_json(event_file)
-            result = ingest_event(event, source_root=source_root, overwrite=overwrite)
+            result = ingest_records(
+    [event],
+    source_root=source_root,
+    input_root=queue_dir,
+    overwrite=overwrite,
+    mode="continuous",
+)
             combined_items.extend(result.items)
             ingested += result.ingested_items
             skipped += result.skipped_items

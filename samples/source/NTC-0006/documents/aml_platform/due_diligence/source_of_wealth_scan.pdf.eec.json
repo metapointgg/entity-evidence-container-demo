@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0006",
+  "category": "Due Diligence",
+  "document_type": "Source of Wealth",
+  "source_system": "AML Platform",
+  "captured_at": "2026-01-01",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "CDD_REVIEW_2026",
+  "snapshot_type": "CDD Review",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0006/05_source_of_wealth/source_of_wealth_scan.pdf",
+  "original_relative_path": "source_of_wealth_scan.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "7f4c79834509947c9ee1d8baaa39d32f91409bbcb108f8d10c3d9c6206941a22"
+}

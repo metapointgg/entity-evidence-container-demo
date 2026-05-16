@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0004",
+  "display_name": "Noah Carey",
+  "entity_type": "Individual",
+  "jurisdiction": "United Kingdom",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0004/10_transactions/transactions_q1_2026.csv",
+  "filename": "transactions_q1_2026.csv",
+  "category": "Transactions",
+  "document_type": "Transaction Extract",
+  "source_system": "Core Banking Export",
+  "captured_at": "2026-03-31",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "TRANSACTIONS_2026_Q1",
+  "snapshot_type": "Transactions",
+  "sha256": "fa97dde31a0d49cb43d8c41d1ba378039068f34e8d5abd4c8dd6880e1d91b1fc",
+  "missing_flag": "No"
+}

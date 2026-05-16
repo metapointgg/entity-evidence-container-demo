@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0003",
+  "display_name": "Charlotte Ferbrache",
+  "entity_type": "Individual",
+  "jurisdiction": "Jersey",
+  "risk_rating": "Medium",
+  "relative_path": "legacy_customer_folders/NTC-0003/10_transactions/transactions_q1_2026.csv",
+  "filename": "transactions_q1_2026.csv",
+  "category": "Transactions",
+  "document_type": "Transaction Extract",
+  "source_system": "Core Banking Export",
+  "captured_at": "2026-03-31",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "TRANSACTIONS_2026_Q1",
+  "snapshot_type": "Transactions",
+  "sha256": "2b0cc38c1e1d7fe14c75f8d07f885da49ed0503bc3aa3414f06e7e9506ce1b5d",
+  "missing_flag": "No"
+}

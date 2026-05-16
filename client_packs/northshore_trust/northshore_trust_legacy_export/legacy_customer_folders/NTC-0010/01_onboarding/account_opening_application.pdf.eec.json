@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0010",
+  "display_name": "Isla De Carteret",
+  "entity_type": "Individual",
+  "jurisdiction": "Jersey",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0010/01_onboarding/account_opening_application.pdf",
+  "filename": "account_opening_application.pdf",
+  "category": "Onboarding",
+  "document_type": "Application",
+  "source_system": "Legacy Onboarding Portal",
+  "captured_at": "2025-12-17",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "aefc5261e5df2dbc861e450e433a2443154b809387091c172fa75e17c4c34aa9",
+  "missing_flag": "No"
+}

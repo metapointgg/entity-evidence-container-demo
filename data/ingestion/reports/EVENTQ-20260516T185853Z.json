@@ -1,0 +1,13 @@
+{
+  "run_id": "EVENTQ-20260516T185853Z",
+  "mode": "continuous-queue",
+  "started_at": "2026-05-16T18:58:53Z",
+  "completed_at": "2026-05-16T18:58:53Z",
+  "source": "data/ingestion/queue",
+  "target_source_root": "data/source",
+  "total_items": 0,
+  "ingested_items": 0,
+  "skipped_items": 0,
+  "failed_items": 0,
+  "items": []
+}

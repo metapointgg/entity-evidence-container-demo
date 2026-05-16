@@ -1,0 +1,20 @@
+{
+  "entity_id": "NTC-0010",
+  "display_name": "Isla De Carteret",
+  "entity_type": "Individual",
+  "jurisdiction": "Jersey",
+  "risk_rating": "Low",
+  "relative_path": "legacy_customer_folders/NTC-0010/customer_metadata.json",
+  "filename": "customer_metadata.json",
+  "category": "Metadata",
+  "document_type": "Customer Metadata",
+  "source_system": "Legacy CRM Export",
+  "captured_at": "2025-12-17",
+  "retention_class": "Permanent",
+  "sensitivity": "Internal",
+  "legal_hold_status": "None",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "sha256": "53095a4511c6b6f48a66e91978cd61749314549ec7277349bd31b89171a82ae3",
+  "missing_flag": "No"
+}

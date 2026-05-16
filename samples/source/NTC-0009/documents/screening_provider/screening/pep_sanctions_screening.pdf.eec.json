@@ -1,0 +1,19 @@
+{
+  "entity_id": "NTC-0009",
+  "category": "Screening",
+  "document_type": "Screening Evidence",
+  "source_system": "Screening Provider",
+  "captured_at": "2025-12-21",
+  "retention_class": "CDD",
+  "sensitivity": "Confidential",
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": "Onboarding",
+  "legal_hold_status": "None",
+  "retention_until": "",
+  "deletion_eligible": "No",
+  "source_file": "/Users/mikeozanne/Projects Git/entity-evidence-container-demo/client_packs/northshore_trust/northshore_trust_legacy_export/legacy_customer_folders/NTC-0009/08_screening/pep_sanctions_screening.pdf",
+  "original_relative_path": "pep_sanctions_screening.pdf",
+  "ingestion_run_id": "INGEST-20260516T192320Z",
+  "ingested_at": "2026-05-16T19:23:20Z",
+  "sha256": "6381aff6f282f715b236c4b4dae15c04d6422049e705844daa5f9d3a0cb2625b"
+}

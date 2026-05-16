@@ -1,0 +1,13 @@
+{
+  "run_id": "INGEST-20260516T184213Z",
+  "mode": "bulk",
+  "started_at": "2026-05-16T18:42:13Z",
+  "completed_at": "2026-05-16T18:42:13Z",
+  "source": "/data/new client/northshore_trust_legacy_export",
+  "target_source_root": "data/source",
+  "total_items": 0,
+  "ingested_items": 0,
+  "skipped_items": 0,
+  "failed_items": 0,
+  "items": []
+}
