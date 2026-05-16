@@ -1,0 +1,13 @@
+Account Opening Application
+Synthetic customer onboarding pack for Aurelia Le Page / CUST-999001
+Customer ID: CUST-999001
+Name: Aurelia Le Page
+Jurisdiction: Guernsey
+Occupation: Property Developer
+Risk rating: High
+Product 1: Current account
+Product 2: Fixed term deposit
+Product 3: Notice account
+Proof of address: Missing at time of archive snapshot.
+Exception reason: customer provided identity evidence and source-of-wealth material, but address evidence remains outstanding.
+Compliance status: High-risk file requires proof of address before final onboarding closure.

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import base64
+import hashlib
+import json
 import subprocess
 import sys
 from datetime import datetime
@@ -15,11 +17,24 @@ from eec.container_reader import inspect_container, validate_container
 from eec.corruption import corrupt_container
 from eec.exporter import export_evidence_pack
 from eec.indexer import rebuild_index
+from eec.ingestion import bulk_ingest, process_event_queue, write_ingestion_report
 from eec.presets import REGULATORY_PRESETS
 from eec.retention import retention_report
+from eec.rulesets import (
+    DEFAULT_REQUIRED_EVIDENCE,
+    default_ruleset,
+    ensure_rulesets,
+    evaluate_completeness,
+    export_completeness_report,
+    load_rulesets,
+    save_rulesets,
+    EvidenceRuleProfile,
+    EvidenceRuleset,
+)
 from eec.search import advanced_search_index
+from eec.query_interpreter import execute_structured_query, interpret_archive_query, query_capability_matrix
 from eec.search_result_exporter import export_search_results
-from eec.local_llm import answer_question_from_evidence, expand_search_query, lm_studio_status, summarise_search_results
+from eec.local_llm import answer_question_from_evidence, expand_search_query, lm_studio_status, summarise_completeness_report, summarise_search_results
 from eec.lmstudio_vector_search import build_lmstudio_vector_index, lmstudio_vector_search
 from eec.ui_data import (
     format_bytes,
@@ -341,109 +356,852 @@ def _merge_results(primary: list[dict[str, Any]], extra_batches: list[list[dict[
     return merged[:limit]
 
 
+def _customer_label(entity: Dict[str, Any]) -> str:
+    return f"{entity.get('entity_id')} — {entity.get('display_name', '')} · {entity.get('jurisdiction', '')} · {entity.get('risk_rating', '')}"
+
+
+def _evidence_table(rows: list[dict[str, Any]], *, key: str, height: int = 420):
+    df = pd.DataFrame(rows)
+    cols = [
+        "object_id", "entity_id", "display_name", "snapshot_id", "risk_rating", "jurisdiction",
+        "category", "document_type", "filename", "source_system", "retention_class",
+        "retention_until", "legal_hold_status", "sensitivity", "ocr_source", "size_bytes",
+    ]
+    for score_col in ["lmstudio_vector_score", "vector_score", "semantic_score"]:
+        if score_col in df.columns:
+            cols.insert(3, score_col)
+    out = df[[c for c in cols if c in df.columns]].copy()
+    if "size_bytes" in out.columns:
+        out["size"] = out["size_bytes"].apply(format_bytes)
+        out = out.drop(columns=["size_bytes"])
+    return _selectable_dataframe(out, key=key, height=height)
+
+
+
+def _rows_summary_cache_key(query: str, rows: list[dict[str, Any]]) -> str:
+    """Create a stable key for an AI summary over a result set."""
+    identity = {
+        "query": query,
+        "rows": [
+            {
+                "container_id": row.get("container_id"),
+                "snapshot_id": row.get("snapshot_id"),
+                "entity_id": row.get("entity_id"),
+                "object_id": row.get("object_id"),
+                "filename": row.get("filename"),
+                "document_type": row.get("document_type"),
+                "sha256": row.get("sha256"),
+            }
+            for row in rows[:25]
+        ],
+    }
+    payload = json.dumps(identity, sort_keys=True, default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _render_ai_summary_once(query: str, rows: list[dict[str, Any]], *, state_key: str) -> None:
+    """Render an AI summary without recomputing it on dataframe row-selection reruns."""
+    if not rows:
+        return
+
+    cache_key = _rows_summary_cache_key(query, rows)
+    summary_store_key = f"ai_summary::{state_key}"
+    summary_store = st.session_state.setdefault(summary_store_key, {})
+
+    st.markdown("### AI evidence summary")
+
+    if cache_key not in summary_store:
+        with st.spinner("Summarising retrieved evidence with the local LLM..."):
+            summary_store[cache_key] = summarise_search_results(query, rows)
+
+    st.markdown(summary_store[cache_key])
+
+    c1, c2 = st.columns([1, 5])
+    if c1.button("Refresh summary", key=f"{summary_store_key}:refresh"):
+        summary_store.pop(cache_key, None)
+        st.rerun()
+
+
+
+def _completeness_summary_cache_key(report: dict[str, Any], rows: list[dict[str, Any]], filters: dict[str, Any]) -> str:
+    """Create a stable key for an AI summary over a completeness result set."""
+    identity = {
+        "summary": report.get("summary", {}),
+        "filters": filters,
+        "rows": [
+            {
+                "entity_id": row.get("entity_id"),
+                "risk_rating": row.get("risk_rating"),
+                "jurisdiction": row.get("jurisdiction"),
+                "profile": row.get("profile"),
+                "complete": row.get("complete"),
+                "missing_evidence": row.get("missing_evidence"),
+                "present_evidence": row.get("present_evidence"),
+            }
+            for row in rows[:50]
+        ],
+    }
+    payload = json.dumps(identity, sort_keys=True, default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _render_completeness_ai_summary(report: dict[str, Any], rows: list[dict[str, Any]], filters: dict[str, Any], *, state_key: str) -> None:
+    """Render an AI completeness summary without recomputing on dataframe-selection reruns."""
+    if not rows:
+        return
+
+    st.markdown("### AI completeness summary")
+    st.caption("Generated locally from the completeness result set. The checklist and ruleset remain the source of truth.")
+
+    cache_key = _completeness_summary_cache_key(report, rows, filters)
+    store_key = f"completeness_ai_summary::{state_key}"
+    store = st.session_state.setdefault(store_key, {})
+
+    if cache_key not in store:
+        with st.spinner("Summarising completeness findings with the local LLM..."):
+            summary_report = {**report, "rows": rows}
+            store[cache_key] = summarise_completeness_report(summary_report)
+
+    st.markdown(store[cache_key])
+
+    c1, c2 = st.columns([1, 5])
+    if c1.button("Refresh summary", key=f"{store_key}:refresh"):
+        store.pop(cache_key, None)
+        st.rerun()
+
+def _cached_ai_summary_for_export(query: str, rows: list[dict[str, Any]], state_key: str | None) -> str | None:
+    """Return a previously generated AI summary for this result set, if one exists."""
+    if not state_key:
+        return None
+    cache_key = _rows_summary_cache_key(query, rows)
+    summary_store = st.session_state.get(f"ai_summary::{state_key}", {})
+    if isinstance(summary_store, dict):
+        value = summary_store.get(cache_key)
+        return str(value) if value else None
+    return None
+
+
+def _render_evidence_actions(
+    rows: list[dict[str, Any]],
+    *,
+    paths,
+    query: str,
+    key_prefix: str,
+    selected_idx: int | None = None,
+    structured_query: dict[str, Any] | None = None,
+    result_context: dict[str, Any] | None = None,
+    ai_summary_state_key: str | None = None,
+) -> None:
+    st.markdown("### Evidence actions")
+    c_export, c_preview, c_validate, c_msg = st.columns([1.5, 1.4, 1.2, 3])
+    if c_export.button("Export current evidence pack", type="primary", key=f"{key_prefix}-export"):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_dir = paths.exports / f"evidence_results_{timestamp}"
+        ai_summary = _cached_ai_summary_for_export(query, rows, ai_summary_state_key)
+        export_search_results(
+            rows,
+            out_dir,
+            pack_name=query,
+            query=query,
+            structured_query=structured_query,
+            completeness_report=result_context if (result_context or {}).get("type") == "completeness_report" else None,
+            ai_summary=ai_summary,
+        )
+        st.success(f"Exported {len(rows)} evidence item(s) to {out_dir}")
+        st.caption("Pack includes README, query JSON, structured query JSON, manifest, hash report, source-system report, retention/legal-hold report and AI summary where available.")
+    if selected_idx is None:
+        c_msg.caption("Select an evidence row to preview or ask about it.")
+        return
+    row = rows[selected_idx]
+    _open_preview_once(row, f"{key_prefix}:{row.get('object_id')}", session_key=f"{key_prefix}_last_preview")
+    if c_preview.button("Open selected preview again", key=f"{key_prefix}-preview"):
+        render_object_preview_modal(row)
+    if c_validate.button("Validate container", key=f"{key_prefix}-validate"):
+        validation = cached_validate(row["container_path"])
+        render_validation_badge(validation["status"])
+    c_msg.caption(f"Selected: {row.get('display_name')} / {row.get('filename')}")
+    ask = st.text_input("Ask about selected / retrieved evidence", value="", key=f"{key_prefix}-ask")
+    if ask and st.button("Ask local LLM", key=f"{key_prefix}-ask-button"):
+        try:
+            evidence_rows = [row] + [r for i, r in enumerate(rows) if i != selected_idx][:7]
+            with st.spinner("Asking the local LLM over retrieved evidence..."):
+                st.markdown(answer_question_from_evidence(ask, evidence_rows))
+        except Exception as exc:
+            st.error(f"Local LLM question failed: {exc}")
+
+
+def _restore_structured_flags(structured_dict: dict[str, Any]) -> dict[str, Any]:
+    """Small helper for rendering persisted structured search state after Streamlit reruns."""
+    return {
+        "intent": structured_dict.get("intent"),
+        "result_type": structured_dict.get("result_type"),
+        "requires_summary": bool(structured_dict.get("requires_summary")),
+        "requires_evidence": bool(structured_dict.get("requires_evidence", True)),
+    }
+
+
+def _show_customer_evidence_from_search(paths, selected_customer: dict[str, Any], *, query: str) -> None:
+    entity_id = selected_customer.get("entity_id")
+    if not entity_id:
+        return
+    st.markdown("### Selected customer evidence")
+    st.caption(
+        f"{entity_id} — {selected_customer.get('display_name', '')} · "
+        f"{selected_customer.get('jurisdiction', '')} · {selected_customer.get('risk_rating', '')}"
+    )
+    try:
+        customer_rows = list_objects_for_entity(paths.index, entity_id)
+    except Exception as exc:
+        st.warning(f"Could not load customer evidence: {exc}")
+        return
+    if not customer_rows:
+        st.info("No indexed evidence was found for the selected customer.")
+        return
+    event, supported = _evidence_table(customer_rows, key=f"search-customer-evidence-{entity_id}", height=360)
+    evidence_idx = _selected_row_index(event) if supported else None
+    _render_evidence_actions(
+        customer_rows,
+        paths=paths,
+        query=query or f"Evidence for {entity_id}",
+        key_prefix=f"search-customer-evidence-{entity_id}",
+        selected_idx=evidence_idx,
+    )
+
+
 def search_tab(root: Path) -> None:
     paths = resolve_archive_paths(root)
-    st.subheader("Search rebuilt index")
+    st.subheader("Search the Evidence Archive")
     schema_status = get_index_schema_status(paths.index)
     if not schema_status["is_current"]:
-        st.error(schema_status["message"]); st.json(schema_status); return
-    facets = cached_facets(str(paths.index))
-    preset_names = ["Custom search"] + list(REGULATORY_PRESETS.keys())
-    preset_name = st.selectbox("Regulatory evidence search preset", preset_names)
-    preset = REGULATORY_PRESETS.get(preset_name, {})
-    if preset_name != "Custom search": st.caption(preset.get("description", ""))
-    query = st.text_input("Search query", value=preset.get("query", "source of wealth"))
-    mode = st.radio(
-        "Search mode",
-        ["keyword", "semantic", "vector", "lmstudio-vector"],
-        horizontal=True,
-        help="Vector mode uses the local TF-IDF index. LM Studio vector mode uses the local embeddings endpoint and evidence_lmstudio_vector.pkl.",
-    )
-    limit = st.slider("Limit", min_value=5, max_value=250, value=50, step=5)
-    filters = _filter_multiselects(facets, defaults=preset.get("filters", {}))
+        st.error(schema_status["message"])
+        st.json(schema_status)
+        return
 
-    with st.expander("Local LM Studio assistance", expanded=False):
+    state_key = f"intent_search_state::{paths.root.resolve()}"
+
+    entities = cached_entities(str(paths.index))
+    entity_options = {"": "No selected customer"}
+    entity_options.update({entity["entity_id"]: _customer_label(entity) for entity in entities})
+
+    st.markdown(
+        "Ask in natural language. The app interprets the request into a controlled structured query, "
+        "executes deterministic filters/search, and only then uses the local LLM to summarise retrieved evidence."
+    )
+
+    # Keep selected customer stable across reruns and row clicks.
+    if "search_scope" not in st.session_state:
+        st.session_state["search_scope"] = "All customers"
+    if "search_selected_entity_id" not in st.session_state:
+        st.session_state["search_selected_entity_id"] = ""
+
+    c_scope, c_customer = st.columns([1, 2])
+    scope = c_scope.radio(
+        "Scope",
+        ["All customers", "Selected customer"],
+        horizontal=True,
+        key="search_scope",
+    )
+
+    selected_entity_id: str | None = None
+    entity_ids = list(entity_options.keys())[1:]
+    if scope == "Selected customer":
+        current_entity = st.session_state.get("search_selected_entity_id") or (entity_ids[0] if entity_ids else "")
+        if current_entity not in entity_ids and entity_ids:
+            current_entity = entity_ids[0]
+        selected_entity_id = c_customer.selectbox(
+            "Customer",
+            options=entity_ids,
+            format_func=lambda value: entity_options.get(value, value),
+            index=entity_ids.index(current_entity) if current_entity in entity_ids else 0,
+            key="search_selected_entity_id",
+        )
+    else:
+        c_customer.caption("Searching across all indexed customer evidence.")
+        st.session_state["search_selected_entity_id"] = st.session_state.get("search_selected_entity_id", "")
+
+    examples = {
+        "Customer source of wealth": "What is the customer's source of wealth?",
+        "High-risk customers": "Show me customers who are high risk",
+        "High-risk Guernsey customers": "Show me customers in Guernsey who are high risk",
+        "CDD for high-risk Guernsey customers": "Show me the CDD for customers in Guernsey who are high risk",
+        "Legal hold review": "Show me documents past retention date but blocked by legal hold",
+        "Regulatory pack": "Prepare evidence for high-risk Guernsey customers showing CDD, source of wealth and screening evidence",
+    }
+    example_name = st.selectbox("Example requests", ["Custom"] + list(examples.keys()), key="search_example")
+    default_query = examples.get(
+        example_name,
+        "What is the customer's source of wealth?" if scope == "Selected customer" else "Show me customers who are high risk",
+    )
+
+    # Do not overwrite the user's text on every rerun caused by table selection.
+    if "search_query_text" not in st.session_state or example_name != st.session_state.get("search_last_example"):
+        st.session_state["search_query_text"] = default_query
+        st.session_state["search_last_example"] = example_name
+
+    query = st.text_area(
+        "Ask a question or request evidence",
+        height=88,
+        key="search_query_text",
+    )
+
+    with st.expander("Advanced options", expanded=False):
         status = lm_studio_status()
         if status.get("available"):
             st.success(f"LM Studio available: {status.get('base_url')}")
             st.caption(f"Query model: {status.get('query_model')} · Chat model: {status.get('chat_model')} · Embedding model: {status.get('embedding_model')}")
         else:
-            st.warning("LM Studio is not currently available.")
+            st.warning("LM Studio is not currently available. The app will use deterministic rule-based interpretation.")
             st.caption(status.get("error", ""))
-        use_llm_expansion = st.checkbox("Use local LLM query expansion", value=False, disabled=not status.get("available"))
-        show_summary = st.checkbox("Enable local LLM result summary", value=False, disabled=not status.get("available"))
-        expanded_terms: list[str] = []
-        if use_llm_expansion and query.strip():
-            try:
-                with st.spinner("Expanding search query with local LLM..."):
-                    expanded_terms = expand_search_query(query)
-                st.caption("Expanded terms: " + ", ".join(expanded_terms))
-            except Exception as exc:
-                st.error(f"Local LLM query expansion failed: {exc}")
+        use_local_ai = st.checkbox("Interpret natural language locally", value=status.get("available", False), disabled=not status.get("available"), key="search_use_local_ai")
+        include_summary = st.checkbox("Generate AI evidence summary when relevant", value=status.get("available", False), disabled=not status.get("available"), key="search_include_summary")
+        show_interpreted = st.checkbox("Show interpreted structured query", value=True, key="search_show_interpreted")
+        limit = st.slider("Result limit", min_value=5, max_value=250, value=50, step=5, key="search_limit")
+        with st.expander("Supported query capabilities", expanded=False):
+            matrix = query_capability_matrix()
+            st.dataframe(
+                pd.DataFrame([
+                    {
+                        "capability": key,
+                        "intent": value.get("intent"),
+                        "result_type": value.get("result_type"),
+                        "requires_selected_customer": value.get("requires_selected_entity"),
+                        "filters": ", ".join(value.get("supports_filters", [])),
+                        "description": value.get("description"),
+                    }
+                    for key, value in matrix.items()
+                ]),
+                use_container_width=True,
+                hide_index=True,
+                height=280,
+            )
+        if st.button("Clear last search result", key="search_clear_state"):
+            st.session_state.pop(state_key, None)
+            for key in list(st.session_state.keys()):
+                if key.startswith(f"ai_summary::{state_key}"):
+                    st.session_state.pop(key, None)
+            st.rerun()
 
-    if mode == "vector":
-        results = cached_vector_search(str(paths.root / "index" / "evidence_vector.pkl"), query + " " + " ".join(expanded_terms), limit)
-        st.caption("Vector mode uses the local offline TF-IDF vector index and does not currently apply structured facets.")
-    elif mode == "lmstudio-vector":
-        results = cached_lmstudio_vector_search(str(paths.root / "index" / "evidence_lmstudio_vector.pkl"), query + " " + " ".join(expanded_terms), limit)
-        st.caption("LM Studio vector mode uses local embeddings from LM Studio. Build this index from the Dashboard tab first.")
-    else:
-        results = cached_search(str(paths.index), query, limit, mode, _filters_key(filters))
-        if expanded_terms:
-            extra = []
-            for term in expanded_terms[:8]:
-                try:
-                    extra.append(cached_search(str(paths.index), term, limit, mode, _filters_key(filters)))
-                except Exception:
-                    pass
-            results = _merge_results(results, extra, limit)
-    st.caption(f"{len(results)} result(s)")
-    if not results:
-        st.info("No results found."); return
-    df = pd.DataFrame(results)
-    cols = ["object_id", "entity_id", "display_name", "snapshot_id", "risk_rating", "category", "document_type", "filename", "source_system", "retention_class", "legal_hold_status", "sensitivity", "ocr_source", "size_bytes"]
-    if "semantic_score" in df.columns: cols.insert(3, "semantic_score")
-    if "vector_score" in df.columns: cols.insert(3, "vector_score")
-    if "lmstudio_vector_score" in df.columns: cols.insert(3, "lmstudio_vector_score")
-    out = df[[c for c in cols if c in df.columns]].copy()
-    if "size_bytes" in out.columns:
-        out["size"] = out["size_bytes"].apply(format_bytes); out = out.drop(columns=["size_bytes"])
-    event, supported = _selectable_dataframe(out, key="search-results-table", height=420)
-    idx = _selected_row_index(event) if supported else None
-    st.markdown("### Result actions")
-    c_export, c_preview, c_validate, c_msg = st.columns([1.4, 1.4, 1.2, 3])
-    if c_export.button("Export all results as evidence pack", type="primary"):
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_dir = paths.exports / f"search_results_{timestamp}"
-        export_search_results(results, out_dir, pack_name=f"{preset_name} / {query}")
-        st.success(f"Exported {len(results)} result(s) to {out_dir}")
-    if idx is not None:
-        row = results[idx]
-        _open_preview_once(row, f"search:{mode}:{query}:{row['object_id']}", session_key="last_search_result_preview")
-        if c_preview.button("Open selected preview again"):
-            render_object_preview_modal(row)
-        if c_validate.button("Validate container"):
-            validation = cached_validate(row["container_path"]); render_validation_badge(validation["status"])
-        c_msg.caption(f"Selected: {row.get('display_name')} / {row.get('filename')}")
-        if row.get("snippet"):
-            st.markdown("### Selected result snippet"); st.markdown(str(row["snippet"]))
-        ask = st.text_input("Ask a question about the current results or selected evidence", value="")
-        if ask and st.button("Ask local LLM"):
-            try:
-                evidence_rows = [row] + [r for i, r in enumerate(results) if i != idx][:7]
-                with st.spinner("Asking local LLM over retrieved evidence..."):
-                    st.markdown(answer_question_from_evidence(ask, evidence_rows))
-            except Exception as exc:
-                st.error(f"Local LLM question failed: {exc}")
-    else:
-        c_msg.caption("Select a row to preview it.")
+    search_clicked = st.button("Search evidence archive", type="primary", key="intent_search_button")
 
-    if show_summary and st.button("Summarise current results with local LLM"):
+    if search_clicked:
+        structured = interpret_archive_query(
+            query,
+            selected_entity_id=selected_entity_id,
+            use_local_ai=use_local_ai,
+            limit=limit,
+        )
+        if include_summary and (
+            structured.result_type in {"evidence", "evidence_grouped_by_customer", "completeness_report"}
+            or structured.intent == "evidence_completeness_review"
+        ):
+            structured.requires_summary = True
+
+        result = execute_structured_query(paths.index, structured)
+        for key in list(st.session_state.keys()):
+            if key.startswith(f"ai_summary::{state_key}"):
+                st.session_state.pop(key, None)
+        st.session_state[state_key] = {
+            "query": query,
+            "structured": structured.to_dict(),
+            "result": result,
+            "selected_entity_id": selected_entity_id,
+            "created_at": datetime.now().isoformat(timespec="seconds"),
+        }
+    elif state_key not in st.session_state:
+        st.info("Choose a scope, enter a request, then click Search evidence archive.")
+        return
+
+    search_state = st.session_state.get(state_key)
+    if not search_state:
+        return
+
+    query = search_state.get("query", query)
+    structured_dict = search_state.get("structured", {})
+    structured_flags = _restore_structured_flags(structured_dict)
+    result = search_state.get("result", {})
+
+    st.caption(f"Showing last search result from {search_state.get('created_at', 'this session')}. Row selections will not reset this result.")
+
+    if show_interpreted:
+        with st.expander("Interpreted request", expanded=True):
+            capability_id = structured_dict.get("capability") or structured_dict.get("intent")
+            capability = query_capability_matrix().get(capability_id or "", {})
+            if capability:
+                st.info(f"Capability: {capability_id} — {capability.get('description', '')}")
+            st.json(structured_dict)
+
+    result_type = result.get("type")
+    rows: list[dict[str, Any]] = result.get("rows") or []
+
+    if result_type == "customers":
+        st.markdown(f"### Customers found: {len(rows)}")
+        if not rows:
+            st.info("No customers matched the request.")
+            return
+        df = pd.DataFrame(rows)
+        display_cols = ["entity_id", "display_name", "jurisdiction", "risk_rating", "occupation", "evidence_count", "last_evidence_date", "payload_bytes"]
+        out = df[[c for c in display_cols if c in df.columns]].copy()
+        if "payload_bytes" in out.columns:
+            out["payload_size"] = out["payload_bytes"].apply(format_bytes)
+            out = out.drop(columns=["payload_bytes"])
+        event, supported = _selectable_dataframe(out, key="structured-customers", height=420)
+        selected_idx = _selected_row_index(event) if supported else None
+        if selected_idx is not None:
+            selected_customer = rows[selected_idx]
+            selected_customer_id = selected_customer.get("entity_id")
+            st.session_state["search_selected_entity_id"] = selected_customer_id or ""
+            st.success(f"Selected {selected_customer_id} — evidence is shown below. You can also switch scope to Selected customer and ask a follow-up question.")
+            _show_customer_evidence_from_search(paths, selected_customer, query=query)
+        else:
+            st.caption("Select a customer row to view its indexed evidence without leaving the Search tab.")
+        return
+
+    if result_type == "completeness_report":
+        summary = result.get("summary", {})
+        st.markdown(f"### Evidence completeness results: {len(rows)} customer(s)")
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Evaluated", summary.get("customers_evaluated", len(rows)))
+        c2.metric("Complete", summary.get("complete_customers", 0))
+        c3.metric("Incomplete", summary.get("incomplete_customers", 0))
+        c4.metric("Missing items", summary.get("total_missing_items", 0))
+
+        if rows and structured_flags["requires_summary"]:
+            try:
+                _render_completeness_ai_summary(
+                    {
+                        "summary": summary,
+                        "ruleset": result.get("ruleset", {}),
+                        "rows": rows,
+                        "source": "search",
+                        "query": query,
+                    },
+                    rows,
+                    filters={
+                        "query": query,
+                        "entity_id": structured_dict.get("entity_id"),
+                        "risk_rating": structured_dict.get("risk_rating"),
+                        "jurisdiction": structured_dict.get("jurisdiction"),
+                        "document_type": structured_dict.get("document_type"),
+                        "capability": structured_dict.get("capability"),
+                    },
+                    state_key=f"{state_key}:search-completeness",
+                )
+            except Exception as exc:
+                st.warning(f"Local AI completeness summary unavailable: {exc}")
+
+        if not rows:
+            st.info("No customer completeness findings matched the request.")
+            return
+        display_rows = [{
+            "entity_id": row.get("entity_id"),
+            "display_name": row.get("display_name"),
+            "risk_rating": row.get("risk_rating"),
+            "jurisdiction": row.get("jurisdiction"),
+            "profile": row.get("profile"),
+            "complete": "Yes" if row.get("complete") else "No",
+            "present": f"{row.get('present_count', 0)}/{row.get('required_count', 0)}",
+            "missing_count": row.get("missing_count", 0),
+            "missing_evidence": ", ".join(row.get("missing_evidence") or []),
+        } for row in rows]
+        event, supported = _selectable_dataframe(pd.DataFrame(display_rows), key="structured-completeness", height=420)
+        idx = _selected_row_index(event) if supported else None
+        if idx is not None:
+            selected = rows[idx]
+            st.markdown(f"### Checklist for {selected.get('entity_id')} — {selected.get('display_name')}")
+            _render_checklist(selected)
+        return
+
+    if result_type == "retention_report":
+        st.markdown(f"### Retention / legal hold findings: {len(rows)}")
+        if not rows:
+            st.info("No retention or legal-hold records matched the request.")
+            return
+        event, supported = _evidence_table(rows, key="structured-retention", height=420)
+        idx = _selected_row_index(event) if supported else None
+        _render_evidence_actions(
+            rows,
+            paths=paths,
+            query=query,
+            key_prefix="structured-retention",
+            selected_idx=idx,
+            structured_query=structured_dict,
+            result_context=result,
+        )
+        return
+
+    if result_type == "evidence_grouped_by_customer":
+        grouped = result.get("grouped") or {}
+        st.markdown(f"### Evidence grouped by customer: {len(rows)} item(s) across {len(grouped)} customer(s)")
+        if not rows:
+            st.info("No evidence matched the request.")
+            return
+        if structured_flags["requires_summary"]:
+            try:
+                _render_ai_summary_once(query, rows, state_key=f"{state_key}:grouped")
+            except Exception as exc:
+                st.warning(f"AI summary failed: {exc}")
+        all_table_event, supported = _evidence_table(rows, key="structured-grouped-all", height=320)
+        idx = _selected_row_index(all_table_event) if supported else None
+        _render_evidence_actions(
+            rows,
+            paths=paths,
+            query=query,
+            key_prefix="structured-grouped",
+            selected_idx=idx,
+            structured_query=structured_dict,
+            result_context=result,
+            ai_summary_state_key=f"{state_key}:grouped",
+        )
+        st.markdown("### Customer groups")
+        for entity_id, group_rows in grouped.items():
+            first = group_rows[0]
+            with st.expander(f"{entity_id} — {first.get('display_name', '')} · {first.get('jurisdiction', '')} · {first.get('risk_rating', '')} · {len(group_rows)} evidence item(s)"):
+                group_df = pd.DataFrame(group_rows)
+                cols = ["snapshot_id", "category", "document_type", "filename", "source_system", "retention_class", "legal_hold_status", "sensitivity"]
+                group_event, group_supported = _selectable_dataframe(
+                    group_df[[c for c in cols if c in group_df.columns]],
+                    key=f"structured-group-{entity_id}",
+                    height=220,
+                )
+                group_idx = _selected_row_index(group_event) if group_supported else None
+                if group_idx is not None:
+                    row = group_rows[group_idx]
+                    render_object_preview_modal(row)
+        return
+
+    # Default: evidence result, generally customer-specific Q&A or general evidence retrieval.
+    st.markdown(f"### Evidence found: {len(rows)} item(s)")
+    if not rows:
+        st.info("No evidence matched the request.")
+        return
+
+    if structured_flags["requires_summary"]:
         try:
-            with st.spinner("Summarising retrieved evidence with local LLM..."):
-                st.markdown(summarise_search_results(query, results))
+            _render_ai_summary_once(query, rows, state_key=f"{state_key}:evidence")
         except Exception as exc:
-            st.error(f"Local LLM summary failed: {exc}")
+            st.warning(f"AI summary failed: {exc}")
+
+    event, supported = _evidence_table(rows, key="structured-evidence", height=420)
+    idx = _selected_row_index(event) if supported else None
+    _render_evidence_actions(
+        rows,
+        paths=paths,
+        query=query,
+        key_prefix="structured-evidence",
+        selected_idx=idx,
+        structured_query=structured_dict,
+        result_context=result,
+        ai_summary_state_key=f"{state_key}:evidence",
+    )
+
+
+def _selected_ruleset(root: Path, key: str = "ruleset-select") -> EvidenceRuleset:
+    ensure_rulesets(root)
+    rulesets = load_rulesets(root)
+    selected_id = st.selectbox(
+        "Ruleset",
+        options=[ruleset.ruleset_id for ruleset in rulesets],
+        format_func=lambda ruleset_id: next((ruleset.name for ruleset in rulesets if ruleset.ruleset_id == ruleset_id), ruleset_id),
+        key=key,
+    )
+    return next((ruleset for ruleset in rulesets if ruleset.ruleset_id == selected_id), rulesets[0])
+
+
+def _render_checklist(row: dict[str, Any]) -> None:
+    checklist = row.get("checklist") or []
+    if not checklist:
+        st.info("No checklist details are available for this row.")
+        return
+    check_df = pd.DataFrame([
+        {
+            "status": "✅ Present" if item.get("present") else "❌ Missing",
+            "required_evidence": item.get("required_evidence"),
+            "matches": item.get("match_count", 0),
+            "matching_files": ", ".join(item.get("matching_filenames") or []),
+        }
+        for item in checklist
+    ])
+    st.dataframe(check_df, use_container_width=True, hide_index=True, height=280)
+
+
+def evidence_completeness_tab(root: Path) -> None:
+    paths = resolve_archive_paths(root)
+    st.subheader("Evidence completeness")
+    schema_status = get_index_schema_status(paths.index)
+    if not schema_status["is_current"]:
+        st.error(schema_status["message"])
+        return
+
+    ruleset = _selected_ruleset(root, key="completeness-ruleset")
+    facets = cached_facets(str(paths.index))
+    entities = cached_entities(str(paths.index))
+    entity_options = [""] + [entity["entity_id"] for entity in entities]
+
+    c1, c2, c3, c4 = st.columns(4)
+    risk = c1.selectbox("Risk rating", options=[""] + facets.get("risk_rating", []), key="completeness-risk") or None
+    jurisdiction = c2.selectbox("Jurisdiction", options=[""] + facets.get("jurisdiction", []), key="completeness-jurisdiction") or None
+    entity_id = c3.selectbox("Customer", options=entity_options, format_func=lambda value: value or "All customers", key="completeness-entity") or None
+    missing_only = c4.checkbox("Only incomplete", value=True, key="completeness-missing-only")
+
+    with st.expander("AI summary options", expanded=False):
+        enable_ai_summary = st.checkbox("Generate local AI completeness summary", value=True, key="completeness-ai-summary-enabled")
+        st.caption("The summary is generated from the completeness report only. It does not replace the checklist or ruleset output.")
+
+    report = evaluate_completeness(
+        paths.index,
+        root=root,
+        ruleset_id=ruleset.ruleset_id,
+        entity_id=entity_id,
+        risk_rating=risk,
+        jurisdiction=jurisdiction,
+    )
+    rows = report.get("rows", [])
+    if missing_only:
+        rows = [row for row in rows if not row.get("complete")]
+
+    summary = report.get("summary", {})
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Customers evaluated", summary.get("customers_evaluated", 0))
+    m2.metric("Complete", summary.get("complete_customers", 0))
+    m3.metric("Incomplete", summary.get("incomplete_customers", 0))
+    m4.metric("Missing evidence items", summary.get("total_missing_items", 0))
+
+    st.caption("Completeness is calculated from the preserved evidence index. The database/search layer can be rebuilt from the FITS containers.")
+
+    if enable_ai_summary and rows:
+        try:
+            _render_completeness_ai_summary(
+                {**report, "rows": rows},
+                rows,
+                filters={
+                    "ruleset_id": ruleset.ruleset_id,
+                    "risk_rating": risk,
+                    "jurisdiction": jurisdiction,
+                    "entity_id": entity_id,
+                    "missing_only": missing_only,
+                },
+                state_key="completeness-tab",
+            )
+        except Exception as exc:
+            st.warning(f"Local AI completeness summary unavailable: {exc}")
+
+    if not rows:
+        st.success("No incomplete customer files matched the current filters." if missing_only else "No customers matched the current filters.")
+        return
+
+    display_rows = []
+    for row in rows:
+        display_rows.append({
+            "entity_id": row.get("entity_id"),
+            "display_name": row.get("display_name"),
+            "risk_rating": row.get("risk_rating"),
+            "jurisdiction": row.get("jurisdiction"),
+            "profile": row.get("profile"),
+            "complete": "Yes" if row.get("complete") else "No",
+            "present": f"{row.get('present_count', 0)}/{row.get('required_count', 0)}",
+            "missing_count": row.get("missing_count", 0),
+            "missing_evidence": ", ".join(row.get("missing_evidence") or []),
+        })
+    event, supported = _selectable_dataframe(pd.DataFrame(display_rows), key="completeness-table", height=420)
+    selected_idx = _selected_row_index(event) if supported else None
+
+    c_export, c_note = st.columns([1, 3])
+    if c_export.button("Export completeness report", key="completeness-export"):
+        export_report = {**report, "rows": rows}
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out = export_completeness_report(export_report, paths.exports / f"completeness_report_{timestamp}")
+        st.success(f"Exported completeness report to {out}")
+    c_note.caption("Select a row to view the detailed required-evidence checklist.")
+
+    if selected_idx is not None:
+        selected = rows[selected_idx]
+        st.markdown(f"### Checklist for {selected.get('entity_id')} — {selected.get('display_name')}")
+        st.caption(f"Profile: {selected.get('profile')} · Ruleset: {selected.get('ruleset_name')} · Risk: {selected.get('risk_rating')} · Jurisdiction: {selected.get('jurisdiction')}")
+        _render_checklist(selected)
+        try:
+            customer_rows = list_objects_for_entity(paths.index, selected.get("entity_id"))
+            with st.expander("Show available customer evidence", expanded=False):
+                event2, supported2 = _evidence_table(customer_rows, key=f"completeness-evidence-{selected.get('entity_id')}", height=320)
+                evidence_idx = _selected_row_index(event2) if supported2 else None
+                _render_evidence_actions(
+                    customer_rows,
+                    paths=paths,
+                    query=f"Evidence completeness for {selected.get('entity_id')}",
+                    key_prefix=f"completeness-evidence-{selected.get('entity_id')}",
+                    selected_idx=evidence_idx,
+                )
+        except Exception as exc:
+            st.warning(f"Could not load customer evidence: {exc}")
+
+
+def ruleset_builder_tab(root: Path) -> None:
+    st.subheader("Ruleset builder")
+    st.markdown("Define the evidence expected for each customer profile. The completeness engine uses these rules to identify missing mandatory evidence.")
+    ensure_rulesets(root)
+    rulesets = load_rulesets(root)
+
+    selected_id = st.selectbox(
+        "Ruleset to edit",
+        options=[ruleset.ruleset_id for ruleset in rulesets],
+        format_func=lambda ruleset_id: next((ruleset.name for ruleset in rulesets if ruleset.ruleset_id == ruleset_id), ruleset_id),
+        key="ruleset-builder-selected",
+    )
+    ruleset = next((item for item in rulesets if item.ruleset_id == selected_id), rulesets[0])
+
+    c1, c2 = st.columns([1, 2])
+    new_id = c1.text_input("Ruleset ID", value=ruleset.ruleset_id, key="ruleset-id")
+    new_name = c2.text_input("Ruleset name", value=ruleset.name, key="ruleset-name")
+    new_description = st.text_area("Description", value=ruleset.description, height=80, key="ruleset-description")
+
+    st.markdown("### Customer profiles and required evidence")
+    profile_rows = []
+    for profile in ruleset.profiles:
+        profile_rows.append({
+            "profile": profile.profile,
+            "customer_type": profile.customer_type,
+            "risk_rating": profile.risk_rating or "",
+            "jurisdiction": profile.jurisdiction or "",
+            "required_evidence": ", ".join(profile.required_evidence),
+        })
+    edited = st.data_editor(
+        pd.DataFrame(profile_rows),
+        num_rows="dynamic",
+        use_container_width=True,
+        hide_index=True,
+        key="ruleset-editor",
+        column_config={
+            "required_evidence": st.column_config.TextColumn(
+                "required_evidence",
+                help="Comma-separated list of required evidence items, for example: Application, Passport / ID, Proof of Address",
+                width="large",
+            )
+        },
+    )
+
+    with st.expander("Default profile template", expanded=False):
+        st.table(pd.DataFrame([
+            {"Customer profile": profile, "Required evidence": ", ".join(required)}
+            for profile, required in DEFAULT_REQUIRED_EVIDENCE.items()
+        ]))
+
+    c_save, c_reset, c_path = st.columns([1, 1, 3])
+    if c_save.button("Save ruleset", type="primary", key="ruleset-save"):
+        profiles = []
+        for _, row in edited.fillna("").iterrows():
+            required = [item.strip() for item in str(row.get("required_evidence", "")).split(",") if item.strip()]
+            if not str(row.get("profile", "")).strip():
+                continue
+            profiles.append(EvidenceRuleProfile(
+                profile=str(row.get("profile", "")).strip(),
+                customer_type=str(row.get("customer_type", "Individual")).strip() or "Individual",
+                risk_rating=str(row.get("risk_rating", "")).strip() or None,
+                jurisdiction=str(row.get("jurisdiction", "")).strip() or None,
+                required_evidence=required,
+            ))
+        updated = EvidenceRuleset(
+            ruleset_id=new_id.strip() or ruleset.ruleset_id,
+            name=new_name.strip() or ruleset.name,
+            description=new_description.strip(),
+            profiles=profiles,
+        )
+        other_rulesets = [item for item in rulesets if item.ruleset_id != selected_id]
+        path = save_rulesets(root, [*other_rulesets, updated])
+        st.success(f"Saved ruleset to {path}")
+        st.rerun()
+
+    if c_reset.button("Reset to default", key="ruleset-reset"):
+        path = save_rulesets(root, [default_ruleset()])
+        st.success(f"Reset rulesets to default at {path}")
+        st.rerun()
+
+    c_path.caption(f"Rulesets file: `{root / 'config' / 'evidence_rulesets.json'}`")
+
+
+def ingestion_tab(root: Path) -> None:
+    paths = resolve_archive_paths(root)
+    st.subheader("Ingestion")
+    st.caption("Import historical evidence in bulk, or process continuous update events from source systems. Imported files are normalised into the source archive structure with metadata sidecars, then built into FITS containers and indexed.")
+
+    reports_dir = paths.root / "ingestion" / "reports"
+    queue_dir_default = paths.root / "ingestion" / "queue"
+
+    with st.expander("Bulk ingestion — historical customer folders / legacy exports", expanded=True):
+        input_path = st.text_input("Bulk input folder", value=str(paths.root / "ingestion_demo" / "legacy_export"), key="bulk-ingest-input")
+        manifest_path = st.text_input("Optional CSV/JSON manifest", value=str(paths.root / "ingestion_demo" / "legacy_export" / "bulk_manifest.csv"), key="bulk-ingest-manifest")
+        c1, c2, c3 = st.columns(3)
+        default_jurisdiction = c1.text_input("Default jurisdiction", value="Guernsey", key="bulk-default-jurisdiction")
+        default_risk = c2.selectbox("Default risk rating", options=["Low", "Medium", "High"], index=1, key="bulk-default-risk")
+        overwrite = c3.checkbox("Overwrite existing files", value=True, key="bulk-overwrite")
+        st.caption("Without a manifest, the importer treats each top-level folder as a customer and infers evidence metadata from folder/file names.")
+        if st.button("Run bulk ingestion", type="primary", key="bulk-ingest-run"):
+            try:
+                manifest = Path(manifest_path) if manifest_path.strip() and Path(manifest_path).exists() else None
+                report = bulk_ingest(
+                    Path(input_path),
+                    paths.source,
+                    manifest=manifest,
+                    defaults={"jurisdiction": default_jurisdiction, "risk_rating": default_risk},
+                    overwrite=overwrite,
+                )
+                report_path = reports_dir / f"{report.run_id}.json"
+                write_ingestion_report(report, report_path)
+                clear_caches()
+                st.success(f"Bulk ingestion complete: {report.ingested_items} ingested, {report.skipped_items} skipped, {report.failed_items} failed")
+                st.caption(f"Report: `{report_path}`")
+                st.json(report.to_dict())
+            except Exception as exc:
+                st.error(f"Bulk ingestion failed: {exc}")
+
+    with st.expander("Continuous ingestion — event queue", expanded=True):
+        queue_path = st.text_input("Event queue folder", value=str(queue_dir_default), key="continuous-queue")
+        st.caption("Each JSON event should identify an entity and a file_path to ingest, together with source_system, category/document_type and optional retention metadata.")
+        if st.button("Process event queue", type="primary", key="process-event-queue"):
+            try:
+                report = process_event_queue(Path(queue_path), paths.source)
+                report_path = reports_dir / f"{report.run_id}.json"
+                write_ingestion_report(report, report_path)
+                clear_caches()
+                st.success(f"Queue processed: {report.ingested_items} ingested, {report.skipped_items} skipped, {report.failed_items} failed")
+                st.caption(f"Report: `{report_path}`")
+                st.json(report.to_dict())
+            except Exception as exc:
+                st.error(f"Event queue processing failed: {exc}")
+
+    with st.expander("Post-ingestion rebuild", expanded=True):
+        st.caption("After ingestion, rebuild FITS containers and indexes so the new evidence becomes searchable.")
+        snapshot_model = st.checkbox("Build immutable snapshot containers", value=True, key="ingest-snapshot-build")
+        build_lmstudio = st.checkbox("Also rebuild LM Studio embedding index", value=False, key="ingest-lmstudio-build")
+        if st.button("Rebuild containers and indexes", type="primary", key="ingest-rebuild"):
+            try:
+                run_build_containers(root, snapshot_model=snapshot_model)
+                count = rebuild_index(paths.containers, paths.index)
+                st.success(f"Rebuilt SQLite index with {count} objects")
+                try:
+                    vector_count = build_vector_index(paths.index, paths.root / "index" / "evidence_vector.pkl")
+                    st.success(f"Rebuilt local vector index with {vector_count} objects")
+                except Exception as exc:
+                    st.warning(f"Local vector index rebuild skipped/failed: {exc}")
+                if build_lmstudio:
+                    lm_count = build_lmstudio_vector_index(paths.index, paths.root / "index" / "evidence_lmstudio_vector.pkl")
+                    st.success(f"Rebuilt LM Studio vector index with {lm_count} objects")
+                clear_caches()
+            except Exception as exc:
+                st.error(f"Rebuild failed: {exc}")
+
+    with st.expander("Recent ingestion reports", expanded=False):
+        if not reports_dir.exists():
+            st.info("No ingestion reports yet.")
+        else:
+            reports = sorted(reports_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:10]
+            if not reports:
+                st.info("No ingestion reports yet.")
+            for report in reports:
+                with st.expander(report.name):
+                    try:
+                        st.json(json.loads(report.read_text(encoding="utf-8")))
+                    except Exception:
+                        st.text(report.read_text(encoding="utf-8", errors="replace"))
+
 
 def retention_tab(root: Path) -> None:
     paths = resolve_archive_paths(root)
@@ -500,6 +1258,8 @@ def api_tab(root: Path) -> None:
     st.markdown("Example endpoints:")
     st.code("""GET  /health?root=samples
 POST /index/rebuild?root=samples
+POST /ingestion/bulk?root=samples&input_path=data/ingestion_demo/legacy_export
+POST /ingestion/queue/process?root=samples&queue_path=data/ingestion_demo/queue
 GET  /entities?root=samples
 GET  /entities/{entity_id}/objects?root=samples
 GET  /search?root=samples&q=source%20of%20wealth&mode=keyword
@@ -527,16 +1287,19 @@ def main() -> None:
     st.sidebar.caption(f"LM vector: `{paths.root / 'index' / 'evidence_lmstudio_vector.pkl'}`")
     if st.sidebar.button("Refresh UI caches"):
         clear_caches(); st.rerun()
-    tabs = st.tabs(["Dashboard", "Health", "Comparison", "Customers", "Search", "Retention", "Integrity", "Export", "API"])
+    tabs = st.tabs(["Dashboard", "Health", "Comparison", "Customers", "Search", "Completeness", "Rulesets", "Ingestion", "Retention", "Integrity", "Export", "API"])
     with tabs[0]: dashboard_tab(root)
     with tabs[1]: health_tab(root)
     with tabs[2]: comparison_tab(root)
     with tabs[3]: customers_tab(root)
     with tabs[4]: search_tab(root)
-    with tabs[5]: retention_tab(root)
-    with tabs[6]: integrity_tab(root)
-    with tabs[7]: export_tab(root)
-    with tabs[8]: api_tab(root)
+    with tabs[5]: evidence_completeness_tab(root)
+    with tabs[6]: ruleset_builder_tab(root)
+    with tabs[7]: ingestion_tab(root)
+    with tabs[8]: retention_tab(root)
+    with tabs[9]: integrity_tab(root)
+    with tabs[10]: export_tab(root)
+    with tabs[11]: api_tab(root)
 
 
 if __name__ == "__main__":

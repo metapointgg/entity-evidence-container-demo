@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 
 from eec.container_builder import build_all_containers
-from eec.demo_data import generate_customers
+from eec.demo_data import generate_customers, generate_high_risk_missing_proof_of_address_customer
 from eec.indexer import rebuild_index
 from eec.vector_search import build_vector_index
 from eec.lmstudio_vector_search import build_lmstudio_vector_index
@@ -23,6 +23,7 @@ def main() -> None:
     parser.add_argument("--full-container", action="store_true", help="Build one full container per customer instead of immutable snapshot containers")
     parser.add_argument("--clean", action="store_true", help="Remove existing containers and indexes before rebuilding")
     parser.add_argument("--lmstudio-vector", action="store_true", help="Also build the LM Studio embedding vector index using the local /v1/embeddings endpoint")
+    parser.add_argument("--include-edge-cases", action="store_true", help="Add deterministic edge-case customers for demo testing when --regenerate is used")
     args = parser.parse_args()
 
     root = args.root
@@ -44,6 +45,8 @@ def main() -> None:
         if args.clean and source.exists():
             shutil.rmtree(source)
         created = generate_customers(source, args.customers, args.target_mb_per_customer, args.seed)
+        if args.include_edge_cases:
+            created.append(generate_high_risk_missing_proof_of_address_customer(source, args.target_mb_per_customer, args.seed + 999))
         print(f"Generated {len(created)} customers in {source}")
 
     if not source.exists():

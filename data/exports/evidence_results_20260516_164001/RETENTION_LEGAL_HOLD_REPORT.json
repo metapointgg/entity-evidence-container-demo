@@ -1,0 +1,11 @@
+{
+  "total_records": 5,
+  "legal_hold_count": 0,
+  "deletion_eligible_count": 0,
+  "retention_class_counts": {
+    "Customer File": 2,
+    "CDD": 1,
+    "Governance": 2
+  },
+  "legal_hold_records": []
+}

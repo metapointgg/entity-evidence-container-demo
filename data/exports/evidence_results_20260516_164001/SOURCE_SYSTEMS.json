@@ -1,0 +1,14 @@
+{
+  "total_source_systems": 1,
+  "source_system_counts": {
+    "Salesforce FSC": 5
+  },
+  "by_entity": {
+    "CUST-000046": {
+      "Salesforce FSC": 3
+    },
+    "CUST-999001": {
+      "Salesforce FSC": 2
+    }
+  }
+}

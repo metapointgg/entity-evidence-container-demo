@@ -97,4 +97,15 @@ def lmstudio_vector_search(index_path: Path, query: str, limit: int = 50, *, mod
         out["snippet"] = (out.get("search_text") or "")[:300]
         scored.append(out)
     scored.sort(key=lambda row: row.get("lmstudio_vector_score", 0.0), reverse=True)
-    return scored[:limit]
+
+    deduped: list[dict[str, Any]] = []
+    seen: set[tuple[str, str, str]] = set()
+    for row in scored:
+        key = (str(row.get("entity_id", "")), str(row.get("filename", "")), str(row.get("document_type", "")))
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(row)
+        if len(deduped) >= limit:
+            break
+    return deduped

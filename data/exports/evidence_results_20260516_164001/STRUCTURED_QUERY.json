@@ -1,0 +1,30 @@
+{
+  "raw_query": "Show me all onboarding documentation for high risk clients in Guernsey",
+  "capability": "cohort_evidence_retrieval",
+  "intent": "cohort_evidence_retrieval",
+  "result_type": "evidence_grouped_by_customer",
+  "entity_id": null,
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "evidence_category": null,
+  "document_type": null,
+  "snapshot_id": "ONBOARDING",
+  "snapshot_type": null,
+  "missing_evidence": false,
+  "source_system": null,
+  "retention_class": null,
+  "legal_hold_status": null,
+  "sensitivity": null,
+  "semantic_query": "Show me all onboarding documentation for high risk clients in Guernsey",
+  "keyword_terms": [
+    "onboarding documentation",
+    "high risk",
+    "Guernsey"
+  ],
+  "requires_summary": true,
+  "requires_evidence": true,
+  "group_by": "entity_id",
+  "limit": 50,
+  "interpretation_source": "local_llm",
+  "confidence": 1.0
+}

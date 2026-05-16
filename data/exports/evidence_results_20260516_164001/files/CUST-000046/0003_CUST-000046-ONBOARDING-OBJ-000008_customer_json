@@ -1,0 +1,21 @@
+{
+  "entity_id": "CUST-000046",
+  "entity_type": "Customer",
+  "display_name": "Thomas Carey",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "occupation": "Medical Consultant",
+  "products": [
+    "Regular saver",
+    "Notice account",
+    "Easy access savings"
+  ],
+  "created_at": "2026-05-16T14:13:24Z",
+  "source_systems": [
+    "Salesforce FSC",
+    "Core Banking",
+    "Email Archive",
+    "Statement Engine",
+    "AML Screening Platform"
+  ]
+}

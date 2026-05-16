@@ -303,3 +303,361 @@ python scripts/search_lmstudio_vector_index.py \
 In Streamlit, open the **Dashboard** tab to see LM Studio status and build the LM Studio embedding index, then use **Search → lmstudio-vector** mode. The search tab also supports optional local LLM query expansion, result summarisation, and ask-the-archive over retrieved evidence.
 
 The LLM is intentionally assistive only. It expands queries and summarises retrieved evidence, but the FITS preservation containers remain the source of truth.
+
+## Intent-led search UI
+
+The Search tab now works around user intent rather than exposing every search mechanism directly.
+
+Recommended scenarios:
+
+1. **Selected customer evidence question**
+   - Scope: `Selected customer`
+   - Query: `What is the customer's source of wealth?`
+   - Output: supporting evidence rows plus a local AI summary where LM Studio is available.
+
+2. **Customer discovery**
+   - Scope: `All customers`
+   - Query: `Show me customers in Guernsey who are high risk`
+   - Output: customer list, not document rows.
+
+3. **Cohort evidence retrieval**
+   - Scope: `All customers`
+   - Query: `Show me the CDD for customers in Guernsey who are high risk`
+   - Output: evidence rows grouped by customer.
+
+4. **Retention/legal hold review**
+   - Scope: `All customers`
+   - Query: `Show me documents past retention date but blocked by legal hold`
+   - Output: retention/legal-hold evidence rows.
+
+The local LLM is used as a controlled interpretation and summarisation layer. It does **not** generate SQL. It produces a constrained structured query which is then validated and executed by application code.
+
+You can test the interpreter from the command line:
+
+```bash
+python scripts/test_structured_search.py \
+  --query "Show me the CDD for customers in Guernsey who are high risk"
+
+python scripts/test_structured_search.py \
+  --entity-id CUST-000001 \
+  --query "What is the customer's source of wealth?"
+```
+
+## Intent-led search capability matrix
+
+The Search tab now routes natural-language requests through a constrained query capability matrix rather than exposing search mechanics directly. The local LLM may interpret a user request into JSON, but the application validates it against supported capabilities and then executes deterministic Python/SQLite logic. The LLM never generates SQL.
+
+Supported capabilities include:
+
+- `customer_evidence_question` — answer a question about a selected customer using retrieved evidence.
+- `customer_evidence_retrieval` — retrieve evidence for a selected customer.
+- `customer_discovery` — find customers by risk, jurisdiction or similar customer-level filters.
+- `missing_evidence_review` — find customers in a cohort who lack a required document/evidence type.
+- `cohort_evidence_retrieval` — retrieve evidence for a cohort and group it by customer.
+- `regulatory_pack_request` — retrieve/export evidence for audit or regulatory pack use cases.
+- `retention_legal_hold_review` — review records by retention, legal hold or deletion status.
+- `archive_health_query` — route integrity/corruption queries to archive-health logic.
+- `general_archive_search` — fallback evidence search.
+
+List the matrix from the command line:
+
+```bash
+python scripts/list_query_capabilities.py
+```
+
+Useful test queries:
+
+```text
+What is the customer's source of wealth?
+Show me customers who are high risk
+Show me customers in Guernsey who are high risk
+Show me the CDD for customers in Guernsey who are high risk
+Show me customers who are high risk and do not have proof of address
+Show me all onboarding documentation for high risk clients in Guernsey
+Show me documents past retention date but blocked by legal hold
+Show me containers with integrity failures
+```
+
+## Evidence completeness and rulesets
+
+The demo now includes a rules-driven evidence completeness layer.
+
+### Default ruleset
+
+The default ruleset is stored in `samples/config/evidence_rulesets.json` when first created and can be edited in the Streamlit **Rulesets** tab.
+
+| Customer profile | Required evidence |
+|---|---|
+| Low-risk individual | Application, Passport / ID, Proof of Address, CDD Review |
+| Medium-risk individual | Application, Passport / ID, Proof of Address, CDD Review, Source of Funds |
+| High-risk individual | Application, Passport / ID, Proof of Address, CDD Review, Source of Wealth, Source of Funds, Screening, EDD Approval |
+| Corporate customer | Application, Company Registry Extract, Beneficial Owner Evidence, Authorised Signatory ID, Proof of Address, CDD Review, Source of Funds |
+
+### UI workflow
+
+Run the app:
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
+Use the new tabs:
+
+- **Completeness**: evaluate customers against the selected evidence ruleset, view missing evidence and export reports.
+- **Rulesets**: edit customer profiles and required evidence items.
+
+### Command-line evaluation
+
+```bash
+python scripts/evaluate_completeness.py \
+  --sqlite samples/index/evidence_index.db \
+  --root samples
+```
+
+Filter examples:
+
+```bash
+python scripts/evaluate_completeness.py \
+  --sqlite samples/index/evidence_index.db \
+  --root samples \
+  --risk-rating High \
+  --missing-item "Proof of Address"
+```
+
+Export a report:
+
+```bash
+python scripts/evaluate_completeness.py \
+  --sqlite samples/index/evidence_index.db \
+  --root samples \
+  --export samples/exports/completeness_report
+```
+
+### Natural-language examples
+
+The Search tab can now route completeness-style requests to the ruleset engine:
+
+```text
+Is this customer's onboarding file complete?
+Which customers have incomplete onboarding files?
+Show me customers missing mandatory evidence
+Show me high-risk customers with incomplete onboarding documentation
+```
+
+For deterministic edge-case testing, regenerate data with:
+
+```bash
+python scripts/refresh_demo_assets.py \
+  --root samples \
+  --clean \
+  --regenerate \
+  --customers 3 \
+  --target-mb-per-customer 2 \
+  --seed 42 \
+  --include-edge-cases
+```
+
+This creates `CUST-999001`, a high-risk Guernsey customer deliberately missing Proof of Address evidence.
+
+## Evidence Pack Export v2
+
+Evidence pack export now creates a regulator/audit-friendly folder rather than just recovered payloads.
+
+Search result exports include:
+
+```text
+README.md
+EVIDENCE_PACK_SUMMARY.md
+AI_SUMMARY.md
+QUERY.json
+STRUCTURED_QUERY.json
+RULESET_USED.json
+COMPLETENESS_REPORT.json
+MANIFEST.json
+HASH_REPORT.json
+SOURCE_SYSTEMS.json
+RETENTION_LEGAL_HOLD_REPORT.json
+files/
+```
+
+The pack captures:
+
+- the original natural-language query;
+- the controlled structured query used by the application;
+- recovered original payload files from the FITS containers;
+- SHA-256 hashes for exported files compared with preserved manifest hashes;
+- source-system provenance counts;
+- retention and legal-hold context;
+- completeness/ruleset context where applicable;
+- any cached local-AI summary generated from the retrieved evidence.
+
+The AI summary is assistive only. The manifest, hash report and recovered files remain the evidence of record.
+
+Single-container exports from the Export tab now use the same report layout, with `files/` containing the extracted container payloads and JSON reports around the export.
+
+## Next roadmap: ingestion and OCR
+
+The next architectural stage is ingestion. The POC should support both:
+
+1. **Bulk ingestion** — one-off import of historical customer folders, legacy exports, email archives, statements and CDD evidence.
+2. **Continuous ingestion** — event-driven updates from source systems such as Salesforce, AML platforms, statement engines, email archives and document stores.
+
+Recommended ingestion pipeline:
+
+```text
+Source systems / drop folders / APIs
+        ↓
+Ingestion manifest builder
+        ↓
+OCR and metadata extraction
+        ↓
+Evidence classification and ruleset mapping
+        ↓
+Snapshot/container builder
+        ↓
+Index rebuild or incremental index update
+        ↓
+Completeness / exception checks
+```
+
+OCR should be pluggable:
+
+```text
+EEC_OCR_PROVIDER=sidecar      # deterministic demo text files
+EEC_OCR_PROVIDER=tesseract    # local/offline OCR
+EEC_OCR_PROVIDER=aws_textract # future production-style option
+EEC_OCR_PROVIDER=none
+```
+
+OCR output should be stored in the FITS manifest/search text so scanned documents remain searchable even if the original payload is an image-only PDF or scan.
+
+## Bulk and continuous ingestion
+
+The demo now includes an ingestion layer that normalises source-system files into the archive `source/` structure before FITS containers are built.
+
+### Bulk ingestion
+
+Bulk ingestion is for one-off imports of historical customer folders, legacy document stores, email exports, statements and CDD evidence.
+
+Create a demo import set:
+
+```bash
+python scripts/create_ingestion_demo.py --root data/ingestion_demo
+```
+
+Run a manifest-driven import:
+
+```bash
+python scripts/bulk_ingest.py \
+  --input data/ingestion_demo/legacy_export \
+  --source data/source \
+  --manifest data/ingestion_demo/legacy_export/bulk_manifest.csv \
+  --default-jurisdiction Guernsey \
+  --default-risk-rating Medium
+```
+
+Run a folder-discovery import without a manifest:
+
+```bash
+python scripts/bulk_ingest.py \
+  --input data/ingestion_demo/legacy_export \
+  --source data/source
+```
+
+The importer writes files under each customer folder and creates `.eec.json` sidecar metadata files. The FITS builder reads those sidecars so the preserved payload records carry source-system, category, document type, retention and sensitivity metadata.
+
+### Continuous ingestion
+
+Continuous ingestion is event-driven. A source system drops JSON events into a queue folder. Each event identifies the customer and file to ingest.
+
+Example event:
+
+```json
+{
+  "event_id": "EVT-STATEMENT-0001",
+  "entity_id": "CUST-BULK001",
+  "display_name": "Beatrice Martel",
+  "jurisdiction": "Guernsey",
+  "risk_rating": "High",
+  "file_path": "data/ingestion_demo/continuous_payloads/CUST-BULK001_new_statement.pdf",
+  "source_system": "Statement Engine",
+  "category": "Statements",
+  "document_type": "Monthly Statement",
+  "retention_class": "Statements",
+  "snapshot_id": "STATEMENT_EVENT_2026_04",
+  "snapshot_type": "Continuous Statement Event"
+}
+```
+
+Process the queue:
+
+```bash
+python scripts/process_ingestion_queue.py \
+  --queue data/ingestion_demo/queue \
+  --source data/source
+```
+
+Or ingest a single event:
+
+```bash
+python scripts/ingest_event.py \
+  --event data/ingestion_demo/queue/event_statement_0001.json \
+  --source data/source
+```
+
+After any ingestion, rebuild containers and indexes:
+
+```bash
+python scripts/build_containers.py \
+  --source data/source \
+  --output data/containers \
+  --snapshot-model
+
+python scripts/rebuild_index.py \
+  --containers data/containers \
+  --sqlite data/index/evidence_index.db
+
+python scripts/build_vector_index.py \
+  --sqlite data/index/evidence_index.db \
+  --output data/index/evidence_vector.pkl
+```
+
+If LM Studio is running and you want embedding search:
+
+```bash
+python scripts/build_lmstudio_vector_index.py \
+  --sqlite data/index/evidence_index.db \
+  --output data/index/evidence_lmstudio_vector.pkl
+```
+
+### Ingestion UI
+
+The Streamlit app includes an **Ingestion** tab with:
+
+- bulk import from a source folder and optional manifest;
+- continuous queue processing;
+- post-ingestion rebuild of FITS containers and indexes;
+- recent ingestion report inspection.
+
+### API endpoints
+
+The FastAPI layer includes ingestion endpoints:
+
+```text
+POST /ingestion/bulk?root=data&input_path=data/ingestion_demo/legacy_export
+POST /ingestion/event?root=data
+POST /ingestion/queue/process?root=data&queue_path=data/ingestion_demo/queue
+```
+
+The event endpoint accepts the same JSON payload shape used by the queue processor.
+
+### OCR/searchable text during ingestion
+
+The ingestion layer preserves the original document bytes and writes metadata sidecars. Searchable text is extracted when containers are built through `EEC_OCR_PROVIDER`:
+
+- `auto` uses sidecars/direct text/PDF text, then Tesseract for images if available;
+- `sidecar` uses existing `.search.txt` sidecars and embedded text extraction;
+- `tesseract` prioritises native OCR for image files;
+- `none` only indexes direct text formats.
+
+This keeps ingestion and preservation separate: ingestion captures and classifies evidence, while the container build extracts text and embeds the searchable text in the FITS manifest.

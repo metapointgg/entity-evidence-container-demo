@@ -37,6 +37,25 @@ def _payload_hdu(name: str, data: bytes, record: PayloadRecord) -> fits.ImageHDU
     return hdu
 
 
+
+
+def _payload_metadata_override(path: Path) -> Dict[str, str]:
+    """Read optional ingestion metadata sidecars created by the ingestion layer."""
+    candidates = [
+        Path(str(path) + ".eec.json"),
+        path.with_suffix(path.suffix + ".metadata.json"),
+    ]
+    for candidate in candidates:
+        if not candidate.exists():
+            continue
+        try:
+            value = read_json(candidate)
+            if isinstance(value, dict):
+                return {str(k): str(v) for k, v in value.items() if v is not None}
+        except Exception:
+            continue
+    return {}
+
 def _categorise(path: Path) -> Dict[str, str]:
     parts = set(p.lower() for p in path.parts)
     name = path.name.lower()
@@ -81,7 +100,7 @@ def _slug(value: str) -> str:
 
 
 def _files_for_snapshot(source_dir: Path, snapshot_id: str) -> List[Path]:
-    all_files = [p for p in sorted(source_dir.rglob("*")) if p.is_file() and not p.name.endswith(".search.txt")]
+    all_files = [p for p in sorted(source_dir.rglob("*")) if p.is_file() and not p.name.endswith(".search.txt") and not p.name.endswith(".eec.json") and not p.name.endswith(".metadata.json")]
     if snapshot_id == "FULL":
         return all_files
     selected: List[Path] = []
@@ -147,8 +166,15 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
         data = path.read_bytes()
         hdu_name = f"PAYLOAD_{payload_index:06d}"
         cat = _categorise(rel)
+        override = _payload_metadata_override(path)
+        for key in ["category", "document_type", "source_system", "retention_class", "sensitivity"]:
+            if override.get(key):
+                cat[key] = override[key]
         search_text, ocr_source = extract_search_text(path)
         retention = _retention_metadata(cat["retention_class"], cat["sensitivity"], snapshot_slug)
+        for key in ["retention_until", "legal_hold_status", "deletion_eligible"]:
+            if override.get(key):
+                retention[key] = override[key]
         rec = PayloadRecord(
             object_id=f"{entity_id}-{snapshot_slug}-OBJ-{payload_index:06d}",
             entity_id=entity_id,
@@ -158,7 +184,7 @@ def build_container(source_dir: Path, output_path: Path, *, snapshot_id: str = "
             relative_path=safe_rel_path(rel),
             mime_type=guess_mime(path),
             source_system=cat["source_system"],
-            captured_at=utc_now_iso(),
+            captured_at=override.get("captured_at") or utc_now_iso(),
             retention_class=cat["retention_class"],
             sensitivity=cat["sensitivity"],
             sha256=sha256_bytes(data),

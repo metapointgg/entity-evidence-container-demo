@@ -1,0 +1,16 @@
+From: compliance@example-bank.test
+To: aurelia.lepage@example.test
+Subject: CDD follow-up - proof of address required
+Date: Tue, 11 Feb 2026 09:31:00 +0000
+Message-ID: <CUST-999001-1@example-bank.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear Aurelia,
+
+Please provide certified proof of address. The current high-risk CDD file cannot be closed without this evidence.
+
+Customer reference: CUST-999001
+
+Regards,
+Compliance Operations

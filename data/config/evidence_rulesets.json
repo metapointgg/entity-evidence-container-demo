@@ -1,0 +1,67 @@
+{
+  "rulesets": [
+    {
+      "ruleset_id": "retail_cdd_v1",
+      "name": "Retail Individual CDD v1",
+      "description": "Default CDD evidence completeness rules for financial-services customer files.",
+      "profiles": [
+        {
+          "profile": "Low-risk individual",
+          "customer_type": "Individual",
+          "risk_rating": "Low",
+          "jurisdiction": null,
+          "required_evidence": [
+            "Application",
+            "Passport / ID",
+            "Proof of Address",
+            "CDD Review"
+          ]
+        },
+        {
+          "profile": "Medium-risk individual",
+          "customer_type": "Individual",
+          "risk_rating": "Medium",
+          "jurisdiction": null,
+          "required_evidence": [
+            "Application",
+            "Passport / ID",
+            "Proof of Address",
+            "CDD Review",
+            "Source of Funds"
+          ]
+        },
+        {
+          "profile": "High-risk individual",
+          "customer_type": "Individual",
+          "risk_rating": "High",
+          "jurisdiction": null,
+          "required_evidence": [
+            "Application",
+            "Passport / ID",
+            "Proof of Address",
+            "CDD Review",
+            "Source of Wealth",
+            "Source of Funds",
+            "Screening",
+            "EDD Approval"
+          ]
+        },
+        {
+          "profile": "Corporate customer",
+          "customer_type": "Corporate",
+          "risk_rating": null,
+          "jurisdiction": null,
+          "required_evidence": [
+            "Application",
+            "Company Registry Extract",
+            "Beneficial Owner Evidence",
+            "Authorised Signatory ID",
+            "Proof of Address",
+            "CDD Review",
+            "Source of Funds"
+          ]
+        }
+      ]
+    }
+  ]
+}

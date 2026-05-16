@@ -1,0 +1,54 @@
+{
+  "total_files": 5,
+  "matched": 5,
+  "mismatched": 0,
+  "status": "PASS",
+  "rows": [
+    {
+      "entity_id": "CUST-000046",
+      "object_id": "CUST-000046-ONBOARDING-OBJ-000001",
+      "filename": "account_opening_application.pdf",
+      "exported_path": "files/CUST-000046/0001_CUST-000046-ONBOARDING-OBJ-000001_account_opening_application_pdf",
+      "exported_sha256": "fc743c90539db33575680bd094b9a3c66d6540b5156341a1983eb288dfd49e58",
+      "manifest_sha256": "fc743c90539db33575680bd094b9a3c66d6540b5156341a1983eb288dfd49e58",
+      "match": true
+    },
+    {
+      "entity_id": "CUST-000046",
+      "object_id": "CUST-000046-ONBOARDING-OBJ-000004",
+      "filename": "proof_of_address_utility_bill.pdf",
+      "exported_path": "files/CUST-000046/0002_CUST-000046-ONBOARDING-OBJ-000004_proof_of_address_utility_bill_pdf",
+      "exported_sha256": "38431fd45343ea06ce26b7727189b4ba049f1f9439cb98b380b313e56a823347",
+      "manifest_sha256": "38431fd45343ea06ce26b7727189b4ba049f1f9439cb98b380b313e56a823347",
+      "match": true
+    },
+    {
+      "entity_id": "CUST-000046",
+      "object_id": "CUST-000046-ONBOARDING-OBJ-000008",
+      "filename": "customer.json",
+      "exported_path": "files/CUST-000046/0003_CUST-000046-ONBOARDING-OBJ-000008_customer_json",
+      "exported_sha256": "82c567c42a6455c19a2c3b6a280542b429d3801cf865f029d50ac309310fc5b0",
+      "manifest_sha256": "82c567c42a6455c19a2c3b6a280542b429d3801cf865f029d50ac309310fc5b0",
+      "match": true
+    },
+    {
+      "entity_id": "CUST-999001",
+      "object_id": "CUST-999001-ONBOARDING-OBJ-000001",
+      "filename": "account_opening_application.pdf",
+      "exported_path": "files/CUST-999001/0004_CUST-999001-ONBOARDING-OBJ-000001_account_opening_application_pdf",
+      "exported_sha256": "32cc678cf3ce8dac62764f68d504c4273bfe9f60720b6c5b5aad921b4b29435f",
+      "manifest_sha256": "32cc678cf3ce8dac62764f68d504c4273bfe9f60720b6c5b5aad921b4b29435f",
+      "match": true
+    },
+    {
+      "entity_id": "CUST-999001",
+      "object_id": "CUST-999001-ONBOARDING-OBJ-000007",
+      "filename": "customer.json",
+      "exported_path": "files/CUST-999001/0005_CUST-999001-ONBOARDING-OBJ-000007_customer_json",
+      "exported_sha256": "fb5585b3a21142ff84e0e8a96ddba041eca15ff897b3415f2e8ed38405609ded",
+      "manifest_sha256": "fb5585b3a21142ff84e0e8a96ddba041eca15ff897b3415f2e8ed38405609ded",
+      "match": true
+    }
+  ],
+  "mismatches": []
+}

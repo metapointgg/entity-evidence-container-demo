@@ -14,6 +14,8 @@ from eec.ui_data import list_entities, list_objects_for_entity, read_payload, re
 from eec.vector_search import vector_search
 from eec.local_llm import answer_question_from_evidence, expand_search_query, lm_studio_status, summarise_search_results
 from eec.lmstudio_vector_search import build_lmstudio_vector_index, lmstudio_vector_search
+from eec.query_interpreter import execute_structured_query, interpret_archive_query
+from eec.ingestion import bulk_ingest, ingest_event, process_event_queue, write_ingestion_report
 
 app = FastAPI(title="Entity Evidence Container API", version="0.1.0")
 
@@ -124,3 +126,41 @@ def llm_ask(root: str = "samples", q: str = "", question: str = "", mode: str = 
     else:
         rows = advanced_search_index(paths.index, query=q, limit=limit, mode=mode)
     return {"query": q, "question": question, "answer": answer_question_from_evidence(question, rows), "result_count": len(rows)}
+
+
+@app.get("/structured-search")
+def structured_search(root: str = "samples", q: str = "", selected_entity_id: Optional[str] = None, use_local_ai: bool = True, limit: int = 25):
+    paths = _paths(root)
+    structured = interpret_archive_query(q, selected_entity_id=selected_entity_id, use_local_ai=use_local_ai, limit=limit)
+    result = execute_structured_query(paths.index, structured)
+    return {"interpreted": structured.to_dict(), "result": result}
+
+
+@app.post("/ingestion/bulk")
+def api_bulk_ingest(root: str = "samples", input_path: str = "", manifest_path: Optional[str] = None):
+    if not input_path:
+        raise HTTPException(status_code=400, detail="input_path is required")
+    paths = _paths(root)
+    report = bulk_ingest(Path(input_path), paths.source, manifest=Path(manifest_path) if manifest_path else None)
+    report_path = paths.root / "ingestion" / "reports" / f"{report.run_id}.json"
+    write_ingestion_report(report, report_path)
+    return {"report": report.to_dict(), "report_path": str(report_path)}
+
+
+@app.post("/ingestion/event")
+def api_ingest_event(event: dict, root: str = "samples"):
+    paths = _paths(root)
+    report = ingest_event(event, source_root=paths.source)
+    report_path = paths.root / "ingestion" / "reports" / f"{report.run_id}.json"
+    write_ingestion_report(report, report_path)
+    return {"report": report.to_dict(), "report_path": str(report_path)}
+
+
+@app.post("/ingestion/queue/process")
+def api_process_ingestion_queue(root: str = "samples", queue_path: str = ""):
+    paths = _paths(root)
+    queue = Path(queue_path) if queue_path else paths.root / "ingestion" / "queue"
+    report = process_event_queue(queue, paths.source)
+    report_path = paths.root / "ingestion" / "reports" / f"{report.run_id}.json"
+    write_ingestion_report(report, report_path)
+    return {"report": report.to_dict(), "report_path": str(report_path)}

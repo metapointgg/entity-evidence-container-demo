@@ -1,0 +1,16 @@
+From: compliance@example-bank.test
+To: aurelia.lepage@example.test
+Subject: Manual review escalation
+Date: Tue, 13 Feb 2026 09:33:00 +0000
+Message-ID: <CUST-999001-3@example-bank.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear Aurelia,
+
+The relationship has been escalated because proof of address remains outstanding.
+
+Customer reference: CUST-999001
+
+Regards,
+Compliance Operations

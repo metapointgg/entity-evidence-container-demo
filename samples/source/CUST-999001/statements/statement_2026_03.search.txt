@@ -1,0 +1,8 @@
+Monthly Account Statement
+Statement for Aurelia Le Page / CUST-999001
+Statement period: 2026-03-01 to 2026-03-28
+Customer ID: CUST-999001
+Customer name: Aurelia Le Page
+Opening balance: £90,000.00
+Closing balance: £93,250.75
+Narrative: inbound funds include property sale proceeds and investment portfolio liquidation receipts.

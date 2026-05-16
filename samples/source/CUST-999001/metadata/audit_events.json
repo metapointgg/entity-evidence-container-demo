@@ -1,0 +1,23 @@
+[
+  {
+    "event_id": "AUD-CUST-999001-001",
+    "timestamp": "2026-01-13T09:00:00Z",
+    "event_type": "Customer created",
+    "actor": "relationship.manager",
+    "source_system": "Salesforce FSC"
+  },
+  {
+    "event_id": "AUD-CUST-999001-002",
+    "timestamp": "2026-01-14T09:00:00Z",
+    "event_type": "CDD exception recorded - proof of address missing",
+    "actor": "compliance.officer",
+    "source_system": "AML Screening Platform"
+  },
+  {
+    "event_id": "AUD-CUST-999001-003",
+    "timestamp": "2026-01-15T09:00:00Z",
+    "event_type": "Manual review escalation",
+    "actor": "compliance.officer",
+    "source_system": "Salesforce FSC"
+  }
+]

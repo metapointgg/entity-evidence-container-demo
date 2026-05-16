@@ -1,0 +1,26 @@
+[
+  {
+    "account_id": "ACC-999001-1",
+    "product": "Current account",
+    "currency": "GBP",
+    "opened_on": "2026-01-13",
+    "status": "Open",
+    "balance": 77500.5
+  },
+  {
+    "account_id": "ACC-999001-2",
+    "product": "Fixed term deposit",
+    "currency": "GBP",
+    "opened_on": "2026-01-14",
+    "status": "Open",
+    "balance": 105001.0
+  },
+  {
+    "account_id": "ACC-999001-3",
+    "product": "Notice account",
+    "currency": "GBP",
+    "opened_on": "2026-01-15",
+    "status": "Open",
+    "balance": 132501.5
+  }
+]

@@ -1,0 +1,13 @@
+date,account_id,description,amount,balance,channel
+2026-01-01,ACC-999001-1,Investment liquidation receipt,820.1,75820.1,Online
+2026-01-08,ACC-999001-1,Property sale proceeds,820.1,76640.2,Branch
+2026-01-15,ACC-999001-1,Investment liquidation receipt,12500.0,89140.2,Operations
+2026-01-22,ACC-999001-1,Professional fee,12500.0,101640.2,Operations
+2026-01-29,ACC-999001-1,Investment liquidation receipt,25000.0,126640.2,Online
+2026-02-05,ACC-999001-1,Investment liquidation receipt,820.1,127460.3,Branch
+2026-02-12,ACC-999001-1,Interest credit,820.1,128280.4,Operations
+2026-02-19,ACC-999001-1,Professional fee,12500.0,140780.4,Operations
+2026-02-26,ACC-999001-1,Interest credit,25000.0,165780.4,Operations
+2026-03-05,ACC-999001-1,Interest credit,25000.0,190780.4,Branch
+2026-03-12,ACC-999001-1,Professional fee,-1500.25,189280.15,Branch
+2026-03-19,ACC-999001-1,Interest credit,820.1,190100.25,Online
