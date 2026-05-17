@@ -24,6 +24,10 @@ dependencies = [
 [project.optional-dependencies]
 ocr = ["pytesseract>=0.3.10"]
 test = ["pytest>=8.0.0"]
+mcp = ["mcp[cli]>=1.2.0"]
+
+[project.scripts]
+trustvault-mcp = "eec.mcp_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
