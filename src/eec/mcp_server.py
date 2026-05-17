@@ -43,7 +43,7 @@ def build_server() -> "FastMCP":
     if FastMCP is None:
         raise RuntimeError(_MCP_INSTALL_HELP)
 
-    mcp = FastMCP("TrustVault MCP", json_response=True)
+    mcp = FastMCP("TrustVault MCP")
 
     @mcp.tool()
     def trustvault_archive_status() -> dict[str, Any]:
