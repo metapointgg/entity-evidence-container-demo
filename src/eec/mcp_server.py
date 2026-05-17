@@ -27,9 +27,65 @@ Then run:
     trustvault-mcp
 """.strip()
 
+_JURISDICTION_MAP = {
+    "guernsey": "Guernsey",
+    "jersey": "Jersey",
+    "uk": "United Kingdom",
+    "united kingdom": "United Kingdom",
+    "isle of man": "Isle of Man",
+}
+
+_RISK_RATING_MAP = {
+    "high": "High",
+    "high risk": "High",
+    "high-risk": "High",
+    "medium": "Medium",
+    "medium risk": "Medium",
+    "medium-risk": "Medium",
+    "low": "Low",
+    "low risk": "Low",
+    "low-risk": "Low",
+}
+
+_SNAPSHOT_MAP = {
+    "onboarding": "ONBOARDING",
+    "account opening": "ONBOARDING",
+    "cdd review 2026": "CDD_REVIEW_2026",
+    "statements 2026 q1": "STATEMENTS_2026_Q1",
+    "correspondence 2026": "CORRESPONDENCE_2026",
+    "transactions 2026 q1": "TRANSACTIONS_2026_Q1",
+    "legal disclosure": "LEGAL_DISCLOSURE",
+}
+
 
 def _json_resource(payload: dict[str, Any]) -> str:
     return json.dumps(payload, indent=2, default=str)
+
+
+def _normalise_lookup(value: str | None) -> str:
+    return str(value or "").strip().lower().replace("_", " ")
+
+
+def _normalise_jurisdiction(value: str | None) -> str | None:
+    if value is None or str(value).strip() == "":
+        return None
+    text = str(value).strip()
+    return _JURISDICTION_MAP.get(_normalise_lookup(text), text)
+
+
+def _normalise_risk_rating(value: str | None) -> str | None:
+    if value is None or str(value).strip() == "":
+        return None
+    text = str(value).strip()
+    return _RISK_RATING_MAP.get(_normalise_lookup(text), text[:1].upper() + text[1:].lower())
+
+
+def _normalise_snapshot_id(value: str | None) -> str | None:
+    if value is None or str(value).strip() == "":
+        return None
+    text = str(value).strip()
+    mapped = _SNAPSHOT_MAP.get(_normalise_lookup(text))
+    return mapped or text.upper()
 
 
 def build_server() -> "FastMCP":
@@ -57,7 +113,11 @@ def build_server() -> "FastMCP":
         limit: int | None = None,
     ) -> dict[str, Any]:
         """List TrustVault customer/entity records with optional cohort filters."""
-        return mcp_tools.list_entities(jurisdiction=jurisdiction, risk_rating=risk_rating, limit=limit)
+        return mcp_tools.list_entities(
+            jurisdiction=_normalise_jurisdiction(jurisdiction),
+            risk_rating=_normalise_risk_rating(risk_rating),
+            limit=limit,
+        )
 
     @mcp.tool()
     def trustvault_get_entity_summary(entity_id: str) -> dict[str, Any]:
@@ -80,7 +140,7 @@ def build_server() -> "FastMCP":
             limit=limit,
             document_type=document_type,
             category=category,
-            snapshot_id=snapshot_id,
+            snapshot_id=_normalise_snapshot_id(snapshot_id),
         )
 
     @mcp.tool()
@@ -97,11 +157,11 @@ def build_server() -> "FastMCP":
         """Search across the TrustVault archive using the rebuilt index."""
         return mcp_tools.search_archive(
             query=query,
-            jurisdiction=jurisdiction,
-            risk_rating=risk_rating,
+            jurisdiction=_normalise_jurisdiction(jurisdiction),
+            risk_rating=_normalise_risk_rating(risk_rating),
             document_type=document_type,
             category=category,
-            snapshot_id=snapshot_id,
+            snapshot_id=_normalise_snapshot_id(snapshot_id),
             source_system=source_system,
             limit=limit,
         )
@@ -147,8 +207,8 @@ def build_server() -> "FastMCP":
         """Check evidence completeness for one or more TrustVault customers."""
         return mcp_tools.check_completeness(
             entity_id=entity_id,
-            jurisdiction=jurisdiction,
-            risk_rating=risk_rating,
+            jurisdiction=_normalise_jurisdiction(jurisdiction),
+            risk_rating=_normalise_risk_rating(risk_rating),
             missing_only=missing_only,
             ruleset_id=ruleset_id,
         )
