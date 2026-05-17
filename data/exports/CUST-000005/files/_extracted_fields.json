@@ -1,0 +1,1127 @@
+[
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "detected_jurisdiction",
+    "field_value": "Jersey",
+    "field_type": "jurisdiction",
+    "confidence": 0.82,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "detected_risk_rating",
+    "field_value": "Medium",
+    "field_type": "risk_rating",
+    "confidence": 0.78,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "detected_reference",
+    "field_value": "Opening",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "detected_reference",
+    "field_value": "Product",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "detected_reference",
+    "field_value": "terms",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "field_name": "ocr_character_count",
+    "field_value": "495",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "inheritance",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "field_name": "detected_risk_rating",
+    "field_value": "Medium",
+    "field_type": "risk_rating",
+    "confidence": 0.78,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "field_name": "pep_screening_signal",
+    "field_value": "true",
+    "field_type": "boolean",
+    "confidence": 0.75,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "field_name": "sanctions_screening_signal",
+    "field_value": "true",
+    "field_type": "boolean",
+    "confidence": 0.75,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "field_name": "edd_signal",
+    "field_value": "true",
+    "field_type": "boolean",
+    "confidence": 0.75,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "field_name": "detected_reference",
+    "field_value": "usage",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "field_name": "ocr_character_count",
+    "field_value": "429",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000003",
+    "field_name": "detected_date",
+    "field_value": "2031-09-30",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000003",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000003",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000003",
+    "field_name": "ocr_character_count",
+    "field_value": "241",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000004",
+    "field_name": "detected_date",
+    "field_value": "2026-04-02",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000004",
+    "field_name": "detected_jurisdiction",
+    "field_value": "Jersey",
+    "field_type": "jurisdiction",
+    "confidence": 0.82,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000004",
+    "field_name": "detected_address",
+    "field_value": "63 Harbour Road, St Peter Port, Jersey",
+    "field_type": "address",
+    "confidence": 0.75,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000004",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000004",
+    "field_name": "detected_reference",
+    "field_value": "holder",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000004",
+    "field_name": "ocr_character_count",
+    "field_value": "266",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000005",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "inheritance",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000005",
+    "field_name": "ocr_character_count",
+    "field_value": "350",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000006",
+    "field_name": "detected_date",
+    "field_value": "11 Feb 2026",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000006",
+    "field_name": "detected_reference",
+    "field_value": "opening",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000006",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000006",
+    "field_name": "ocr_character_count",
+    "field_value": "431",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000007",
+    "field_name": "detected_date",
+    "field_value": "12 Feb 2026",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000007",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "inheritance",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000007",
+    "field_name": "edd_signal",
+    "field_value": "true",
+    "field_type": "boolean",
+    "confidence": 0.75,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000007",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000007",
+    "field_name": "ocr_character_count",
+    "field_value": "431",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000008",
+    "field_name": "detected_date",
+    "field_value": "13 Feb 2026",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000008",
+    "field_name": "missing_evidence_signal",
+    "field_value": "true",
+    "field_type": "boolean",
+    "confidence": 0.75,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000008",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000008",
+    "field_name": "ocr_character_count",
+    "field_value": "448",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000009",
+    "field_name": "detected_date",
+    "field_value": "14 Feb 2026",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000009",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000009",
+    "field_name": "ocr_character_count",
+    "field_value": "438",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000010",
+    "field_name": "detected_date",
+    "field_value": "15 Feb 2026",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000010",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000010",
+    "field_name": "ocr_character_count",
+    "field_value": "427",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "detected_date",
+    "field_value": "2026-01-01",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "detected_date",
+    "field_value": "2026-01-03",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "detected_date",
+    "field_value": "2026-01-05",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "detected_date",
+    "field_value": "2026-01-07",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "detected_date",
+    "field_value": "2026-01-09",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "detected_date",
+    "field_value": "2026-01-11",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "Salary",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "field_name": "ocr_character_count",
+    "field_value": "2626",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000012",
+    "field_name": "ocr_character_count",
+    "field_value": "138",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000013",
+    "field_name": "ocr_character_count",
+    "field_value": "138",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000014",
+    "field_name": "ocr_character_count",
+    "field_value": "138",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000015",
+    "field_name": "ocr_character_count",
+    "field_value": "138",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000016",
+    "field_name": "detected_date",
+    "field_value": "2024-04-03",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000016",
+    "field_name": "detected_date",
+    "field_value": "2024-07-16",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000016",
+    "field_name": "detected_date",
+    "field_value": "2024-04-23",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000016",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000016",
+    "field_name": "ocr_character_count",
+    "field_value": "532",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000017",
+    "field_name": "sanctions_screening_signal",
+    "field_value": "true",
+    "field_type": "boolean",
+    "confidence": 0.75,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000017",
+    "field_name": "detected_reference",
+    "field_value": "approved",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000017",
+    "field_name": "ocr_character_count",
+    "field_value": "1221",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000018",
+    "field_name": "detected_jurisdiction",
+    "field_value": "Jersey",
+    "field_type": "jurisdiction",
+    "confidence": 0.82,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000018",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000018",
+    "field_name": "ocr_character_count",
+    "field_value": "458",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000019",
+    "field_name": "detected_date",
+    "field_value": "2031-09-30",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000019",
+    "field_name": "detected_name",
+    "field_value": "Thomas Vfilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000019",
+    "field_name": "detected_reference",
+    "field_value": "CUST",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000019",
+    "field_name": "ocr_character_count",
+    "field_value": "292",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000020",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "inheritance",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000020",
+    "field_name": "ocr_character_count",
+    "field_value": "374",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "field_name": "detected_date",
+    "field_value": "2026-01-01",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "field_name": "detected_date",
+    "field_value": "2026-01-28",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "salary",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "field_name": "detected_reference",
+    "field_value": "Statement",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "field_name": "ocr_character_count",
+    "field_value": "547",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "field_name": "detected_date",
+    "field_value": "2026-02-01",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "field_name": "detected_date",
+    "field_value": "2026-02-28",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "salary",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "field_name": "detected_reference",
+    "field_value": "Statement",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "field_name": "ocr_character_count",
+    "field_value": "549",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "field_name": "detected_date",
+    "field_value": "2026-03-01",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "field_name": "detected_date",
+    "field_value": "2026-03-28",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "salary",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "field_name": "detected_reference",
+    "field_value": "Statement",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "field_name": "ocr_character_count",
+    "field_value": "549",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "field_name": "detected_date",
+    "field_value": "2026-04-01",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "field_name": "detected_date",
+    "field_value": "2026-04-28",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "salary",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "field_name": "detected_reference",
+    "field_value": "Statement",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "field_name": "ocr_character_count",
+    "field_value": "549",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "field_name": "detected_date",
+    "field_value": "2026-05-01",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "field_name": "detected_date",
+    "field_value": "2026-05-28",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "salary",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "field_name": "detected_reference",
+    "field_value": "Statement",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "field_name": "ocr_character_count",
+    "field_value": "550",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "field_name": "detected_date",
+    "field_value": "2026-06-01",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "field_name": "detected_date",
+    "field_value": "2026-06-28",
+    "field_type": "date",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "field_name": "detected_name",
+    "field_value": "Thomas Wilson",
+    "field_type": "person",
+    "confidence": 0.72,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "savings",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "field_name": "source_of_wealth_signal",
+    "field_value": "salary",
+    "field_type": "financial_source",
+    "confidence": 0.8,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "field_name": "detected_reference",
+    "field_value": "Statement",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "field_name": "detected_reference",
+    "field_value": "CUST-000005",
+    "field_type": "identifier",
+    "confidence": 0.65,
+    "source": "rule_based",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "field_name": "ocr_character_count",
+    "field_value": "549",
+    "field_type": "integer",
+    "confidence": 0.99,
+    "source": "system",
+    "extracted_at": "2026-05-16T19:45:47Z"
+  }
+]

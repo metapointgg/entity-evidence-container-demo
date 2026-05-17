@@ -10,6 +10,91 @@ from typing import Any, Iterable
 from .local_llm import get_lm_studio_client, get_query_model, lm_studio_status
 from .search import advanced_search_index
 
+VALID_DOCUMENT_TYPES = {
+    "Application",
+    "Passport / ID",
+    "Proof of Address",
+    "CDD Review",
+    "Source of Funds",
+    "Source of Wealth",
+    "Screening Evidence",
+    "EDD Approval",
+    "Company Registry Extract",
+    "Beneficial Owner Evidence",
+    "Authorised Signatory ID",
+    "Monthly Statement",
+    "Transaction Extract",
+    "Customer Correspondence",
+    "Customer Metadata",
+    "Legacy Binary Payload",
+}
+
+DOCUMENT_TYPE_NORMALISATION = {
+    "application form": "Application",
+    "account opening application": "Application",
+    "passport": "Passport / ID",
+    "id": "Passport / ID",
+    "identity": "Passport / ID",
+    "proof of identity": "Passport / ID",
+    "proof of address": "Proof of Address",
+    "address evidence": "Proof of Address",
+    "utility bill": "Proof of Address",
+    "cdd": "CDD Review",
+    "cdd review": "CDD Review",
+    "kyc": "CDD Review",
+    "source of funds": "Source of Funds",
+    "sof": "Source of Funds",
+    "source of wealth": "Source of Wealth",
+    "sow": "Source of Wealth",
+    "screening": "Screening Evidence",
+    "pep screening": "Screening Evidence",
+    "sanctions screening": "Screening Evidence",
+    "edd": "EDD Approval",
+    "enhanced due diligence": "EDD Approval",
+    "company registry": "Company Registry Extract",
+    "company registry extract": "Company Registry Extract",
+    "beneficial owner": "Beneficial Owner Evidence",
+    "beneficial owner evidence": "Beneficial Owner Evidence",
+    "ubo evidence": "Beneficial Owner Evidence",
+    "authorised signatory": "Authorised Signatory ID",
+    "authorised signatory id": "Authorised Signatory ID",
+    "monthly statement": "Monthly Statement",
+    "statement": "Monthly Statement",
+    "bank statement": "Monthly Statement",
+    "transaction extract": "Transaction Extract",
+    "transactions": "Transaction Extract",
+    "correspondence": "Customer Correspondence",
+    "email": "Customer Correspondence",
+}
+
+LIFECYCLE_SNAPSHOT_TERMS = {
+    "onboarding": "ONBOARDING",
+    "onboarding document": "ONBOARDING",
+    "onboarding documents": "ONBOARDING",
+    "onboarding documentation": "ONBOARDING",
+    "onboarding evidence": "ONBOARDING",
+    "customer onboarding": "ONBOARDING",
+    "account opening": "ONBOARDING",
+}
+
+CATEGORY_NORMALISATION = {
+    "identity": "Identity",
+    "address": "Address",
+    "due diligence": "Due Diligence",
+    "cdd": "Due Diligence",
+    "kyc": "Due Diligence",
+    "screening": "Screening",
+    "statements": "Statements",
+    "statement": "Statements",
+    "transactions": "Transactions",
+    "transaction": "Transactions",
+    "correspondence": "Correspondence",
+    "emails": "Correspondence",
+    "email": "Correspondence",
+    "corporate": "Corporate",
+    "metadata": "Metadata",
+}
+
 ALLOWED_INTENTS = {
     "customer_evidence_question",
     "customer_evidence_retrieval",
@@ -64,11 +149,10 @@ DOCUMENT_HINTS = {
     "Source of Wealth": ["source of wealth", "wealth", "where did the customer money come from"],
     "Source of Funds": ["source of funds", "funds", "funding", "money come from"],
     "CDD Review": ["cdd", "due diligence", "kyc", "review"],
-    "Passport": ["passport", "identity"],
+    "Passport / ID": ["passport", "identity"],
     "Proof of Address": ["proof of address", "utility bill", "address"],
-    "Bank Statement": ["statement", "bank statement", "monthly statement"],
+    "Monthly Statement": ["statement", "bank statement", "monthly statement"],
 }
-
 
 SNAPSHOT_HINTS = {
     "ONBOARDING": ["onboarding", "account opening", "opening documentation", "application pack"],
@@ -81,11 +165,19 @@ SNAPSHOT_HINTS = {
 
 DOCUMENT_TYPE_ALIASES = {
     "Proof of Address": ["Proof of Address", "utility bill", "address evidence"],
-    "Source of Wealth": ["Source of Wealth / CDD", "source of wealth", "wealth evidence"],
-    "Source of Funds": ["Source of Wealth / CDD", "source of funds", "funding evidence"],
-    "CDD Review": ["Source of Wealth / CDD", "CDD", "cdd_risk_review"],
-    "Passport": ["Identity Evidence", "passport", "identity evidence"],
-    "Bank Statement": ["Monthly Statement", "statement"],
+    "Source of Wealth": ["Source of Wealth / CDD", "Source of Wealth", "source of wealth", "wealth evidence"],
+    "Source of Funds": ["Source of Wealth / CDD", "Source of Funds", "source of funds", "funding evidence"],
+    "CDD Review": ["Source of Wealth / CDD", "CDD", "CDD Review", "cdd_risk_review"],
+    "Passport / ID": ["Identity Evidence", "Passport / ID", "passport", "identity evidence"],
+    "Monthly Statement": ["Monthly Statement", "statement", "bank statement"],
+    "Application": ["Application", "account opening application", "application"],
+    "Screening Evidence": ["Screening Evidence", "Screening", "pep", "sanctions"],
+    "EDD Approval": ["EDD Approval", "enhanced due diligence", "edd"],
+    "Company Registry Extract": ["Company Registry Extract", "company registry"],
+    "Beneficial Owner Evidence": ["Beneficial Owner Evidence", "beneficial owner", "ubo"],
+    "Authorised Signatory ID": ["Authorised Signatory ID", "authorised signatory"],
+    "Transaction Extract": ["Transaction Extract", "transactions"],
+    "Customer Correspondence": ["Customer Correspondence", "Email", "correspondence"],
 }
 
 CATEGORY_ALIASES = {
@@ -97,8 +189,10 @@ CATEGORY_ALIASES = {
     "Correspondence": ["Correspondence"],
     "Complaints": ["Complaints", "Correspondence"],
     "Legal": ["Legal", "Correspondence", "Due Diligence"],
+    "Onboarding": ["Onboarding"],
+    "Corporate": ["Corporate"],
+    "Metadata": ["Metadata"],
 }
-
 
 SUPPORTED_QUERY_CAPABILITIES: dict[str, dict[str, Any]] = {
     "customer_evidence_question": {
@@ -133,7 +227,6 @@ SUPPORTED_QUERY_CAPABILITIES: dict[str, dict[str, Any]] = {
         "supports_filters": ["risk_rating", "jurisdiction", "evidence_category", "document_type", "snapshot_id"],
         "default_summary": False,
     },
-
     "evidence_completeness_review": {
         "description": "Evaluate customer files against an evidence completeness ruleset and show missing mandatory evidence.",
         "intent": "evidence_completeness_review",
@@ -212,7 +305,6 @@ def _apply_capability_defaults(structured: "StructuredArchiveQuery") -> "Structu
     if capability.get("group_by") and not structured.group_by:
         structured.group_by = str(capability["group_by"])
 
-    # A selected customer should always scope customer-level evidence questions/retrieval.
     if capability.get("requires_selected_entity") and not structured.entity_id:
         structured.intent = "customer_evidence_question"
         structured.result_type = "evidence"
@@ -266,6 +358,88 @@ class StructuredArchiveQuery:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+def _normalise_text_value(value: object) -> str:
+    return str(value or "").strip()
+
+
+def _normalise_lookup_key(value: object) -> str:
+    return _normalise_text_value(value).lower().replace("_", " ")
+
+
+def normalise_structured_query(structured: StructuredArchiveQuery) -> StructuredArchiveQuery:
+    """Normalise LLM/rules output before query execution."""
+    raw_query = _normalise_lookup_key(structured.raw_query)
+    semantic_query = _normalise_lookup_key(structured.semantic_query)
+
+    document_type_raw = _normalise_text_value(structured.document_type)
+    document_type_key = _normalise_lookup_key(document_type_raw)
+    evidence_category_raw = _normalise_text_value(structured.evidence_category)
+    evidence_category_key = _normalise_lookup_key(evidence_category_raw)
+    snapshot_id_raw = _normalise_text_value(structured.snapshot_id)
+    snapshot_id_key = _normalise_lookup_key(snapshot_id_raw)
+
+    onboarding_detected = (
+        document_type_key in LIFECYCLE_SNAPSHOT_TERMS
+        or evidence_category_key in LIFECYCLE_SNAPSHOT_TERMS
+        or snapshot_id_key in LIFECYCLE_SNAPSHOT_TERMS
+        or "onboarding" in raw_query
+        or "onboarding" in semantic_query
+        or "account opening" in raw_query
+        or "account opening" in semantic_query
+    )
+
+    if onboarding_detected:
+        if document_type_key in LIFECYCLE_SNAPSHOT_TERMS or document_type_key == "onboarding":
+            structured.document_type = None
+        if evidence_category_key in LIFECYCLE_SNAPSHOT_TERMS or evidence_category_key == "onboarding":
+            structured.evidence_category = None
+        if not structured.snapshot_id or snapshot_id_key in LIFECYCLE_SNAPSHOT_TERMS or snapshot_id_key == "onboarding":
+            structured.snapshot_id = "ONBOARDING"
+
+    # Normalise document type aliases and discard invented hard filters.
+    document_type_raw = _normalise_text_value(structured.document_type)
+    document_type_key = _normalise_lookup_key(document_type_raw)
+    if document_type_key:
+        mapped_document_type = DOCUMENT_TYPE_NORMALISATION.get(document_type_key)
+        if mapped_document_type:
+            structured.document_type = mapped_document_type
+        elif document_type_raw not in VALID_DOCUMENT_TYPES:
+            structured.document_type = None
+
+    # Normalise evidence category aliases.
+    evidence_category_raw = _normalise_text_value(structured.evidence_category)
+    evidence_category_key = _normalise_lookup_key(evidence_category_raw)
+    if evidence_category_key:
+        structured.evidence_category = CATEGORY_NORMALISATION.get(evidence_category_key, evidence_category_raw)
+
+    # Normalise snapshot values.
+    snapshot_id_raw = _normalise_text_value(structured.snapshot_id)
+    snapshot_id_key = _normalise_lookup_key(snapshot_id_raw)
+    if snapshot_id_key in LIFECYCLE_SNAPSHOT_TERMS:
+        structured.snapshot_id = LIFECYCLE_SNAPSHOT_TERMS[snapshot_id_key]
+    elif snapshot_id_raw.upper() == "ONBOARDING":
+        structured.snapshot_id = "ONBOARDING"
+
+    # Avoid using full natural-language questions as hard text filters.
+    cleaned_terms: list[str] = []
+    for term in structured.keyword_terms or []:
+        term_text = _normalise_text_value(term)
+        if not term_text:
+            continue
+        if len(term_text.split()) > 8:
+            continue
+        if term_text.lower() not in {t.lower() for t in cleaned_terms}:
+            cleaned_terms.append(term_text)
+
+    if onboarding_detected:
+        for term in ["onboarding", "application", "passport", "proof of address"]:
+            if term not in {t.lower() for t in cleaned_terms}:
+                cleaned_terms.append(term)
+
+    structured.keyword_terms = cleaned_terms
+    return structured
 
 
 def _normalise_query_text(query: str) -> str:
@@ -366,6 +540,7 @@ def _fallback_interpret(query: str, selected_entity_id: str | None = None, limit
             risk_rating=risk,
             evidence_category=category,
             document_type=document_type,
+            snapshot_id=snapshot_id,
             semantic_query=query,
             keyword_terms=[query, *(filter(None, [category, document_type]))],
             requires_summary=True,
@@ -501,7 +676,6 @@ def _validate_interpreted_payload(payload: dict[str, Any], fallback: StructuredA
         confidence=float(payload.get("confidence") or 0.8),
     )
 
-    # Keep common language variants aligned with generated demo data.
     if out.jurisdiction:
         out.jurisdiction = JURISDICTION_MAP.get(out.jurisdiction.lower(), out.jurisdiction)
     if out.risk_rating:
@@ -510,8 +684,7 @@ def _validate_interpreted_payload(payload: dict[str, Any], fallback: StructuredA
 
 
 def interpret_archive_query(query: str, selected_entity_id: str | None = None, *, use_local_ai: bool = True, limit: int = 25) -> StructuredArchiveQuery:
-    fallback = _fallback_interpret(query, selected_entity_id=selected_entity_id, limit=limit)
-    fallback = _apply_capability_defaults(fallback)
+    fallback = normalise_structured_query(_apply_capability_defaults(_fallback_interpret(query, selected_entity_id=selected_entity_id, limit=limit)))
     if not use_local_ai or not query.strip():
         return fallback
     status = lm_studio_status()
@@ -528,18 +701,24 @@ def interpret_archive_query(query: str, selected_entity_id: str | None = None, *
             "allowed_risk_ratings": ["Low", "Medium", "High"],
             "allowed_jurisdictions": ["Guernsey", "Jersey", "United Kingdom", "Isle of Man", "Other"],
             "allowed_evidence_categories": sorted(CATEGORY_KEYWORDS.keys()),
+            "allowed_document_types": sorted(VALID_DOCUMENT_TYPES),
+            "lifecycle_terms": {
+                "onboarding": {"snapshot_id": "ONBOARDING", "document_type": None},
+                "account opening": {"snapshot_id": "ONBOARDING", "document_type": None},
+            },
             "instructions": (
-                "Return only valid JSON. Do not include prose. The LLM must not generate SQL. For questions about complete files, incomplete onboarding, missing mandatory evidence or evidence checklists, use intent=evidence_completeness_review and result_type=completeness_report. "
+                "Return only valid JSON. Do not include prose. The LLM must not generate SQL. "
+                "For questions about complete files, incomplete onboarding, missing mandatory evidence or evidence checklists, use intent=evidence_completeness_review and result_type=completeness_report. "
                 "Set entity_id to the selected_entity_id when a selected customer is in scope. "
-                "Use result_type=customers for customer lists, evidence for customer-specific evidence, "
-                "and evidence_grouped_by_customer for cohort evidence retrieval. "
-                "For requests such as 'customers who do not have proof of address', set intent='missing_evidence_review', "
-                "missing_evidence=true, result_type=customers, and evidence.document_type='Proof of Address'. "
-                "For onboarding documentation, set evidence.snapshot_id='ONBOARDING'."
+                "Use result_type=customers for customer lists, evidence for customer-specific evidence, and evidence_grouped_by_customer for cohort evidence retrieval. "
+                "For requests such as 'customers who do not have proof of address', set intent='missing_evidence_review', missing_evidence=true, result_type=customers, and evidence.document_type='Proof of Address'. "
+                "Important controlled vocabulary rules: Onboarding is not a document_type. Treat onboarding, onboarding documentation, onboarding documents, customer onboarding and account opening as evidence.snapshot_id='ONBOARDING'. "
+                "Do not set evidence.document_type='ONBOARDING'. Only use document_type values from the controlled list supplied in the prompt. "
+                "If the user asks for onboarding documentation generally, set evidence.snapshot_id='ONBOARDING' and leave evidence.document_type null."
             ),
             "schema": {
                 "intent": "customer_evidence_question | customer_evidence_retrieval | customer_discovery | missing_evidence_review | evidence_completeness_review | cohort_evidence_retrieval | regulatory_pack_request | retention_legal_hold_review | archive_health_query | general_archive_search",
-                "result_type": "evidence | customers | evidence_grouped_by_customer | retention_report | archive_health",
+                "result_type": "evidence | customers | evidence_grouped_by_customer | retention_report | archive_health | completeness_report",
                 "scope": {"entity_id": None, "jurisdiction": None, "risk_rating": None},
                 "evidence": {"category": None, "document_type": None, "snapshot_id": None, "snapshot_type": None, "source_system": None, "retention_class": None, "legal_hold_status": None},
                 "missing_evidence": False,
@@ -555,13 +734,7 @@ def interpret_archive_query(query: str, selected_entity_id: str | None = None, *
         response = client.chat.completions.create(
             model=get_query_model(),
             messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You convert natural-language regulated archive searches into strict JSON. "
-                        "Return only valid JSON. Never generate SQL."
-                    ),
-                },
+                {"role": "system", "content": "You convert natural-language regulated archive searches into strict JSON. Return only valid JSON. Never generate SQL."},
                 {"role": "user", "content": json.dumps(prompt, indent=2)},
             ],
             temperature=0.1,
@@ -572,7 +745,8 @@ def interpret_archive_query(query: str, selected_entity_id: str | None = None, *
         payload = _extract_json(text)
         if not payload:
             return fallback
-        return _apply_capability_defaults(_validate_interpreted_payload(payload, fallback, selected_entity_id, limit))
+        interpreted = _apply_capability_defaults(_validate_interpreted_payload(payload, fallback, selected_entity_id, limit))
+        return normalise_structured_query(interpreted)
     except Exception:
         return fallback
 
@@ -592,6 +766,7 @@ def _base_evidence_query() -> str:
 
 
 def _build_where(structured: StructuredArchiveQuery, *, include_text: bool = False) -> tuple[str, list[Any]]:
+    structured = normalise_structured_query(structured)
     clauses: list[str] = []
     params: list[Any] = []
     mapping = {
@@ -610,11 +785,6 @@ def _build_where(structured: StructuredArchiveQuery, *, include_text: bool = Fal
             clauses.append(f"{column} = ?")
             params.append(value)
 
-    # Evidence categories and document types are interpreted from user language and
-    # are intentionally broader than the stored demo taxonomy. For example,
-    # "proof of address" is stored as category "Due Diligence" with document type
-    # "Proof of Address", so applying category="Address" as an exact filter would
-    # incorrectly return no rows.
     if structured.document_type:
         aliases = DOCUMENT_TYPE_ALIASES.get(structured.document_type, [structured.document_type])
         doc_clauses = []
@@ -648,6 +818,7 @@ def _build_where(structured: StructuredArchiveQuery, *, include_text: bool = Fal
 
 
 def discover_customers(sqlite_path: Path, structured: StructuredArchiveQuery) -> list[dict[str, Any]]:
+    structured = normalise_structured_query(structured)
     conn = sqlite3.connect(sqlite_path)
     conn.row_factory = sqlite3.Row
     try:
@@ -664,7 +835,6 @@ def discover_customers(sqlite_path: Path, structured: StructuredArchiveQuery) ->
         having = ""
         join_params: list[Any] = []
         if structured.missing_evidence and (structured.document_type or structured.evidence_category or structured.snapshot_id):
-            # Return customers in the cohort where no matching evidence exists.
             missing_clauses = ["mo.entity_id = e.entity_id"]
             if structured.snapshot_id:
                 missing_clauses.append("mo.snapshot_id = ?")
@@ -673,10 +843,6 @@ def discover_customers(sqlite_path: Path, structured: StructuredArchiveQuery) ->
                 aliases = DOCUMENT_TYPE_ALIASES.get(structured.document_type, [structured.document_type])
                 alias_clauses = []
                 for alias in aliases:
-                    # Missing-evidence checks must only consider evidence identity fields.
-                    # Do not match against search_text here, because a CDD review can say
-                    # "proof of address is missing" and would otherwise be mistaken for
-                    # proof-of-address evidence.
                     alias_clauses.append("(lower(mo.document_type) LIKE ? OR lower(mo.filename) LIKE ?)")
                     like = f"%{alias.lower()}%"
                     join_params.extend([like, like])
@@ -710,7 +876,7 @@ def discover_customers(sqlite_path: Path, structured: StructuredArchiveQuery) ->
 
 
 def retrieve_structured_evidence(sqlite_path: Path, structured: StructuredArchiveQuery) -> list[dict[str, Any]]:
-    # First use deterministic filters and text hints. Fall back to semantic/FTS if useful.
+    structured = normalise_structured_query(structured)
     conn = sqlite3.connect(sqlite_path)
     conn.row_factory = sqlite3.Row
     try:
@@ -738,6 +904,7 @@ def retrieve_structured_evidence(sqlite_path: Path, structured: StructuredArchiv
 
 
 def retention_structured_rows(sqlite_path: Path, structured: StructuredArchiveQuery) -> list[dict[str, Any]]:
+    structured = normalise_structured_query(structured)
     conn = sqlite3.connect(sqlite_path)
     conn.row_factory = sqlite3.Row
     try:
@@ -784,6 +951,8 @@ def group_evidence_by_customer(rows: Iterable[dict[str, Any]]) -> dict[str, list
 
 
 def execute_structured_query(sqlite_path: Path, structured: StructuredArchiveQuery) -> dict[str, Any]:
+    structured = normalise_structured_query(_apply_capability_defaults(structured))
+
     if structured.result_type == "completeness_report" or structured.intent == "evidence_completeness_review":
         from .rulesets import evaluate_completeness
         report = evaluate_completeness(

@@ -1,0 +1,8 @@
+{
+  "container_path": "data/containers/CUST-000005.fits",
+  "entity_id": "CUST-000005",
+  "status": "PASS",
+  "checked_payloads": 26,
+  "failed_payloads": 0,
+  "failures": []
+}

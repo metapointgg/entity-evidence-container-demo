@@ -1,0 +1,236 @@
+[
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:account_opening_application.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:cdd_risk_review.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000003",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:passport_scan_certified.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000004",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:proof_of_address_utility_bill.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000005",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:source_of_wealth_scan.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000006",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000007",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000008",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000009",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000010",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000012",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:bulk_archive_attachment_01.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000013",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:bulk_archive_attachment_02.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000014",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:bulk_archive_attachment_03.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000015",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:bulk_archive_attachment_04.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000016",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000017",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000018",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "direct-text",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000019",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "ocr:pytesseract",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000020",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "ocr:pytesseract",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:statement_2026_01.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:statement_2026_02.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:statement_2026_03.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:statement_2026_04.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:statement_2026_05.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "event_type": "DOCUMENT_EXTRACTION",
+    "tool": "sidecar:statement_2026_06.search.txt",
+    "model": "deterministic_rules_v1",
+    "status": "PASS",
+    "timestamp": "2026-05-16T19:45:47Z",
+    "error": ""
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "total_records": 26,
+  "retention_class_counts": {
+    "Customer File": 1,
+    "CDD": 6,
+    "Correspondence": 5,
+    "Transactional": 1,
+    "Archive": 4,
+    "Governance": 3,
+    "Statements": 6
+  },
+  "legal_hold_count": 0,
+  "deletion_eligible_count": 0,
+  "legal_hold_records": []
+}

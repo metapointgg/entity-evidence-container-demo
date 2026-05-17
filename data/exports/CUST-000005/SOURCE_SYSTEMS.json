@@ -1,0 +1,11 @@
+{
+  "total_source_systems": 6,
+  "source_system_counts": {
+    "Salesforce FSC": 7,
+    "AML Screening Platform": 3,
+    "Email Archive": 5,
+    "Core Banking": 1,
+    "Legacy Archive": 4,
+    "Statement Engine": 6
+  }
+}

@@ -1,0 +1,16 @@
+From: support@example-bank.test
+To: thomas.wilson@example.test
+Subject: Fixed term deposit maturity
+Date: Tue, 14 Feb 2026 09:34:00 +0000
+Message-ID: <CUST-000005-4@example-bank.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear Thomas,
+
+Your fixed term deposit maturity date is approaching. Please select reinvestment, withdrawal or rollover instructions.
+
+Customer reference: CUST-000005
+
+Regards,
+Customer Operations

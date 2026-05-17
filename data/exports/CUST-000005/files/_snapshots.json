@@ -1,0 +1,32 @@
+[
+  {
+    "snapshot_id": "CDD_REVIEW_2026",
+    "snapshot_type": "CDD / AML Review Snapshot",
+    "object_count": 3,
+    "payload_bytes": 313052
+  },
+  {
+    "snapshot_id": "CORRESPONDENCE_2026",
+    "snapshot_type": "Correspondence Snapshot 2026",
+    "object_count": 5,
+    "payload_bytes": 2180
+  },
+  {
+    "snapshot_id": "ONBOARDING",
+    "snapshot_type": "Onboarding Evidence Snapshot",
+    "object_count": 11,
+    "payload_bytes": 25875871
+  },
+  {
+    "snapshot_id": "STATEMENTS_2026_Q1",
+    "snapshot_type": "Statement Snapshot 2026 Q1",
+    "object_count": 6,
+    "payload_bytes": 14370
+  },
+  {
+    "snapshot_id": "TRANSACTIONS_2026_Q1",
+    "snapshot_type": "Transaction Extract Snapshot 2026 Q1",
+    "object_count": 1,
+    "payload_bytes": 2668
+  }
+]

@@ -1,0 +1,236 @@
+[
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000001",
+    "filename": "account_opening_application.pdf",
+    "extracted_text": "Account Opening Application\nSynthetic customer onboarding pack for Thomas Wilson / CUST-000005\nCustomer ID: CUST-000005\nName: Thomas Wilson\nJurisdiction: Jersey\nOccupation: Investment Manager\nRisk rating: Medium\nProduct 1: Cash ISA\nProduct 2: Current account\nProduct 3: Easy access savings\nCustomer has confirmed tax residency and source of wealth information.\nCustomer has accepted account terms and data processing notice.\nConsent recorded for electronic communications and statement delivery.",
+    "extraction_method": "sidecar:account_opening_application.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 495
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000002",
+    "filename": "cdd_risk_review.pdf",
+    "extracted_text": "Customer Due Diligence Risk Review\nCDD periodic review for Thomas Wilson / CUST-000005\nRisk rating: Medium\nSource of wealth: inheritance\nPEP screening: No match\nSanctions screening: Clear\nAdverse media: No material adverse media\nDecision: Continue relationship\nReviewer: Compliance Officer 2\nRationale: Documentation supports declared activity and expected account usage.\nEnhanced due diligence applied where risk rating is High.",
+    "extraction_method": "sidecar:cdd_risk_review.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 429
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000003",
+    "filename": "passport_scan_certified.pdf",
+    "extracted_text": "PASSPORT IDENTITY EVIDENCE\nName: Thomas Wilson\nCustomer reference: CUST-000005\nNationality: British Citizen\nDocument number: P951405188\nDocument expiry: 2031-09-30\nCertification: Seen and certified as a true likeness by relationship manager.",
+    "extraction_method": "sidecar:passport_scan_certified.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 241
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000004",
+    "filename": "proof_of_address_utility_bill.pdf",
+    "extracted_text": "Island Utilities Statement\nProof of address evidence for Thomas Wilson\nAccount holder: Thomas Wilson\nService address: 63 Harbour Road, St Peter Port, Jersey\nBill date: 2026-04-02\nAmount due: £309.00\nSynthetic utility bill generated for document preservation testing.",
+    "extraction_method": "sidecar:proof_of_address_utility_bill.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 266
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000005",
+    "filename": "source_of_wealth_scan.pdf",
+    "extracted_text": "SOURCE OF WEALTH EVIDENCE\nCustomer: Thomas Wilson\nSource of wealth category: inheritance\nEvidence reviewed: bank statements, sale contract, accountant letter, tax computation.\nCompliance conclusion: evidence is consistent with declared net worth and expected activity.\nAdditional monitoring: periodic review cycle retained due to transaction profile.",
+    "extraction_method": "sidecar:source_of_wealth_scan.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 350
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000006",
+    "filename": "email_01_welcome_to_banxlocal.eml",
+    "extracted_text": "From: support@example-bank.test\nTo: thomas.wilson@example.test\nSubject: Welcome to Banxlocal\nDate: Tue, 11 Feb 2026 09:31:00 +0000\nMessage-ID: <CUST-000005-1@example-bank.test>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=utf-8\n\nDear Thomas,\n\nYour account opening journey is now complete. Please review your statement preferences and online access arrangements.\n\nCustomer reference: CUST-000005\n\nRegards,\nCustomer Operations\n",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 432
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000007",
+    "filename": "email_02_cdd_follow-up.eml",
+    "extracted_text": "From: support@example-bank.test\nTo: thomas.wilson@example.test\nSubject: CDD follow-up\nDate: Tue, 12 Feb 2026 09:32:00 +0000\nMessage-ID: <CUST-000005-2@example-bank.test>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=utf-8\n\nDear Thomas,\n\nPlease provide further source of wealth information relating to inheritance. This supports our enhanced due diligence review.\n\nCustomer reference: CUST-000005\n\nRegards,\nCustomer Operations\n",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 432
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000008",
+    "filename": "email_03_complaint_acknowledgement.eml",
+    "extracted_text": "From: support@example-bank.test\nTo: thomas.wilson@example.test\nSubject: Complaint acknowledgement\nDate: Tue, 13 Feb 2026 09:33:00 +0000\nMessage-ID: <CUST-000005-3@example-bank.test>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=utf-8\n\nDear Thomas,\n\nWe acknowledge your complaint regarding interest calculation query. We will investigate and respond within the required timeframe.\n\nCustomer reference: CUST-000005\n\nRegards,\nCustomer Operations\n",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 449
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000009",
+    "filename": "email_04_fixed_term_deposit_maturity.eml",
+    "extracted_text": "From: support@example-bank.test\nTo: thomas.wilson@example.test\nSubject: Fixed term deposit maturity\nDate: Tue, 14 Feb 2026 09:34:00 +0000\nMessage-ID: <CUST-000005-4@example-bank.test>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=utf-8\n\nDear Thomas,\n\nYour fixed term deposit maturity date is approaching. Please select reinvestment, withdrawal or rollover instructions.\n\nCustomer reference: CUST-000005\n\nRegards,\nCustomer Operations\n",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 439
+  },
+  {
+    "object_id": "CUST-000005-CORRESPONDENCE_2026-OBJ-000010",
+    "filename": "email_05_periodic_review_request.eml",
+    "extracted_text": "From: support@example-bank.test\nTo: thomas.wilson@example.test\nSubject: Periodic review request\nDate: Tue, 15 Feb 2026 09:35:00 +0000\nMessage-ID: <CUST-000005-5@example-bank.test>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=utf-8\n\nDear Thomas,\n\nWe are completing a periodic review of your customer due diligence profile and may require updated information.\n\nCustomer reference: CUST-000005\n\nRegards,\nCustomer Operations\n",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 428
+  },
+  {
+    "object_id": "CUST-000005-TRANSACTIONS_2026_Q1-OBJ-000011",
+    "filename": "transactions_2026_q1.csv",
+    "extracted_text": "date,account_id,description,amount,balance,channel\n2026-01-01,ACC-000005-1,ATM withdrawal,-39.22,15985.31,Branch\n2026-01-03,ACC-000005-1,ATM withdrawal,241.31,16226.62,Branch\n2026-01-05,ACC-000005-1,ATM withdrawal,-167.91,16058.71,Operations\n2026-01-07,ACC-000005-1,Transfer to savings,112.45,16171.16,Online\n2026-01-09,ACC-000005-1,Card settlement,2435.69,18606.85,Online\n2026-01-11,ACC-000005-1,Card settlement,-49.31,18557.54,Online\n2026-01-13,ACC-000005-1,Transfer to savings,-753.31,17804.23,Branch\n2026-01-15,ACC-000005-1,Salary credit,105.23,17909.46,Online\n2026-01-17,ACC-000005-1,Card settlement,1501.48,19410.94,Operations\n2026-01-19,ACC-000005-1,Salary credit,-461.46,18949.48,Online\n2026-01-21,ACC-000005-1,Interest credit,749.01,19698.49,Online\n2026-01-23,ACC-000005-1,Salary credit,-191.6,19506.89,Online\n2026-01-25,ACC-000005-1,Interest credit,2305.51,21812.4,Mobile\n2026-01-27,ACC-000005-1,Interest credit,1912.98,23725.38,Operations\n2026-01-29,ACC-000005-1,ATM withdrawal,-555.53,23169.85,Mobile\n2026-01-31,ACC-000005-1,Transfer to savings,-299.3,22870.55,Online\n2026-02-02,ACC-000005-1,Card settlement,-518.9,22351.65,Mobile\n2026-02-04,ACC-000005-1,Interest credit,1041.64,23393.29,Branch\n2026-02-06,ACC-000005-1,Interest credit,1759.79,25153.08,Operations\n2026-02-08,ACC-000005-1,Standing order,2198.06,27351.14,Operations\n2026-02-10,ACC-000005-1,Transfer to savings,207.75,27558.89,Mobile\n2026-02-12,ACC-000005-1,ATM withdrawal,1211.78,28770.67,Mobile\n2026-02-14,ACC-000005-1,Card settlement,2327.05,31097.72,Branch\n2026-02-16,ACC-000005-1,Salary credit,73.33,31171.05,Branch\n2026-02-18,ACC-000005-1,Transfer to savings,-8.44,31162.61,Mobile\n2026-02-20,ACC-000005-1,Interest credit,-283.44,30879.17,Operations\n2026-02-22,ACC-000005-1,Interest credit,1474.92,32354.09,Online\n2026-02-24,ACC-000005-1,Standing order,-692.29,31661.8,Online\n2026-02-26,ACC-000005-1,Interest credit,1519.86,33181.66,Mobile\n2026-02-28,ACC-000005-1,Standing order,1468.37,34650.03,Branch\n2026-03-02,ACC-000005-1,Transfer to savings,602.96,35252.99,Branch\n2026-03-04,ACC-000005-1,Standing order,1337.19,36590.18,Branch\n2026-03-06,ACC-000005-1,Card settlement,-564.35,36025.83,Online\n2026-03-08,ACC-000005-1,Transfer to savings,1163.65,37189.48,Online\n2026-03-10,ACC-000005-1,Interest credit,649.21,37838.69,Online\n2026-03-12,ACC-000005-1,Standing order,1509.12,39347.81,Operations\n2026-03-14,ACC-000005-1,Transfer to savings,644.6,39992.41,Mobile\n2026-03-16,ACC-000005-1,ATM withdrawal,2135.1,42127.51,Online\n2026-03-18,ACC-000005-1,Salary credit,1192.26,43319.77,Mobile\n2026-03-20,ACC-000005-1,ATM withdrawal,-44.55,43275.22,Mobile\n",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 2627
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000012",
+    "filename": "bulk_archive_attachment_01.bin",
+    "extracted_text": "Synthetic large evidence payload for CUST-000005 Thomas Wilson. Bulk archive attachment 1. Contains preserved binary evidence placeholder.",
+    "extraction_method": "sidecar:bulk_archive_attachment_01.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 138
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000013",
+    "filename": "bulk_archive_attachment_02.bin",
+    "extracted_text": "Synthetic large evidence payload for CUST-000005 Thomas Wilson. Bulk archive attachment 2. Contains preserved binary evidence placeholder.",
+    "extraction_method": "sidecar:bulk_archive_attachment_02.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 138
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000014",
+    "filename": "bulk_archive_attachment_03.bin",
+    "extracted_text": "Synthetic large evidence payload for CUST-000005 Thomas Wilson. Bulk archive attachment 3. Contains preserved binary evidence placeholder.",
+    "extraction_method": "sidecar:bulk_archive_attachment_03.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 138
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000015",
+    "filename": "bulk_archive_attachment_04.bin",
+    "extracted_text": "Synthetic large evidence payload for CUST-000005 Thomas Wilson. Bulk archive attachment 4. Contains preserved binary evidence placeholder.",
+    "extraction_method": "sidecar:bulk_archive_attachment_04.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 138
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000016",
+    "filename": "accounts.json",
+    "extracted_text": "[\n  {\n    \"account_id\": \"ACC-000005-1\",\n    \"product\": \"Cash ISA\",\n    \"currency\": \"GBP\",\n    \"opened_on\": \"2024-04-03\",\n    \"status\": \"Open\",\n    \"balance\": 62235.62\n  },\n  {\n    \"account_id\": \"ACC-000005-2\",\n    \"product\": \"Current account\",\n    \"currency\": \"GBP\",\n    \"opened_on\": \"2024-07-16\",\n    \"status\": \"Open\",\n    \"balance\": 139906.11\n  },\n  {\n    \"account_id\": \"ACC-000005-3\",\n    \"product\": \"Easy access savings\",\n    \"currency\": \"GBP\",\n    \"opened_on\": \"2024-04-23\",\n    \"status\": \"Open\",\n    \"balance\": 120333.04\n  }\n]",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 532
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000017",
+    "filename": "audit_events.json",
+    "extracted_text": "[\n  {\n    \"event_id\": \"AUD-CUST-000005-001\",\n    \"timestamp\": \"2026-01-02T09:00:00Z\",\n    \"event_type\": \"Customer created\",\n    \"actor\": \"compliance.officer\",\n    \"source_system\": \"Core Banking\"\n  },\n  {\n    \"event_id\": \"AUD-CUST-000005-002\",\n    \"timestamp\": \"2026-01-03T09:00:00Z\",\n    \"event_type\": \"CDD documents received\",\n    \"actor\": \"compliance.officer\",\n    \"source_system\": \"Salesforce FSC\"\n  },\n  {\n    \"event_id\": \"AUD-CUST-000005-003\",\n    \"timestamp\": \"2026-01-04T09:00:00Z\",\n    \"event_type\": \"Sanctions screening completed\",\n    \"actor\": \"system\",\n    \"source_system\": \"Core Banking\"\n  },\n  {\n    \"event_id\": \"AUD-CUST-000005-004\",\n    \"timestamp\": \"2026-01-05T09:00:00Z\",\n    \"event_type\": \"Account approved\",\n    \"actor\": \"compliance.officer\",\n    \"source_system\": \"AML Screening Platform\"\n  },\n  {\n    \"event_id\": \"AUD-CUST-000005-005\",\n    \"timestamp\": \"2026-01-06T09:00:00Z\",\n    \"event_type\": \"Statement generated\",\n    \"actor\": \"relationship.manager\",\n    \"source_system\": \"Core Banking\"\n  },\n  {\n    \"event_id\": \"AUD-CUST-000005-006\",\n    \"timestamp\": \"2026-01-07T09:00:00Z\",\n    \"event_type\": \"Periodic review scheduled\",\n    \"actor\": \"system\",\n    \"source_system\": \"AML Screening Platform\"\n  }\n]",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 1221
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000018",
+    "filename": "customer.json",
+    "extracted_text": "{\n  \"entity_id\": \"CUST-000005\",\n  \"entity_type\": \"Customer\",\n  \"display_name\": \"Thomas Wilson\",\n  \"jurisdiction\": \"Jersey\",\n  \"risk_rating\": \"Medium\",\n  \"occupation\": \"Investment Manager\",\n  \"products\": [\n    \"Cash ISA\",\n    \"Current account\",\n    \"Easy access savings\"\n  ],\n  \"created_at\": \"2026-05-16T14:13:09Z\",\n  \"source_systems\": [\n    \"Salesforce FSC\",\n    \"Core Banking\",\n    \"Email Archive\",\n    \"Statement Engine\",\n    \"AML Screening Platform\"\n  ]\n}",
+    "extraction_method": "direct-text",
+    "extraction_confidence": 0.88,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 458
+  },
+  {
+    "object_id": "CUST-000005-ONBOARDING-OBJ-000019",
+    "filename": "passport_scan.jpg",
+    "extracted_text": "PASSPORT IDENTITY EVIDENCE\n\nName: Thomas Vfilson\n\nCustomer reference: CUST.000005\n\nNationality British Citizen\n\nDocument number PAS 1405 188\n\nDocumentexpir 2031-09-30\n\nCertification: See n and certified asa Je likeness by relaticnship\n\nSyntheticscanned evidence for preservation cantainer POC",
+    "extraction_method": "ocr:pytesseract",
+    "extraction_confidence": 0.68,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 292
+  },
+  {
+    "object_id": "CUST-000005-CDD_REVIEW_2026-OBJ-000020",
+    "filename": "source_of_wealth_evidence.jpg",
+    "extracted_text": "SOURCE OF WEALTH EVIDENCE\n\nSource of wealth category inheritance?\n\nEvidence reviened bank statements sale contract accoun ant letter\n\n‘ax computation\n\nCompliance con-usion evidence Iscansistentwith declansd net worth\n\nand expected act,\n\nAdditional monityring penedic review cycle retained due t>\n\ntransaction profits\n\nSyntheticscanned evidence for preservation cantainer POC",
+    "extraction_method": "ocr:pytesseract",
+    "extraction_confidence": 0.68,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 374
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000021",
+    "filename": "statement_2026_01.pdf",
+    "extracted_text": "Monthly Account Statement\nStatement for Thomas Wilson / CUST-000005\nStatement period: 2026-01-01 to 2026-01-28\nCustomer ID: CUST-000005\nCustomer name: Thomas Wilson\nOpening balance: £2,707.08\nClosing balance: £2,413.85\nProduct references: Cash ISA, Current account, Easy access savings\nNarrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.\nPlease retain this statement for your records.\nContact support immediately if any transaction appears incorrect.",
+    "extraction_method": "sidecar:statement_2026_01.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 547
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000022",
+    "filename": "statement_2026_02.pdf",
+    "extracted_text": "Monthly Account Statement\nStatement for Thomas Wilson / CUST-000005\nStatement period: 2026-02-01 to 2026-02-28\nCustomer ID: CUST-000005\nCustomer name: Thomas Wilson\nOpening balance: £41,035.71\nClosing balance: £40,360.50\nProduct references: Cash ISA, Current account, Easy access savings\nNarrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.\nPlease retain this statement for your records.\nContact support immediately if any transaction appears incorrect.",
+    "extraction_method": "sidecar:statement_2026_02.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 549
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000023",
+    "filename": "statement_2026_03.pdf",
+    "extracted_text": "Monthly Account Statement\nStatement for Thomas Wilson / CUST-000005\nStatement period: 2026-03-01 to 2026-03-28\nCustomer ID: CUST-000005\nCustomer name: Thomas Wilson\nOpening balance: £66,732.04\nClosing balance: £66,999.70\nProduct references: Cash ISA, Current account, Easy access savings\nNarrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.\nPlease retain this statement for your records.\nContact support immediately if any transaction appears incorrect.",
+    "extraction_method": "sidecar:statement_2026_03.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 549
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000024",
+    "filename": "statement_2026_04.pdf",
+    "extracted_text": "Monthly Account Statement\nStatement for Thomas Wilson / CUST-000005\nStatement period: 2026-04-01 to 2026-04-28\nCustomer ID: CUST-000005\nCustomer name: Thomas Wilson\nOpening balance: £55,793.82\nClosing balance: £55,872.00\nProduct references: Cash ISA, Current account, Easy access savings\nNarrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.\nPlease retain this statement for your records.\nContact support immediately if any transaction appears incorrect.",
+    "extraction_method": "sidecar:statement_2026_04.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 549
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000025",
+    "filename": "statement_2026_05.pdf",
+    "extracted_text": "Monthly Account Statement\nStatement for Thomas Wilson / CUST-000005\nStatement period: 2026-05-01 to 2026-05-28\nCustomer ID: CUST-000005\nCustomer name: Thomas Wilson\nOpening balance: £99,666.51\nClosing balance: £101,294.43\nProduct references: Cash ISA, Current account, Easy access savings\nNarrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.\nPlease retain this statement for your records.\nContact support immediately if any transaction appears incorrect.",
+    "extraction_method": "sidecar:statement_2026_05.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 550
+  },
+  {
+    "object_id": "CUST-000005-STATEMENTS_2026_Q1-OBJ-000026",
+    "filename": "statement_2026_06.pdf",
+    "extracted_text": "Monthly Account Statement\nStatement for Thomas Wilson / CUST-000005\nStatement period: 2026-06-01 to 2026-06-28\nCustomer ID: CUST-000005\nCustomer name: Thomas Wilson\nOpening balance: £35,829.24\nClosing balance: £36,732.33\nProduct references: Cash ISA, Current account, Easy access savings\nNarrative: Monthly statement includes standing orders, inbound salary, card settlement and fixed term deposit maturity information where applicable.\nPlease retain this statement for your records.\nContact support immediately if any transaction appears incorrect.",
+    "extraction_method": "sidecar:statement_2026_06.search.txt",
+    "extraction_confidence": 0.9,
+    "extracted_at": "2026-05-16T19:45:47Z",
+    "character_count": 549
+  }
+]
